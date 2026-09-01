@@ -36,11 +36,11 @@
       --border: #e2e8f0;
       --radius-lg: 16px;
       --radius-md: 10px;
-      --shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.06), 0 8px 10px -6px rgba(15, 23, 42, 0.02);
+      --shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.05), 0 8px 10px -6px rgba(15, 23, 42, 0.02);
     }
 
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; }
-    body { background: var(--bg); color: var(--text-main); padding-bottom: 90px; }
+    body { background: linear-gradient(180deg, #f1f5f9 0%, #f8fafc 100%); color: var(--text-main); padding-bottom: 90px; min-height: 100vh; }
 
     /* ATMOS Shiny Logo Effect */
     .brand-logo-box {
@@ -77,7 +77,8 @@
 
     /* Navigation Header */
     nav { 
-      background: var(--card-bg); 
+      background: rgba(255, 255, 255, 0.95); 
+      backdrop-filter: blur(10px);
       border-bottom: 1px solid var(--border); 
       padding: 12px 24px; 
       display: flex; 
@@ -86,7 +87,7 @@
       position: sticky; 
       top: 0; 
       z-index: 100;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.03);
     }
     .brand { display: flex; align-items: center; gap: 12px; }
     .brand-title { font-size: 1.05rem; font-weight: 900; color: var(--atmos-navy); letter-spacing: -0.3px; text-transform: uppercase; }
@@ -157,31 +158,89 @@
     }
     .section-header i { color: var(--atmos-red); }
 
-    /* App Cards & Layout */
+    /* App Cards & Light Gradient Enhancements */
     .app-card { 
-      background: var(--card-bg); border-radius: var(--radius-lg); padding: 22px; 
-      box-shadow: var(--shadow); border: 1px solid var(--border); margin-bottom: 18px; 
-      position: relative; overflow: hidden;
+      background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%); 
+      border-radius: var(--radius-lg); 
+      padding: 22px; 
+      box-shadow: var(--shadow); 
+      border: 1px solid var(--border); 
+      margin-bottom: 18px; 
+      position: relative; 
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .app-card:hover {
+      box-shadow: 0 12px 28px -5px rgba(15, 23, 42, 0.08);
     }
 
     .grid-metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
     
     .metric-card {
-      background: var(--card-bg); border-radius: var(--radius-lg); padding: 18px;
+      border-radius: var(--radius-lg); padding: 18px;
       border: 1px solid var(--border); box-shadow: var(--shadow); display: flex;
       flex-direction: column; justify-content: space-between; min-height: 120px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
+    .metric-card:hover { transform: translateY(-2px); box-shadow: 0 12px 24px -5px rgba(15, 23, 42, 0.08); }
     .metric-header { display: flex; justify-content: space-between; align-items: flex-start; }
     .metric-title { font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
     .metric-value { font-size: 1.4rem; font-weight: 800; margin-top: 8px; color: var(--text-main); }
     .metric-sub { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; display: flex; align-items: center; gap: 4px; }
     .metric-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
 
-    .card-blue .metric-icon { background: var(--primary-light); color: var(--primary); }
-    .card-green .metric-icon { background: var(--accent-green-bg); color: var(--accent-green); }
-    .card-rose .metric-icon { background: var(--accent-rose-bg); color: var(--accent-rose); }
-    .card-amber .metric-icon { background: var(--accent-amber-bg); color: var(--accent-amber); }
-    .card-purple .metric-icon { background: var(--accent-purple-bg); color: var(--accent-purple); }
+    /* Light Colored Gradients for Structural Cards & Tabs */
+    .card-green { background: linear-gradient(135deg, #ecfdf5 0%, #ffffff 100%); border-color: #a7f3d0; }
+    .card-green .metric-icon { background: #dcfce7; color: var(--accent-green); }
+
+    .card-blue { background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%); border-color: #bfdbfe; }
+    .card-blue .metric-icon { background: #dbeafe; color: var(--primary); }
+
+    .card-purple { background: linear-gradient(135deg, #f5f3ff 0%, #ffffff 100%); border-color: #ddd6fe; }
+    .card-purple .metric-icon { background: #ede9fe; color: var(--accent-purple); }
+
+    .card-amber { background: linear-gradient(135deg, #fffbeb 0%, #ffffff 100%); border-color: #fde68a; }
+    .card-amber .metric-icon { background: #fef3c7; color: var(--accent-amber); }
+
+    .card-rose { background: linear-gradient(135deg, #fff1f2 0%, #ffffff 100%); border-color: #fecdd3; }
+    .card-rose .metric-icon { background: #ffe4e6; color: var(--accent-rose); }
+
+    /* Tab-Specific Light Gradient Visual Design */
+    #servicesTab .app-card {
+      background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 60%, #e0f2fe 100%);
+      border: 1px solid #bae6fd;
+    }
+
+    #expenseTab .app-card {
+      background: linear-gradient(135deg, #fff5f5 0%, #ffffff 60%, #ffe4e6 100%);
+      border: 1px solid #fecdd3;
+    }
+
+    #transferTab .app-card {
+      background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 60%, #dcfce7 100%);
+      border: 1px solid #bbf7d0;
+    }
+
+    #invoiceTab .app-card {
+      background: linear-gradient(135deg, #fffbeb 0%, #ffffff 60%, #fef3c7 100%);
+      border: 1px solid #fde68a;
+    }
+
+    #reportsTab .app-card {
+      background: linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #f1f5f9 100%);
+      border: 1px solid #cbd5e1;
+    }
+
+    #adminTab .app-card {
+      background: linear-gradient(135deg, #faf5ff 0%, #ffffff 60%, #f3e8ff 100%);
+      border: 1px solid #e9d5ff;
+    }
+
+    #profileTab .app-card {
+      background: linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #f1f5f9 100%);
+      border: 1px solid #cbd5e1;
+      box-shadow: 0 12px 30px -8px rgba(15, 23, 42, 0.08);
+    }
 
     /* Form Fields */
     .form-group { margin-bottom: 14px; text-align: left; }
@@ -218,7 +277,9 @@
 
     /* Support Card */
     .support-card {
-      background: var(--card-bg); border-radius: var(--radius-lg); border: 2px solid var(--atmos-navy);
+      background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); 
+      border-radius: var(--radius-lg); 
+      border: 2px solid var(--atmos-navy);
       padding: 24px; text-align: center; margin-top: 24px;
     }
     .support-icon { width: 52px; height: 52px; background: var(--atmos-navy); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; font-size: 1.3rem; }
@@ -320,6 +381,7 @@
   <a class="drawer-menu-item" id="drawer-invoiceTab" onclick="navigateFromDrawer('invoiceTab')"><i class="fa-solid fa-file-invoice"></i> CSC Invoice Generator</a>
   <a class="drawer-menu-item" id="drawer-reportsTab" onclick="navigateFromDrawer('reportsTab')"><i class="fa-solid fa-file-invoice-dollar"></i> Financial Reports</a>
   <a class="drawer-menu-item" id="drawer-adminTab" style="display: none;" onclick="navigateFromDrawer('adminTab')"><i class="fa-solid fa-user-shield"></i> Admin Controls</a>
+  <a class="drawer-menu-item" id="drawer-profileTab" onclick="navigateFromDrawer('profileTab')"><i class="fa-solid fa-user"></i> Profile</a>
 </div>
 
 <!-- LOGIN MODAL -->
@@ -353,6 +415,18 @@
     <div id="forgotPasswordBtnContainer" style="margin-top: 12px; text-align: center; display: none;">
       <a style="font-size: 0.75rem; color: var(--atmos-red); font-weight: 700; text-decoration: none; cursor: pointer;" onclick="openForgotPasswordModal()">Forgot Admin Password?</a>
     </div>
+  </div>
+</div>
+
+<!-- DYNAMIC PROGRESSIVE LATE LOGIN ALERT MODAL -->
+<div id="lateLoginModal" class="modal" style="display: none;">
+  <div class="modal-card" style="text-align: center; border-top: 5px solid var(--accent-amber);">
+    <div style="width: 52px; height: 52px; border-radius: 50%; background: var(--accent-amber-bg); color: var(--accent-amber); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin: 0 auto 14px;">
+      <i class="fa-solid fa-clock"></i>
+    </div>
+    <h3 style="font-size: 1.1rem; font-weight: 900; color: var(--atmos-navy); margin-bottom: 8px;">Late Arrival Notice</h3>
+    <p id="lateAlertMessage" style="font-size: 0.9rem; color: var(--text-main); font-weight: 600; margin-bottom: 20px; line-height: 1.4;"></p>
+    <button class="btn-primary" onclick="closeLateLoginModal()" style="background: var(--atmos-navy);">Understood</button>
   </div>
 </div>
 
@@ -410,6 +484,7 @@
   <button class="tab-btn" id="btn-invoiceTab" onclick="switchTab('invoiceTab', this)">CSC Invoice</button>
   <button class="tab-btn" id="btn-reportsTab" onclick="switchTab('reportsTab', this)">Financial Reports</button>
   <button class="tab-btn" id="btn-adminTab" style="display: none;" onclick="switchTab('adminTab', this)">Admin Controls</button>
+  <button class="tab-btn" id="btn-profileTab" onclick="switchTab('profileTab', this)">Profile</button>
 </div>
 
 <div class="container">
@@ -428,7 +503,7 @@
           <span class="metric-title">Cash Drawer Balance</span>
           <div class="metric-icon"><i class="fa-solid fa-money-bill-wave"></i></div>
         </div>
-        <div class="metric-value" id="dashMetricCash">₹3,000.00</div>
+        <div class="metric-value" id="dashMetricCash">₹399.00</div>
         <div class="metric-sub" style="color: var(--accent-green);"><i class="fa-solid fa-circle-check"></i> Physical Cash in Hand</div>
       </div>
 
@@ -437,7 +512,7 @@
           <span class="metric-title">Bank / UPI Balance</span>
           <div class="metric-icon"><i class="fa-solid fa-building-columns"></i></div>
         </div>
-        <div class="metric-value" id="dashMetricBank">₹0.00</div>
+        <div class="metric-value" id="dashMetricBank">₹5,101.00</div>
         <div class="metric-sub"><i class="fa-solid fa-qrcode"></i> Account Digital Reserve</div>
       </div>
 
@@ -455,7 +530,7 @@
           <span class="metric-title">Overall Total Balance</span>
           <div class="metric-icon"><i class="fa-solid fa-vault"></i></div>
         </div>
-        <div class="metric-value" id="dashMetricTotalBal">₹3,000.00</div>
+        <div class="metric-value" id="dashMetricTotalBal">₹5,500.00</div>
         <div class="metric-sub"><i class="fa-solid fa-calculator"></i> Cash + Bank + Receivables</div>
       </div>
     </div>
@@ -472,7 +547,7 @@
       </div>
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px;">
         <div style="padding: 12px; background: var(--bg); border-radius: var(--radius-md);">
-          <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Selected Date Service Net Income</span>
+          <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Selected Date Service Charges Collected</span>
           <div id="todayIncomeVal" style="font-size: 1.3rem; font-weight: 800; color: var(--accent-green); margin-top: 4px;">₹0.00</div>
         </div>
         <div style="padding: 12px; background: var(--bg); border-radius: var(--radius-md);">
@@ -643,23 +718,26 @@
       <!-- SERVICES OVERVIEW -->
       <div class="app-card" style="display: flex; flex-direction: column; justify-content: space-between;">
         <div>
-          <h3 style="font-size: 1.05rem; font-weight: 800; margin-bottom: 16px;">Services Terminal Overview</h3>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 8px;">
+            <h3 style="font-size: 1.05rem; font-weight: 800;">Services Terminal Overview</h3>
+            <input type="month" id="servicesOverviewMonthPicker" onchange="refreshAllUIViews()" style="width: auto; padding: 4px 8px; font-size: 0.8rem;">
+          </div>
           <div style="display: flex; flex-direction: column; gap: 12px;">
-            <div style="padding: 12px 14px; background: var(--primary-light); border-radius: var(--radius-md); border-left: 4px solid var(--primary);">
-              <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Total Services Rendered</span>
+            <div style="padding: 12px 14px; background: rgba(37, 99, 235, 0.08); border-radius: var(--radius-md); border-left: 4px solid var(--primary);">
+              <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Total Services Rendered (Selected Month)</span>
               <div id="summaryCount" style="font-size: 1.3rem; font-weight: 800; color: var(--primary);">0</div>
             </div>
-            <div style="padding: 12px 14px; background: var(--accent-amber-bg); border-radius: var(--radius-md); border-left: 4px solid var(--accent-amber);">
-              <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Today's Net Dept Fee Transacted</span>
+            <div style="padding: 12px 14px; background: rgba(217, 119, 6, 0.08); border-radius: var(--radius-md); border-left: 4px solid var(--accent-amber);">
+              <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Selected Month Net Dept Fee Transacted</span>
               <div id="summaryTodayDeptFee" style="font-size: 1.3rem; font-weight: 800; color: var(--accent-amber);">₹0.00</div>
             </div>
-            <div style="padding: 12px 14px; background: var(--accent-green-bg); border-radius: var(--radius-md); border-left: 4px solid var(--accent-green);">
-              <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Net Shop Service Income</span>
+            <div style="padding: 12px 14px; background: rgba(5, 150, 105, 0.08); border-radius: var(--radius-md); border-left: 4px solid var(--accent-green);">
+              <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Selected Month Net Shop Service Income</span>
               <div id="summaryRevenue" style="font-size: 1.3rem; font-weight: 800; color: var(--accent-green);">₹0.00</div>
             </div>
           </div>
         </div>
-        <div style="font-size: 0.75rem; color: var(--text-muted); background: var(--bg); padding: 10px; border-radius: var(--radius-md); margin-top: 14px;">
+        <div style="font-size: 0.75rem; color: var(--text-muted); background: rgba(255, 255, 255, 0.7); padding: 10px; border-radius: var(--radius-md); margin-top: 14px; border: 1px solid var(--border);">
           <i class="fa-solid fa-circle-info"></i> Department fees paid via Bank/UPI reduce Bank balance; if paid by cash, cash drawer is updated accordingly.
         </div>
       </div>
@@ -697,25 +775,31 @@
       <i class="fa-solid fa-receipt"></i> Shop Overhead & Expenses Ledger
     </div>
 
-    <div class="app-card" style="border: 2px solid var(--atmos-navy); background: #fdfefe;">
-      <div style="margin-bottom: 14px;">
-        <h3 style="font-size: 1.05rem; font-weight: 900; color: var(--atmos-navy);">
-          <i class="fa-solid fa-building-columns" style="color: var(--atmos-red); margin-right: 6px;"></i> Shop Operating Balances
-        </h3>
-        <p style="font-size: 0.8rem; color: var(--text-muted);">Log shop operating expenses paid strictly for shop overhead domain.</p>
+    <div class="app-card" style="border: 2px solid var(--atmos-navy); background: linear-gradient(135deg, #fff5f5 0%, #ffffff 100%);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
+        <div>
+          <h3 style="font-size: 1.05rem; font-weight: 900; color: var(--atmos-navy);">
+            <i class="fa-solid fa-building-columns" style="color: var(--atmos-red); margin-right: 6px;"></i> Shop Operating Balances & Expenses
+          </h3>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">Log shop operating expenses. Expenses auto-reset on Day 1 of each new month.</p>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <label style="margin: 0; font-size: 0.75rem;">Month Filter:</label>
+          <input type="month" id="expenseMonthPicker" onchange="refreshAllUIViews()" style="width: auto; padding: 4px 8px; font-size: 0.8rem;">
+        </div>
       </div>
 
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; background: var(--bg); padding: 14px; border-radius: var(--radius-md);">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; background: rgba(255, 255, 255, 0.8); padding: 14px; border-radius: var(--radius-md); border: 1px solid var(--border);">
         <div>
           <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Cash Drawer Balance</span>
-          <div id="expDispCashBal" style="font-size: 1.2rem; font-weight: 800; color: var(--accent-green);">₹3,000.00</div>
+          <div id="expDispCashBal" style="font-size: 1.2rem; font-weight: 800; color: var(--accent-green);">₹399.00</div>
         </div>
         <div>
           <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Bank Account Balance</span>
-          <div id="expDispBankBal" style="font-size: 1.2rem; font-weight: 800; color: var(--primary);">₹0.00</div>
+          <div id="expDispBankBal" style="font-size: 1.2rem; font-weight: 800; color: var(--primary);">₹5,101.00</div>
         </div>
         <div>
-          <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Total Expenses Logged</span>
+          <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Selected Month Expenses</span>
           <div id="expDispTotalDeducted" style="font-size: 1.2rem; font-weight: 800; color: var(--accent-rose);">₹0.00</div>
         </div>
       </div>
@@ -771,8 +855,8 @@
       <div class="app-card" style="display: flex; flex-direction: column; justify-content: space-between;">
         <div>
           <h3 style="font-size: 1.05rem; font-weight: 800; margin-bottom: 16px;">Expense Outflow Overview</h3>
-          <div style="padding: 18px; background: var(--accent-rose-bg); border-radius: var(--radius-md); border-left: 4px solid var(--accent-rose);">
-            <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Total Expenses Logged</span>
+          <div style="padding: 18px; background: rgba(225, 29, 72, 0.08); border-radius: var(--radius-md); border-left: 4px solid var(--accent-rose);">
+            <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Selected Month Total Expenses</span>
             <div id="expenseTotalSum" style="font-size: 1.8rem; font-weight: 800; color: var(--accent-rose); margin-top: 4px;">₹0.00</div>
           </div>
         </div>
@@ -878,7 +962,7 @@
           <button class="btn-primary" onclick="resetNewInvoice()" style="width: auto; padding: 6px 14px;"><i class="fa-solid fa-plus"></i> New Bill</button>
         </div>
       </div>
-      <!-- Edit/Delete Action Area (Shown when a saved invoice is loaded) -->
+      <!-- Edit/Delete Action Area -->
       <div id="invoiceActionArea" style="display: none; justify-content: flex-end; gap: 10px; margin-top: 10px;">
         <button id="btnUpdateInvoice" class="btn-primary" onclick="saveInvoiceToHistory(true)" style="width: auto; background: var(--accent-amber);"><i class="fa-solid fa-pen"></i> Update This Invoice</button>
         <button id="btnDeleteInvoice" class="btn-danger" onclick="deleteSavedInvoice()" style="width: auto;"><i class="fa-solid fa-trash"></i> Delete Invoice</button>
@@ -1043,6 +1127,59 @@
       <i class="fa-solid fa-user-shield"></i> Administration & Controls
     </div>
 
+    <!-- MONTHLY CLOSING & ADMIN FINANCIAL CONTROLS -->
+    <div class="app-card" style="border: 2px solid var(--atmos-navy); margin-bottom: 24px; background: linear-gradient(135deg, #faf5ff 0%, #ffffff 100%);">
+      <h3 style="font-size: 1.05rem; font-weight: 900; color: var(--atmos-navy); margin-bottom: 6px;">
+        <i class="fa-solid fa-lock" style="color: var(--atmos-red); margin-right: 6px;"></i> Monthly Closing & Admin Financial Controls
+      </h3>
+      <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 16px;">Lock/archive monthly collections, manage Fazy transfers, and override operating balances.</p>
+      
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+        
+        <!-- Monthly Closing Action Box -->
+        <div style="background: rgba(255, 255, 255, 0.8); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border);">
+          <h4 style="font-size: 0.9rem; font-weight: 800; color: var(--atmos-navy); margin-bottom: 10px;">Monthly Closing Action</h4>
+          <div class="form-group">
+            <label>Select Month & Year to Close</label>
+            <input type="month" id="closingMonthPicker">
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn-primary" onclick="closeSelectedMonth()" style="background: var(--atmos-navy); flex: 1;"><i class="fa-solid fa-lock"></i> Close Month</button>
+            <button class="btn-primary" onclick="editClosedMonth()" style="background: var(--accent-amber); flex: 1;"><i class="fa-solid fa-pen-to-square"></i> Edit Closed Month</button>
+          </div>
+          <div id="closingStatusMsg" style="font-size: 0.75rem; font-weight: 700; color: var(--accent-green); margin-top: 8px;"></div>
+        </div>
+
+        <!-- Fazy Transfers Box -->
+        <div style="background: rgba(255, 255, 255, 0.8); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border);">
+          <h4 style="font-size: 0.9rem; font-weight: 800; color: var(--atmos-navy); margin-bottom: 10px;">Fazy Transfers</h4>
+          <div class="form-group">
+            <label>Transfer Amount (₹)</label>
+            <input type="number" id="fazyAmountInput" min="1" placeholder="e.g. 5000">
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn-primary" onclick="handleFazyTransfer('to')" style="background: var(--accent-rose); flex: 1;"><i class="fa-solid fa-arrow-right"></i> Transfer to Fazy</button>
+            <button class="btn-primary" onclick="handleFazyTransfer('from')" style="background: var(--accent-green); flex: 1;"><i class="fa-solid fa-arrow-left"></i> Receive from Fazy</button>
+          </div>
+        </div>
+
+        <!-- Manual Balance Editing Box -->
+        <div style="background: rgba(255, 255, 255, 0.8); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border);">
+          <h4 style="font-size: 0.9rem; font-weight: 800; color: var(--atmos-navy); margin-bottom: 10px;">Manual Balance Editing</h4>
+          <div class="form-group" style="margin-bottom: 8px;">
+            <label>Cash Drawer Balance (₹)</label>
+            <input type="number" id="manualEditCashInput" placeholder="Enter new cash balance">
+          </div>
+          <div class="form-group" style="margin-bottom: 8px;">
+            <label>Bank / UPI Balance (₹)</label>
+            <input type="number" id="manualEditBankInput" placeholder="Enter new bank balance">
+          </div>
+          <button class="btn-primary" onclick="saveManualBalanceEdits()" style="background: var(--primary);">Save Manual Balances</button>
+        </div>
+
+      </div>
+    </div>
+
     <!-- PREVIOUS DATA / HISTORICAL EXTRACTION -->
     <div class="app-card" style="border-left: 5px solid var(--accent-amber); margin-bottom: 24px;">
       <h3 style="font-size: 1.05rem; font-weight: 900; color: var(--atmos-navy); margin-bottom: 6px;">
@@ -1066,17 +1203,25 @@
 
     <!-- STAFF SALARY & INCENTIVE MANAGEMENT -->
     <div class="app-card" style="border: 2px solid var(--atmos-navy); margin-bottom: 24px;">
-      <h3 style="font-size: 1.05rem; font-weight: 900; color: var(--atmos-navy); margin-bottom: 6px;">
-        <i class="fa-solid fa-money-check-dollar" style="color: var(--atmos-red); margin-right: 6px;"></i> Staff Salary & Incentive Management
-      </h3>
-      <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 16px;">Configure basic salary (entered manually) and incentive: 20% of the amount collected more than the salary amount till 9000 (incentive applies only if service charge collections exceed basic salary automatically).</p>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
+        <div>
+          <h3 style="font-size: 1.05rem; font-weight: 900; color: var(--atmos-navy); margin-bottom: 6px;">
+            <i class="fa-solid fa-money-check-dollar" style="color: var(--atmos-red); margin-right: 6px;"></i> Staff Salary & Incentive Management
+          </h3>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">Configure basic salary and view month-wise incentive metrics (20% of service charges collected above basic salary up to 9000).</p>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <label style="margin: 0; font-size: 0.75rem;">Month Selector:</label>
+          <input type="month" id="salaryMonthPicker" onchange="renderStaffSalaryTable()" style="width: auto; padding: 4px 8px; font-size: 0.8rem;">
+        </div>
+      </div>
       <div style="overflow-x: auto;">
         <table>
           <thead>
             <tr>
               <th>STAFF NAME</th>
               <th>BASIC SALARY (₹)</th>
-              <th>SERVICE CHARGE COLLECTED (₹)</th>
+              <th>SERVICE CHARGE COLLECTED (SELECTED MONTH) (₹)</th>
               <th>INCENTIVE (20% OVER SALARY UP TO 9000)</th>
               <th>TOTAL PAYABLE SALARY (₹)</th>
             </tr>
@@ -1092,16 +1237,16 @@
       <h3 style="font-size: 1.05rem; font-weight: 900; color: var(--atmos-navy); margin-bottom: 6px;">
         <i class="fa-solid fa-sliders" style="color: var(--accent-green); margin-right: 6px;"></i> Monthly Opening Balances Configuration
       </h3>
-      <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 16px;">Set starting balances for physical shop cash (Default ₹3,000), bank/UPI account, and credit receivables.</p>
+      <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 16px;">Set static opening balances for physical cash drawer and bank UPI account per billing period.</p>
       
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 14px;">
         <div class="form-group">
           <label>Starting Cash Drawer Balance (₹)</label>
-          <input type="number" id="adminOpeningCashInput" value="3000" style="font-weight: 800; color: var(--accent-green);">
+          <input type="number" id="adminOpeningCashInput" value="399" style="font-weight: 800; color: var(--accent-green);">
         </div>
         <div class="form-group">
           <label>Starting Bank/UPI Balance (₹)</label>
-          <input type="number" id="adminOpeningBankInput" value="0" style="font-weight: 800; color: var(--primary);">
+          <input type="number" id="adminOpeningBankInput" value="5101" style="font-weight: 800; color: var(--primary);">
         </div>
         <div class="form-group">
           <label>Opening Credit / Receivables (₹)</label>
@@ -1128,25 +1273,33 @@
 
     <!-- STAFF SEPARATE COLLECTION EVALUATION CARD -->
     <div class="app-card" style="border: 2px solid var(--atmos-navy); margin-bottom: 24px;">
-      <h3 style="font-size: 1.05rem; font-weight: 900; color: var(--atmos-navy); margin-bottom: 6px;">
-        <i class="fa-solid fa-users" style="color: var(--atmos-red); margin-right: 6px;"></i> Staff Collection Breakdown
-      </h3>
-      <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 16px;">Evaluate total service revenues collected individually by each staff member.</p>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
+        <div>
+          <h3 style="font-size: 1.05rem; font-weight: 900; color: var(--atmos-navy); margin-bottom: 6px;">
+            <i class="fa-solid fa-users" style="color: var(--atmos-red); margin-right: 6px;"></i> Staff Collection Breakdown
+          </h3>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">Evaluate month-wise service revenues collected individually by each staff member.</p>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <label style="margin: 0; font-size: 0.75rem;">Month Selector:</label>
+          <input type="month" id="staffCollectionMonthPicker" onchange="renderStaffBreakdown()" style="width: auto; padding: 4px 8px; font-size: 0.8rem;">
+        </div>
+      </div>
       
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px;">
-        <div style="padding: 14px; background: var(--bg); border-radius: var(--radius-md); border-left: 4px solid var(--primary);">
+        <div style="padding: 14px; background: rgba(37, 99, 235, 0.05); border-radius: var(--radius-md); border-left: 4px solid var(--primary);">
           <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Manu Joseph</span>
           <div id="staffRevManu" style="font-size: 1.3rem; font-weight: 800; color: var(--primary); margin-top: 4px;">₹0.00</div>
           <div style="font-size: 0.7rem; color: var(--text-muted);" id="staffCountManu">0 transactions</div>
         </div>
 
-        <div style="padding: 14px; background: var(--bg); border-radius: var(--radius-md); border-left: 4px solid var(--accent-green);">
+        <div style="padding: 14px; background: rgba(5, 150, 105, 0.05); border-radius: var(--radius-md); border-left: 4px solid var(--accent-green);">
           <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Jasim</span>
           <div id="staffRevJasim" style="font-size: 1.3rem; font-weight: 800; color: var(--accent-green); margin-top: 4px;">₹0.00</div>
           <div style="font-size: 0.7rem; color: var(--text-muted);" id="staffCountJasim">0 transactions</div>
         </div>
 
-        <div style="padding: 14px; background: var(--bg); border-radius: var(--radius-md); border-left: 4px solid var(--accent-amber);">
+        <div style="padding: 14px; background: rgba(217, 119, 6, 0.05); border-radius: var(--radius-md); border-left: 4px solid var(--accent-amber);">
           <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Staff 3</span>
           <div id="staffRevStaff3" style="font-size: 1.3rem; font-weight: 800; color: var(--accent-amber); margin-top: 4px;">₹0.00</div>
           <div style="font-size: 0.7rem; color: var(--text-muted);" id="staffCountStaff3">0 transactions</div>
@@ -1180,9 +1333,12 @@
     <!-- LIVE ATTENDANCE TRACKER & PDF EXPORTS -->
     <div class="app-card" style="margin-bottom: 24px;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
-        <h3 style="font-size: 1.05rem; font-weight: 800; color: var(--atmos-navy);">
-          <i class="fa-solid fa-user-clock" style="color: var(--atmos-red); margin-right: 6px;"></i> Staff Attendance Tracker
-        </h3>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <h3 style="font-size: 1.05rem; font-weight: 800; color: var(--atmos-navy);">
+            <i class="fa-solid fa-user-clock" style="color: var(--atmos-red); margin-right: 6px;"></i> Staff Attendance Tracker
+          </h3>
+          <input type="month" id="attendanceMonthPicker" onchange="renderAttendanceTable()" style="width: auto; padding: 4px 8px; font-size: 0.8rem;">
+        </div>
         <div style="display: flex; gap: 8px;">
           <button class="btn-pdf" onclick="exportAttendancePDF('daily')"><i class="fa-solid fa-file-pdf"></i> Daily Attendance PDF</button>
           <button class="btn-pdf" onclick="exportAttendancePDF('monthly')" style="background: var(--atmos-navy);"><i class="fa-solid fa-file-pdf"></i> Monthly Attendance PDF</button>
@@ -1270,6 +1426,146 @@
 
   </div>
 
+  <!-- TAB 8: STAFF PROFILE PAGE (ENHANCED VISUAL DESIGN & FIXED ABSENT DAYS LOGIC) -->
+  <div id="profileTab" class="tab-content">
+    <div class="section-header">
+      <i class="fa-solid fa-user"></i> Staff Profile & HR Summary
+    </div>
+
+    <!-- Admin Staff Selection -->
+    <div id="adminStaffSelectorContainer" class="app-card" style="display: none; margin-bottom: 18px; padding: 14px; background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%);">
+      <label style="color: var(--atmos-navy); font-weight: 800;">Select Staff Member to Manage Profile:</label>
+      <select id="profileStaffSelect" onchange="renderProfileData()" style="max-width: 300px; margin-top: 6px;">
+        <option value="Manu Joseph">Manu Joseph</option>
+        <option value="Jasim">Jasim</option>
+        <option value="Staff 3">Staff 3</option>
+      </select>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; margin-bottom: 24px;">
+      
+      <!-- Profile Details Card with Pleasant Light Gradient Design -->
+      <div class="app-card" style="text-align: center; background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 50%, #e2e8f0 100%); border: 1px solid #cbd5e1; box-shadow: 0 12px 30px -8px rgba(15, 23, 42, 0.08);">
+        <div style="position: relative; width: 115px; height: 115px; margin: 0 auto 14px; border-radius: 50%; overflow: hidden; border: 4px solid white; box-shadow: 0 8px 20px rgba(11, 30, 45, 0.15); background: linear-gradient(135deg, #e2e8f0 0%, #f1f5f9 100%);">
+          <img id="profileStaffImg" src="" alt="Staff Photo" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+          <div id="profileStaffPlaceholder" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: #94a3b8;"><i class="fa-solid fa-user"></i></div>
+        </div>
+        
+        <h3 id="profileStaffName" style="font-size: 1.3rem; font-weight: 900; color: var(--atmos-navy); margin-bottom: 2px;">Staff Name</h3>
+        <p id="profileStaffRole" style="font-size: 0.8rem; color: var(--atmos-red); font-weight: 800; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px;">Staff Member</p>
+
+        <div style="text-align: left; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(4px); padding: 16px; border-radius: var(--radius-md); border: 1px solid #e2e8f0; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);">
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label>Mobile Number</label>
+            <input type="text" id="profileStaffMobile" placeholder="e.g. 9895638115" readonly style="background: #f8fafc; font-weight: 700;">
+          </div>
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label>Salary Amount (₹)</label>
+            <input type="number" id="profileStaffSalary" placeholder="0" readonly style="background: #f8fafc; font-weight: 700;">
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label>Calculated Incentives (₹)</label>
+            <input type="text" id="profileStaffIncentive" value="₹0.00" readonly style="background: #f0fdf4; font-weight: 800; color: var(--accent-green);">
+          </div>
+        </div>
+
+        <!-- Upload Photo & Edit Buttons -->
+        <div id="profileAdminActionsContainer" style="display: none; margin-top: 16px; gap: 8px; flex-direction: column;">
+          <input type="file" id="profilePhotoUploadInput" accept="image/*" style="display: none;" onchange="handleStaffPhotoUpload(event)">
+          <button type="button" class="btn-primary" onclick="document.getElementById('profilePhotoUploadInput').click()"><i class="fa-solid fa-camera"></i> Upload Staff Photo</button>
+          <button type="button" class="btn-primary" onclick="saveProfileAdminEdits()" style="background: var(--accent-green);"><i class="fa-solid fa-floppy-disk"></i> Save Profile Edits</button>
+        </div>
+      </div>
+
+      <!-- MONTH-WISE ATTENDANCE SUMMARY WIDGET (STRICT ABSENT DAYS PAST LOGIC) -->
+      <div class="app-card" style="display: flex; flex-direction: column; justify-content: space-between; background: linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #f1f5f9 100%); border: 1px solid #cbd5e1; box-shadow: 0 12px 30px -8px rgba(15, 23, 42, 0.08);">
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
+            <h3 style="font-size: 1.05rem; font-weight: 800; color: var(--atmos-navy);">Month-Wise Attendance Summary</h3>
+            <div style="display: flex; gap: 6px; align-items: center;">
+              <label style="margin: 0; font-size: 0.75rem;">Month:</label>
+              <input type="month" id="profileAttendanceMonthPicker" onchange="renderProfileData()" style="width: auto; padding: 4px 8px; font-size: 0.8rem;">
+            </div>
+          </div>
+
+          <!-- Attendance Dashboard Widget Container -->
+          <div id="profileAttendanceSummaryMetrics" style="display: flex; flex-direction: column; gap: 12px;">
+            
+            <!-- Working Days & Sundays Grid -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+              <div style="padding: 12px; background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%); border-radius: var(--radius-md); border: 1px solid #e2e8f0; text-align: center;">
+                <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Total Working Days</span>
+                <div id="sumTotalWorkingDays" style="font-size: 1.4rem; font-weight: 900; color: var(--atmos-navy); margin-top: 4px;">0</div>
+                <div style="font-size: 0.68rem; color: var(--text-muted); margin-top: 2px;">Total Days - Sundays</div>
+              </div>
+              <div style="padding: 12px; background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border-radius: var(--radius-md); border: 1px solid #e2e8f0; text-align: center;">
+                <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Sunday Off</span>
+                <div id="sumSundayOff" style="font-size: 1.4rem; font-weight: 900; color: var(--text-muted); margin-top: 4px;">0</div>
+                <div style="font-size: 0.68rem; color: var(--text-muted); margin-top: 2px;">Official Off-Days</div>
+              </div>
+            </div>
+
+            <!-- Present Widget Box with On-Time and Late Sub-Counters -->
+            <div style="padding: 14px; background: linear-gradient(135deg, #ecfdf5 0%, #ffffff 100%); border-radius: var(--radius-md); border: 1px solid #a7f3d0;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 0.8rem; font-weight: 800; color: var(--accent-green); text-transform: uppercase;">
+                  <i class="fa-solid fa-user-check" style="margin-right: 4px;"></i> Total Present
+                </span>
+                <strong id="sumPresent" style="font-size: 1.4rem; font-weight: 900; color: var(--accent-green);">0</strong>
+              </div>
+              
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; border-top: 1px dashed #a7f3d0; padding-top: 10px;">
+                <div style="background: white; padding: 8px 10px; border-radius: 8px; border: 1px solid #6ee7b7; display: flex; justify-content: space-between; align-items: center;">
+                  <span style="font-size: 0.75rem; font-weight: 700; color: #047857;">
+                    <i class="fa-solid fa-circle-check" style="color: #059669; margin-right: 4px;"></i> On-Time
+                  </span>
+                  <strong id="sumOnTime" style="font-size: 0.95rem; color: #047857;">0</strong>
+                </div>
+                <div style="background: white; padding: 8px 10px; border-radius: 8px; border: 1px solid #fde68a; display: flex; justify-content: space-between; align-items: center;">
+                  <span style="font-size: 0.75rem; font-weight: 700; color: #b45309;">
+                    <i class="fa-solid fa-clock" style="color: #d97706; margin-right: 4px;"></i> Late
+                  </span>
+                  <strong id="sumLate" style="font-size: 0.95rem; color: #b45309;">0</strong>
+                </div>
+              </div>
+            </div>
+
+            <!-- Absent Widget Box (Fixed Past Days Tracking Only) -->
+            <div style="padding: 12px 14px; background: linear-gradient(135deg, #fff1f2 0%, #ffffff 100%); border-radius: var(--radius-md); border: 1px solid #fecdd3; display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <span style="font-size: 0.8rem; font-weight: 800; color: var(--accent-rose); text-transform: uppercase;">
+                  <i class="fa-solid fa-user-xmark" style="margin-right: 4px;"></i> Absent Days
+                </span>
+                <div style="font-size: 0.68rem; color: #9f1239; margin-top: 2px;">Past working days without login</div>
+              </div>
+              <strong id="sumAbsent" style="font-size: 1.4rem; font-weight: 900; color: var(--accent-rose);">0</strong>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Attendance History Log Table for Profile -->
+    <div class="app-card">
+      <h3 style="font-size: 1.05rem; font-weight: 800; margin-bottom: 16px;">Check-in History Log</h3>
+      <div style="overflow-x: auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>First Check-in</th>
+              <th>Last Active Time</th>
+              <th>Re-logins</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="profileAttendanceTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
   <!-- FOOTER -->
   <footer class="no-print" style="text-align: center; margin-top: 40px; color: var(--text-muted); font-size: 0.8rem; font-weight: 600;">
     <p>© 2026 <strong>ATMOS Digital Solutions</strong>. All Rights Reserved.</p>
@@ -1314,7 +1610,7 @@
   </div>
 </div>
 
-<!-- EDIT SERVICE/RECEIVABLE MODAL -->
+<!-- EDIT SERVICE MODAL -->
 <div id="editServiceModal" class="modal" style="display: none;">
   <div class="modal-card">
     <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 16px;">Edit Logged Service</h3>
@@ -1404,7 +1700,7 @@
 
   <div style="display: flex; gap: 10px; margin-bottom: 15px;">
     <div style="flex: 1; background: #ecfdf5; border: 1px solid #059669; padding: 8px; border-radius: 6px;">
-      <span style="font-size: 9px; font-weight: bold; color: #059669;">NET SERVICE INCOME</span>
+      <span style="font-size: 9px; font-weight: bold; color: #059669;">NET SERVICE CHARGES</span>
       <div id="pdfGrossIncome" style="font-size: 13px; font-weight: bold; color: #059669;">₹0.00</div>
     </div>
     <div style="flex: 1; background: #fff1f2; border: 1px solid #e11d48; padding: 8px; border-radius: 6px;">
@@ -1461,6 +1757,13 @@
     "Staff 3": 0
   };
 
+  let staffMobiles = JSON.parse(localStorage.getItem('atmosStaffMobiles_v11')) || {
+    "Manu Joseph": "9895638115",
+    "Jasim": "9800000000",
+    "Staff 3": "9811111111"
+  };
+
+  let staffPhotos = JSON.parse(localStorage.getItem('atmosStaffPhotos_v11')) || {};
   let attendanceLogs = JSON.parse(localStorage.getItem('atmosAttendanceLogs_v11')) || [];
   
   let masterServices = JSON.parse(localStorage.getItem('atmosMasterServices_v11')) || [
@@ -1479,10 +1782,12 @@
   let expenseEntries = JSON.parse(localStorage.getItem('atmosDailyExpenses_v11')) || [];
   let internalTransfers = JSON.parse(localStorage.getItem('atmosInternalTransfers_v11')) || [];
   let savedInvoices = JSON.parse(localStorage.getItem('atmosSavedInvoices_v11')) || [];
+  let closedMonths = JSON.parse(localStorage.getItem('atmosClosedMonths_v11')) || {};
+  let fazyTransfers = JSON.parse(localStorage.getItem('atmosFazyTransfers_v11')) || [];
   
   let openingBalances = JSON.parse(localStorage.getItem('atmosOpeningBalances_v11')) || {
-    cash: 3000,
-    bank: 0,
+    cash: 399,
+    bank: 5101,
     credit: 0
   };
 
@@ -1534,8 +1839,12 @@
             if (val.savedInvoices) savedInvoices = val.savedInvoices;
             if (val.staffBalanceEdits) staffBalanceEdits = val.staffBalanceEdits;
             if (val.staffSalaries) staffSalaries = val.staffSalaries;
+            if (val.staffMobiles) staffMobiles = val.staffMobiles;
+            if (val.staffPhotos) staffPhotos = val.staffPhotos;
+            if (val.closedMonths) closedMonths = val.closedMonths;
+            if (val.fazyTransfers) fazyTransfers = val.fazyTransfers;
             
-            cleanAyishaBill(); // Clean specifically requested data issue
+            cleanAyishaBill();
             saveAllToLocalStorageLocally();
             refreshAllUIViews();
           }
@@ -1547,7 +1856,7 @@
   }
 
   function cleanAyishaBill() {
-     savedInvoices = savedInvoices.filter(inv => !inv.customerName || !inv.customerName.toLowerCase().includes('ayisha vazhayil'));
+    savedInvoices = savedInvoices.filter(inv => !inv.customerName || !inv.customerName.toLowerCase().includes('ayisha vazhayil'));
   }
 
   function broadcastDataChange() {
@@ -1566,6 +1875,10 @@
         savedInvoices,
         staffBalanceEdits,
         staffSalaries,
+        staffMobiles,
+        staffPhotos,
+        closedMonths,
+        fazyTransfers,
         lastUpdated: Date.now()
       });
     }
@@ -1582,6 +1895,10 @@
     localStorage.setItem('atmosSavedInvoices_v11', JSON.stringify(savedInvoices));
     localStorage.setItem('atmosStaffBalanceEdits_v11', JSON.stringify(staffBalanceEdits));
     localStorage.setItem('atmosStaffSalaries_v11', JSON.stringify(staffSalaries));
+    localStorage.setItem('atmosStaffMobiles_v11', JSON.stringify(staffMobiles));
+    localStorage.setItem('atmosStaffPhotos_v11', JSON.stringify(staffPhotos));
+    localStorage.setItem('atmosClosedMonths_v11', JSON.stringify(closedMonths));
+    localStorage.setItem('atmosFazyTransfers_v11', JSON.stringify(fazyTransfers));
     localStorage.setItem('atmosInvNum_v11', currentInvoiceNumber);
   }
 
@@ -1596,181 +1913,15 @@
     savedInvoices = JSON.parse(localStorage.getItem('atmosSavedInvoices_v11')) || savedInvoices;
     staffBalanceEdits = JSON.parse(localStorage.getItem('atmosStaffBalanceEdits_v11')) || staffBalanceEdits;
     staffSalaries = JSON.parse(localStorage.getItem('atmosStaffSalaries_v11')) || staffSalaries;
+    staffMobiles = JSON.parse(localStorage.getItem('atmosStaffMobiles_v11')) || staffMobiles;
+    staffPhotos = JSON.parse(localStorage.getItem('atmosStaffPhotos_v11')) || staffPhotos;
+    closedMonths = JSON.parse(localStorage.getItem('atmosClosedMonths_v11')) || closedMonths;
+    fazyTransfers = JSON.parse(localStorage.getItem('atmosFazyTransfers_v11')) || fazyTransfers;
     cleanAyishaBill();
     refreshAllUIViews();
   }
 
-  window.onload = function() {
-    cleanAyishaBill();
-    document.getElementById('loginModal').style.display = 'flex';
-    setLoginMode('Staff');
-    const today = new Date();
-    const todayISO = today.toISOString().split('T')[0];
-    
-    document.getElementById('overviewDateSelector').value = todayISO;
-    document.getElementById('invDateDisplay').innerText = today.toLocaleDateString('en-IN');
-    document.getElementById('invNumDisplay').innerText = `CSC-${currentInvoiceNumber}`;
-    document.getElementById('invDateInput').value = todayISO;
-    document.getElementById('serviceDateInput').value = todayISO;
-    document.getElementById('expenseDateInput').value = todayISO;
-    document.getElementById('transferDateInput').value = todayISO;
-
-    document.getElementById('adminOpeningCashInput').value = openingBalances.cash;
-    document.getElementById('adminOpeningBankInput').value = openingBalances.bank;
-    document.getElementById('adminOpeningCreditInput').value = openingBalances.credit;
-
-    if (firebaseDbUrl) {
-      document.getElementById('firebaseDbUrlInput').value = firebaseDbUrl;
-    }
-    
-    const currentYrMo = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
-    document.getElementById('reportMonthPicker').value = currentYrMo;
-    document.getElementById('historicalMonth').value = currentYrMo;
-
-    document.getElementById('newServiceCategory').addEventListener('change', function(e) {
-      if (e.target.value === 'Custom Utility & Bill Services') {
-        document.getElementById('adminDeptFeeGroup').style.display = 'block';
-      } else {
-        document.getElementById('adminDeptFeeGroup').style.display = 'none';
-        document.getElementById('newServiceDeptFee').value = '0';
-      }
-    });
-
-    initFirebaseIfConfigured();
-  };
-
-  function calculateCurrentBalances() {
-    let cashBal = openingBalances.cash;
-    let bankBal = openingBalances.bank;
-    let creditBal = openingBalances.credit;
-
-    serviceEntries.forEach(s => {
-      const deptFee = s.deptFee || 0;
-      const serviceInc = (s.serviceCharge || 0) - (s.discount || 0);
-      const finalPay = s.finalPay || (deptFee + serviceInc);
-
-      if (deptFee > 0) {
-        bankBal -= deptFee;
-      }
-
-      if (s.payMode === 'Cash Drawer') {
-        cashBal += finalPay;
-      } else if (s.payMode === 'Bank/UPI') {
-        bankBal += finalPay;
-      } else if (s.payMode === 'Receivables/Credit') {
-        if (!s.settled) {
-          creditBal += finalPay;
-        }
-      }
-    });
-
-    expenseEntries.forEach(ex => {
-      if (ex.payMode === 'Cash Drawer') {
-        cashBal -= ex.amount;
-      } else if (ex.payMode === 'Bank/UPI') {
-        bankBal -= ex.amount;
-      }
-    });
-
-    internalTransfers.forEach(tr => {
-      if (tr.direction === 'CashToBank') {
-        cashBal -= tr.amount;
-        bankBal += tr.amount;
-      } else if (tr.direction === 'BankToCash') {
-        bankBal -= tr.amount;
-        cashBal += tr.amount;
-      }
-    });
-
-    return { cashBal, bankBal, creditBal };
-  }
-
-  function refreshAllUIViews() {
-    populateServiceDropdown();
-    renderDailyHistory();
-    renderExpenseHistory();
-    renderTransferHistory();
-    updateDrawerBalance();
-    generateFinancialReport();
-    populateSavedInvoicesDropdown();
-    renderDashboardOverviewForDate();
-    
-    if (currentRole === 'Admin') {
-      document.getElementById('staffControlsDashboardCard').style.display = 'none';
-      document.getElementById('btn-adminTab').style.display = 'inline-block';
-      document.getElementById('drawer-adminTab').style.display = 'flex';
-      renderStaffPasswordTable();
-      renderStaffBreakdown();
-      initThreeAnalyticsCharts();
-      renderStaffSalaryTable();
-      renderMasterTable();
-    } else if (currentRole === 'Staff') {
-      document.getElementById('staffControlsDashboardCard').style.display = 'block';
-      document.getElementById('btn-adminTab').style.display = 'none';
-      document.getElementById('drawer-adminTab').style.display = 'none';
-      renderStaffControlsArea();
-    }
-    
-    renderAttendanceTable(); // Available for Admin monitoring, Staff can view
-  }
-
-  function updateDrawerBalance() {
-    const { cashBal, bankBal, creditBal } = calculateCurrentBalances();
-    const totalBal = cashBal + bankBal + creditBal;
-
-    document.getElementById('dashMetricCash').innerText = `₹${cashBal.toFixed(2)}`;
-    document.getElementById('dashMetricBank').innerText = `₹${bankBal.toFixed(2)}`;
-    document.getElementById('dashMetricCredit').innerText = `₹${creditBal.toFixed(2)}`;
-    document.getElementById('dashMetricTotalBal').innerText = `₹${totalBal.toFixed(2)}`;
-
-    document.getElementById('expDispCashBal').innerText = `₹${cashBal.toFixed(2)}`;
-    document.getElementById('expDispBankBal').innerText = `₹${bankBal.toFixed(2)}`;
-
-    const totalExp = expenseEntries.reduce((acc, ex) => acc + ex.amount, 0);
-    document.getElementById('expDispTotalDeducted').innerText = `₹${totalExp.toFixed(2)}`;
-    document.getElementById('expenseTotalSum').innerText = `₹${totalExp.toFixed(2)}`;
-
-    document.getElementById('summaryCount').innerText = serviceEntries.length;
-
-    const todayStr = new Date().toISOString().split('T')[0];
-    const todayServices = serviceEntries.filter(s => s.date === todayStr);
-    const todayDeptFee = todayServices.reduce((acc, s) => acc + (s.deptFee || 0), 0);
-    document.getElementById('summaryTodayDeptFee').innerText = `₹${todayDeptFee.toFixed(2)}`;
-    
-    const todayInc = todayServices.reduce((acc, s) => acc + ((s.serviceCharge || 0) - (s.discount || 0)), 0);
-    document.getElementById('summaryRevenue').innerText = `₹${todayInc.toFixed(2)}`;
-  }
-
-  function renderDashboardOverviewForDate() {
-    const selDate = document.getElementById('overviewDateSelector').value;
-    if (!selDate) return;
-
-    const formattedDateLabel = new Date(selDate).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
-    document.getElementById('overviewTitleLabel').innerText = `Overview for ${formattedDateLabel}`;
-
-    const servicesOnDate = serviceEntries.filter(s => s.date === selDate);
-    const expensesOnDate = expenseEntries.filter(e => e.date === selDate);
-
-    const netIncome = servicesOnDate.reduce((acc, s) => acc + ((s.serviceCharge || 0) - (s.discount || 0)), 0);
-    const shopExpenses = expensesOnDate.reduce((acc, e) => acc + e.amount, 0);
-    const deptFeeTransacted = servicesOnDate.reduce((acc, s) => acc + (s.deptFee || 0), 0);
-    const netBalance = netIncome - shopExpenses;
-
-    document.getElementById('todayIncomeVal').innerText = `₹${netIncome.toFixed(2)}`;
-    document.getElementById('todayExpenseVal').innerText = `₹${shopExpenses.toFixed(2)}`;
-    document.getElementById('todayDeptFeeVal').innerText = `₹${deptFeeTransacted.toFixed(2)}`;
-
-    const netValEl = document.getElementById('todayNetVal');
-    netValEl.innerText = `₹${netBalance.toFixed(2)}`;
-    netValEl.className = netBalance >= 0 ? 'net-positive' : 'net-negative';
-  }
-
-  function resetOverviewToToday() {
-    const todayISO = new Date().toISOString().split('T')[0];
-    document.getElementById('overviewDateSelector').value = todayISO;
-    renderDashboardOverviewForDate();
-  }
-
+  /* Drawer Menu & Tabs */
   function openDrawer() {
     document.getElementById('sideDrawer').classList.add('open');
     document.getElementById('drawerOverlay').classList.add('active');
@@ -1781,73 +1932,161 @@
     document.getElementById('drawerOverlay').classList.remove('active');
   }
 
-  function navigateFromDrawer(tabId) {
-    closeDrawer();
-    const btn = document.getElementById('btn-' + tabId);
-    switchTab(tabId, btn);
+  function switchTab(tabId, btnElement) {
+    document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(tb => tb.classList.remove('active'));
+    document.querySelectorAll('.drawer-menu-item').forEach(dmi => dmi.classList.remove('active'));
+
+    const activeTab = document.getElementById(tabId);
+    if (activeTab) activeTab.classList.add('active');
+
+    if (btnElement) {
+      btnElement.classList.add('active');
+    } else {
+      const matchBtn = document.getElementById(`btn-${tabId}`);
+      if (matchBtn) matchBtn.classList.add('active');
+    }
+
+    const matchDrawer = document.getElementById(`drawer-${tabId}`);
+    if (matchDrawer) matchDrawer.classList.add('active');
+
+    if (tabId === 'profileTab') {
+      renderProfileData();
+    } else if (tabId === 'adminTab') {
+      renderAnalyticsCharts();
+    }
   }
 
+  function navigateFromDrawer(tabId) {
+    closeDrawer();
+    switchTab(tabId, document.getElementById(`btn-${tabId}`));
+  }
+
+  /* Login System */
   function setLoginMode(mode) {
     activeLoginMode = mode;
-    const staffTab = document.getElementById('loginTabStaff');
-    const adminTab = document.getElementById('loginTabAdmin');
+    const staffBtn = document.getElementById('loginTabStaff');
+    const adminBtn = document.getElementById('loginTabAdmin');
     const userSelect = document.getElementById('loginUserSelect');
-    const forgotBtn = document.getElementById('forgotPasswordBtnContainer');
+    const forgotBtnContainer = document.getElementById('forgotPasswordBtnContainer');
 
+    userSelect.innerHTML = '';
     if (mode === 'Staff') {
-      staffTab.style.background = 'white';
-      staffTab.style.color = 'var(--atmos-navy)';
-      adminTab.style.background = 'transparent';
-      adminTab.style.color = 'var(--text-muted)';
-      forgotBtn.style.display = 'none';
+      staffBtn.style.background = 'white';
+      staffBtn.style.color = 'var(--atmos-navy)';
+      adminBtn.style.background = 'transparent';
+      adminBtn.style.color = 'var(--text-muted)';
+      if (forgotBtnContainer) forgotBtnContainer.style.display = 'none';
 
-      userSelect.innerHTML = `
-        <option value="STF-101">Manu Joseph</option>
-        <option value="STF-102">Jasim</option>
-        <option value="STF-103">Staff 3</option>
-      `;
+      userAccounts.filter(acc => acc.role === 'Staff').forEach(acc => {
+        const opt = document.createElement('option');
+        opt.value = acc.id;
+        opt.textContent = `${acc.name} (${acc.id})`;
+        userSelect.appendChild(opt);
+      });
     } else {
-      adminTab.style.background = 'white';
-      adminTab.style.color = 'var(--atmos-navy)';
-      staffTab.style.background = 'transparent';
-      staffTab.style.color = 'var(--text-muted)';
-      forgotBtn.style.display = 'block';
+      adminBtn.style.background = 'white';
+      adminBtn.style.color = 'var(--atmos-navy)';
+      staffBtn.style.background = 'transparent';
+      staffBtn.style.color = 'var(--text-muted)';
+      if (forgotBtnContainer) forgotBtnContainer.style.display = 'block';
 
-      userSelect.innerHTML = `
-        <option value="ADM-001">Admin</option>
-      `;
+      userAccounts.filter(acc => acc.role === 'Admin').forEach(acc => {
+        const opt = document.createElement('option');
+        opt.value = acc.id;
+        opt.textContent = `${acc.name} (${acc.id})`;
+        userSelect.appendChild(opt);
+      });
     }
   }
 
   function performLogin() {
-    const enteredId = document.getElementById('loginUserSelect').value;
-    const enteredPwd = document.getElementById('loginPassword').value;
+    const selectedId = document.getElementById('loginUserSelect').value;
+    const passwordInput = document.getElementById('loginPassword').value;
+    const account = userAccounts.find(acc => acc.id === selectedId);
 
-    if (!enteredPwd) {
-      alert("Please enter password.");
+    if (!account) {
+      alert("Invalid account selected.");
       return;
     }
 
-    const account = userAccounts.find(u => u.id === enteredId && u.role === activeLoginMode);
-
-    if (!account || account.password !== enteredPwd) {
-      alert("Incorrect password.");
+    if (account.password !== passwordInput) {
+      alert("Incorrect password. Please try again.");
       return;
     }
 
-    currentRole = account.role;
     currentUser = account.name;
+    currentRole = account.role;
 
-    if (currentRole === 'Staff') {
-      recordContinuousAttendance(account);
+    document.getElementById('loginModal').style.display = 'none';
+    document.getElementById('activeUserBadge').textContent = `${currentUser} (${currentRole})`;
+
+    const adminTabBtn = document.getElementById('btn-adminTab');
+    const drawerAdminTab = document.getElementById('drawer-adminTab');
+    if (currentRole === 'Admin') {
+      if (adminTabBtn) adminTabBtn.style.display = 'inline-block';
+      if (drawerAdminTab) drawerAdminTab.style.display = 'flex';
+      document.getElementById('staffControlsDashboardCard').style.display = 'none';
+      document.getElementById('adminStaffSelectorContainer').style.display = 'block';
+      document.getElementById('profileAdminActionsContainer').style.display = 'flex';
+    } else {
+      if (adminTabBtn) adminTabBtn.style.display = 'none';
+      if (drawerAdminTab) drawerAdminTab.style.display = 'none';
+      document.getElementById('staffControlsDashboardCard').style.display = 'block';
+      document.getElementById('adminStaffSelectorContainer').style.display = 'none';
+      document.getElementById('profileAdminActionsContainer').style.display = 'none';
     }
 
-    document.getElementById('loginPassword').value = '';
-    document.getElementById('loginModal').style.display = 'none';
-    document.getElementById('activeUserBadge').innerText = `${currentRole}: ${account.name}`;
-    document.getElementById('authSignatureName').innerText = account.name; 
-
+    recordAttendanceLog(account);
+    initDefaultDateInputs();
+    populateMasterServiceDropdown();
     refreshAllUIViews();
+  }
+
+  function recordAttendanceLog(account) {
+    if (account.role !== 'Staff') return;
+
+    const now = new Date();
+    const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+
+    let existingLog = attendanceLogs.find(log => log.staffName === account.name && log.date === dateStr);
+
+    if (!existingLog) {
+      const workStartTime = new Date();
+      workStartTime.setHours(9, 30, 0, 0);
+
+      let status = 'On-time';
+      let lateMinutes = 0;
+      if (now > workStartTime) {
+        lateMinutes = Math.floor((now - workStartTime) / (1000 * 60));
+        status = `Late (${lateMinutes} min)`;
+        
+        const alertMsg = `Good morning, ${account.name}! You checked in at ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })} (${lateMinutes} minutes past scheduled start time 9:30 AM). Recorded in attendance portal.`;
+        document.getElementById('lateAlertMessage').textContent = alertMsg;
+        document.getElementById('lateLoginModal').style.display = 'flex';
+      }
+
+      existingLog = {
+        id: Date.now(),
+        staffName: account.name,
+        date: dateStr,
+        firstCheckIn: timeStr,
+        lastActive: timeStr,
+        relogins: 1,
+        status: status
+      };
+      attendanceLogs.push(existingLog);
+    } else {
+      existingLog.lastActive = timeStr;
+      existingLog.relogins = (existingLog.relogins || 1) + 1;
+    }
+
+    broadcastDataChange();
+  }
+
+  function closeLateLoginModal() {
+    document.getElementById('lateLoginModal').style.display = 'none';
   }
 
   function openForgotPasswordModal() {
@@ -1860,261 +2099,722 @@
     document.getElementById('forgotPasswordModal').style.display = 'none';
   }
 
+  let generatedOtp = "";
   function sendAdminOTP() {
-    alert("OTP will be sent to My No. via WhatsApp.");
+    generatedOtp = Math.floor(1000 + Math.random() * 9000).toString();
+    alert(`OTP Sent to Admin Mobile via WhatsApp: ${generatedOtp}`);
     document.getElementById('otpStep1').style.display = 'none';
     document.getElementById('otpStep2').style.display = 'block';
   }
 
   function verifyAndResetAdminPassword() {
-    const otp = document.getElementById('adminOtpInput').value.trim();
-    const newPwd = document.getElementById('newAdminPasswordInput').value.trim();
+    const inputOtp = document.getElementById('adminOtpInput').value.trim();
+    const newPass = document.getElementById('newAdminPasswordInput').value.trim();
 
-    if (otp !== '9605') {
-      alert("Invalid verification code.");
+    if (inputOtp !== generatedOtp) {
+      alert("Invalid OTP code entered.");
       return;
     }
-    if (!newPwd) {
+    if (!newPass) {
       alert("Please enter a valid new password.");
       return;
     }
 
-    let adminAcc = userAccounts.find(u => u.role === 'Admin');
-    adminAcc.password = newPwd;
-    broadcastDataChange();
-    alert("Admin password updated successfully! You can now log in.");
-    closeForgotPasswordModal();
+    const adminAcc = userAccounts.find(acc => acc.role === 'Admin');
+    if (adminAcc) {
+      adminAcc.password = newPass;
+      broadcastDataChange();
+      alert("Admin password updated successfully! You can now log in with your new password.");
+      closeForgotPasswordModal();
+    }
   }
 
-  function recordContinuousAttendance(account) {
-    if (account.role === 'Admin') return; // Do not track admin attendance
+  function initDefaultDateInputs() {
+    const today = new Date();
+    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    const monthStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
 
-    const todayStr = new Date().toLocaleDateString('en-IN');
-    const timeNow = new Date();
-    const timeStr = timeNow.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: false });
-    const hours = timeNow.getHours();
-    const minutes = timeNow.getMinutes();
-    
-    let attendanceStatus = "On-time";
-    if (hours > 9 || (hours === 9 && minutes > 30)) {
-      attendanceStatus = "Late";
-    }
+    if (document.getElementById('serviceDateInput')) document.getElementById('serviceDateInput').value = todayStr;
+    if (document.getElementById('expenseDateInput')) document.getElementById('expenseDateInput').value = todayStr;
+    if (document.getElementById('transferDateInput')) document.getElementById('transferDateInput').value = todayStr;
+    if (document.getElementById('invDateInput')) document.getElementById('invDateInput').value = todayStr;
+    if (document.getElementById('overviewDateSelector')) document.getElementById('overviewDateSelector').value = todayStr;
 
-    let existing = attendanceLogs.find(a => a.name === account.name && a.date === todayStr);
+    if (document.getElementById('servicesOverviewMonthPicker')) document.getElementById('servicesOverviewMonthPicker').value = monthStr;
+    if (document.getElementById('expenseMonthPicker')) document.getElementById('expenseMonthPicker').value = monthStr;
+    if (document.getElementById('reportMonthPicker')) document.getElementById('reportMonthPicker').value = monthStr;
+    if (document.getElementById('staffCollectionMonthPicker')) document.getElementById('staffCollectionMonthPicker').value = monthStr;
+    if (document.getElementById('attendanceMonthPicker')) document.getElementById('attendanceMonthPicker').value = monthStr;
+    if (document.getElementById('salaryMonthPicker')) document.getElementById('salaryMonthPicker').value = monthStr;
+    if (document.getElementById('profileAttendanceMonthPicker')) document.getElementById('profileAttendanceMonthPicker').value = monthStr;
+    if (document.getElementById('closingMonthPicker')) document.getElementById('closingMonthPicker').value = monthStr;
 
-    if (!existing) {
-      attendanceLogs.push({
-        id: Date.now(),
-        name: account.name,
-        date: todayStr,
-        month: `${timeNow.getFullYear()}-${String(timeNow.getMonth() + 1).padStart(2, '0')}`,
-        firstCheckIn: timeStr,
-        lastActive: timeStr,
-        relogCount: 1,
-        status: attendanceStatus
-      });
-    } else {
-      existing.lastActive = timeStr;
-      existing.relogCount += 1;
-      if (!existing.status) existing.status = attendanceStatus;
-    }
-
-    broadcastDataChange();
+    updateInvoiceDateDisplay();
   }
 
-  function renderAttendanceTable() {
-    const table = document.getElementById('attendanceTable');
-    if (!table) return;
-    table.innerHTML = '';
-    
-    let sortedLogs = [...attendanceLogs]
-      .filter(log => log.name !== 'Admin') // Strictly ensure Admin doesn't show
-      .sort((a, b) => b.id - a.id);
+  /* Catalog Selection & Pricing Logic */
+  function populateMasterServiceDropdown() {
+    const select = document.getElementById('serviceSelect');
+    if (!select) return;
+    select.innerHTML = '<option value="">-- Select Service --</option>';
 
-    sortedLogs.forEach(log => {
-      const attStatus = log.status || 'Offline';
-      table.innerHTML += `
-        <tr>
-          <td><b>${log.name}</b></td>
-          <td>${log.date}</td>
-          <td><b style="color: var(--accent-green);">${log.firstCheckIn}</b></td>
-          <td>${log.lastActive}</td>
-          <td><span class="badge badge-upi">${log.relogCount} session(s)</span></td>
-          <td>
-            <span class="badge ${attStatus === 'On-time' ? 'badge-online' : (attStatus === 'Late' ? 'badge-credit' : 'badge-offline')}">
-              ${attStatus}
-            </span>
-          </td>
-        </tr>
-      `;
+    masterServices.forEach(srv => {
+      const opt = document.createElement('option');
+      opt.value = srv.id;
+      opt.textContent = `${srv.name} (₹${srv.price})`;
+      select.appendChild(opt);
     });
   }
 
-  function switchTab(tabId, btnElement) {
-    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-    document.querySelectorAll('.drawer-menu-item').forEach(el => el.classList.remove('active'));
-
-    document.getElementById(tabId).classList.add('active');
-    
-    if (btnElement) {
-      btnElement.classList.add('active');
-    } else {
-      const horizontalBtn = document.getElementById('btn-' + tabId);
-      if (horizontalBtn) horizontalBtn.classList.add('active');
-    }
-
-    const drawerBtn = document.getElementById('drawer-' + tabId);
-    if (drawerBtn) drawerBtn.classList.add('active');
-  }
-
-  function populateServiceDropdown() {
-    const select = document.getElementById('serviceSelect');
-    if (!select) return;
-    select.innerHTML = '<option value="">-- Choose Service --</option>';
-
-    const stdServices = masterServices.filter(s => s.category !== "Custom Utility & Bill Services").sort((a, b) => a.name.localeCompare(b.name));
-    const customServices = masterServices.filter(s => s.category === "Custom Utility & Bill Services").sort((a, b) => a.name.localeCompare(b.name));
-
-    if (customServices.length > 0) {
-      let optGroupCustom = document.createElement('optgroup');
-      optGroupCustom.label = "Custom Utility & Bill Services";
-      customServices.forEach(srv => {
-        let opt = document.createElement('option');
-        opt.value = srv.id;
-        opt.textContent = `${srv.name} ${srv.price > 0 ? '(₹' + srv.price + ')' : ''}`;
-        optGroupCustom.appendChild(opt);
-      });
-      select.appendChild(optGroupCustom);
-    }
-
-    if (stdServices.length > 0) {
-      let optGroupStd = document.createElement('optgroup');
-      optGroupStd.label = "Standard Services";
-      stdServices.forEach(srv => {
-        let opt = document.createElement('option');
-        opt.value = srv.id;
-        opt.textContent = `${srv.name} ${srv.price > 0 ? '(₹' + srv.price + ')' : ''}`;
-        optGroupStd.appendChild(opt);
-      });
-      select.appendChild(optGroupStd);
-    }
-  }
-
   function handleServiceSelectionChange() {
-    const val = document.getElementById('serviceSelect').value;
+    const select = document.getElementById('serviceSelect');
     const customGroup = document.getElementById('otherServiceCustomGroup');
-    const basePriceInput = document.getElementById('basePrice');
-    const deptFeeInput = document.getElementById('deptFeeInput');
+    const selectedId = parseInt(select.value, 10);
+    const srv = masterServices.find(s => s.id === selectedId);
 
-    if (!val) {
-      customGroup.style.display = 'none';
-      basePriceInput.value = 0;
-      deptFeeInput.value = 0;
-      calculateFinalPrice();
-      return;
-    }
-
-    const srvObj = masterServices.find(s => s.id == val);
-    if (srvObj) {
-      basePriceInput.value = srvObj.price || 0;
-      deptFeeInput.value = srvObj.defaultDeptFee || 0;
-
-      if (srvObj.name.toLowerCase().includes('others')) {
+    if (srv) {
+      document.getElementById('basePrice').value = srv.price || 0;
+      document.getElementById('deptFeeInput').value = srv.defaultDeptFee || 0;
+      if (srv.name.includes("Others")) {
         customGroup.style.display = 'block';
       } else {
         customGroup.style.display = 'none';
       }
+    } else {
+      customGroup.style.display = 'none';
     }
     calculateFinalPrice();
   }
 
   function calculateFinalPrice() {
     const deptFee = parseFloat(document.getElementById('deptFeeInput').value) || 0;
-    const basePrice = parseFloat(document.getElementById('basePrice').value) || 0;
+    const srvCharge = parseFloat(document.getElementById('basePrice').value) || 0;
     const discount = parseFloat(document.getElementById('discountAmt').value) || 0;
-
-    const totalPay = deptFee + basePrice - discount;
-    document.getElementById('finalPrice').value = totalPay > 0 ? totalPay.toFixed(2) : '0.00';
+    const totalPay = Math.max(0, deptFee + srvCharge - discount);
+    document.getElementById('finalPrice').value = totalPay;
   }
 
-  function recordServiceEntry(event) {
-    event.preventDefault();
-    const serviceId = document.getElementById('serviceSelect').value;
-    const srvObj = masterServices.find(s => s.id == serviceId);
-    
-    let serviceName = srvObj ? srvObj.name : 'Custom Service';
-    if (serviceName.toLowerCase().includes('others')) {
-      const customName = document.getElementById('customServiceNameInput').value.trim();
-      if (customName) serviceName = customName;
+  /* Service Transactions */
+  function recordServiceEntry(e) {
+    e.preventDefault();
+    const dateVal = document.getElementById('serviceDateInput').value;
+    const select = document.getElementById('serviceSelect');
+    const srvId = parseInt(select.value, 10);
+    const masterSrv = masterServices.find(s => s.id === srvId);
+
+    let srvName = masterSrv ? masterSrv.name : "Custom Service";
+    if (srvName.includes("Others")) {
+      srvName = document.getElementById('customServiceNameInput').value.trim() || "Custom Service";
     }
 
-    const dateVal = document.getElementById('serviceDateInput').value;
     const deptFee = parseFloat(document.getElementById('deptFeeInput').value) || 0;
-    const serviceCharge = parseFloat(document.getElementById('basePrice').value) || 0;
+    const srvCharge = parseFloat(document.getElementById('basePrice').value) || 0;
     const discount = parseFloat(document.getElementById('discountAmt').value) || 0;
-    const finalPay = parseFloat(document.getElementById('finalPrice').value) || 0;
+    const totalPay = Math.max(0, deptFee + srvCharge - discount);
     const payMode = document.getElementById('payMode').value;
-
-    const now = new Date();
-    const timeStr = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
 
     const newEntry = {
       id: Date.now(),
       date: dateVal,
-      time: timeStr,
-      serviceName,
-      deptFee,
-      serviceCharge,
-      discount,
-      finalPay,
-      payMode,
-      staff: currentUser || 'Admin',
-      settled: false
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      serviceName: srvName,
+      deptFee: deptFee,
+      serviceCharge: srvCharge,
+      discount: discount,
+      totalPay: totalPay,
+      payMode: payMode,
+      loggedBy: currentUser || 'Staff',
+      settled: (payMode !== 'Receivables/Credit')
     };
 
-    serviceEntries.push(newEntry);
+    serviceEntries.unshift(newEntry);
     broadcastDataChange();
+    alert("Service transaction logged successfully!");
 
-    alert("Service transaction recorded successfully!");
-    document.getElementById('serviceSelect').value = '';
     document.getElementById('deptFeeInput').value = 0;
     document.getElementById('basePrice').value = 0;
     document.getElementById('discountAmt').value = 0;
     document.getElementById('finalPrice').value = 0;
     document.getElementById('customServiceNameInput').value = '';
+    select.value = '';
     document.getElementById('otherServiceCustomGroup').style.display = 'none';
   }
 
-  function renderDailyHistory() {
-    const table = document.getElementById('serviceHistoryTable');
-    if (!table) return;
-    table.innerHTML = '';
+  /* Expenses Logging */
+  function recordExpenseEntry(e) {
+    e.preventDefault();
+    const dateVal = document.getElementById('expenseDateInput').value;
+    const category = document.getElementById('expenseCategory').value;
+    const desc = document.getElementById('expenseDesc').value.trim();
+    const amount = parseFloat(document.getElementById('expenseAmount').value) || 0;
+    const payMode = document.getElementById('expensePayMode').value;
 
-    let list = [...serviceEntries].sort((a, b) => b.id - a.id);
+    if (amount <= 0) {
+      alert("Please enter a valid expense amount.");
+      return;
+    }
 
-    list.forEach(item => {
-      let badgeClass = 'badge-cash';
-      if (item.payMode === 'Bank/UPI') badgeClass = 'badge-upi';
-      if (item.payMode === 'Receivables/Credit') badgeClass = 'badge-credit';
+    const newExpense = {
+      id: Date.now(),
+      date: dateVal,
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      category: category,
+      desc: desc,
+      amount: amount,
+      payMode: payMode,
+      recordedBy: currentUser || 'Staff'
+    };
 
-      table.innerHTML += `
-        <tr>
-          <td><b>${item.date}</b><br><small style="color:var(--text-muted);">${item.time}</small></td>
-          <td><b>${item.serviceName}</b>${item.settled ? '<br><span class="badge badge-online">Settled</span>' : ''}</td>
-          <td>₹${(item.deptFee || 0).toFixed(2)}</td>
-          <td>₹${(item.serviceCharge || 0).toFixed(2)}</td>
-          <td>₹${(item.discount || 0).toFixed(2)}</td>
-          <td><b>₹${(item.finalPay || 0).toFixed(2)}</b></td>
-          <td><span class="badge ${badgeClass}">${item.payMode}</span></td>
-          <td><small><b>${item.staff}</b></small></td>
-          <td>
-            <button class="btn-primary" style="padding: 4px 8px; font-size: 0.7rem; width: auto;" onclick="openEditServiceModal(${item.id})"><i class="fa-solid fa-pen"></i></button>
-            <button class="btn-danger" style="padding: 4px 8px; font-size: 0.7rem; width: auto; margin-top: 4px;" onclick="deleteServiceEntry(${item.id})"><i class="fa-solid fa-trash"></i></button>
-          </td>
-        </tr>
+    expenseEntries.unshift(newExpense);
+    broadcastDataChange();
+    alert("Expense logged successfully!");
+
+    document.getElementById('expenseDesc').value = '';
+    document.getElementById('expenseAmount').value = '';
+  }
+
+  /* Internal Cash Transfers */
+  function recordInternalTransfer(e) {
+    e.preventDefault();
+    const dateVal = document.getElementById('transferDateInput').value;
+    const direction = document.getElementById('domainTransferDirection').value;
+    const amount = parseFloat(document.getElementById('domainTransferAmount').value) || 0;
+
+    if (amount <= 0) {
+      alert("Please enter a valid transfer amount.");
+      return;
+    }
+
+    const newTransfer = {
+      id: Date.now(),
+      date: dateVal,
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      direction: direction,
+      amount: amount,
+      recordedBy: currentUser || 'Staff'
+    };
+
+    internalTransfers.unshift(newTransfer);
+    broadcastDataChange();
+    alert("Internal transfer ledger updated successfully!");
+
+    document.getElementById('domainTransferAmount').value = '';
+  }
+
+  /* CSC Invoice Logic */
+  function updateInvoiceDateDisplay() {
+    const input = document.getElementById('invDateInput');
+    const disp = document.getElementById('invDateDisplay');
+    if (input && disp) disp.textContent = input.value;
+  }
+
+  function calcInvItemRowTotal() {
+    const dept = parseFloat(document.getElementById('invItemDept').value) || 0;
+    const srv = parseFloat(document.getElementById('invItemSrv').value) || 0;
+    document.getElementById('invItemAmt').value = (dept + srv).toFixed(2);
+  }
+
+  function addInvoiceRow() {
+    const desc = document.getElementById('invItemDesc').value.trim();
+    const dept = parseFloat(document.getElementById('invItemDept').value) || 0;
+    const srv = parseFloat(document.getElementById('invItemSrv').value) || 0;
+    const total = dept + srv;
+
+    if (!desc && total <= 0) {
+      alert("Please enter item details or an amount.");
+      return;
+    }
+
+    invoiceItems.push({ desc: desc || "Service Item", dept, srv, total });
+    renderInvoiceItems();
+
+    document.getElementById('invItemDesc').value = '';
+    document.getElementById('invItemDept').value = '';
+    document.getElementById('invItemSrv').value = '';
+    document.getElementById('invItemAmt').value = '';
+  }
+
+  function deleteInvoiceRow(index) {
+    invoiceItems.splice(index, 1);
+    renderInvoiceItems();
+  }
+
+  function renderInvoiceItems() {
+    const tbody = document.getElementById('invoiceItemsTableBody');
+    tbody.innerHTML = '';
+    let grandTotal = 0;
+
+    invoiceItems.forEach((item, idx) => {
+      grandTotal += item.total;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${item.desc}</td>
+        <td style="text-align: right;">₹${item.dept.toFixed(2)}</td>
+        <td style="text-align: right;">₹${item.srv.toFixed(2)}</td>
+        <td style="text-align: right; font-weight: 800;">₹${item.total.toFixed(2)}</td>
+        <td class="no-print" style="text-align: center;">
+          <button onclick="deleteInvoiceRow(${idx})" style="background:transparent; color: var(--accent-rose); font-size: 0.9rem; padding: 2px;"><i class="fa-solid fa-trash"></i></button>
+        </td>
       `;
+      tbody.appendChild(tr);
     });
+
+    document.getElementById('invTotalVal').textContent = grandTotal.toFixed(2);
+  }
+
+  function saveInvoiceToHistory(isUpdate) {
+    const custName = document.getElementById('invCustomerName').value.trim();
+    const custPhone = document.getElementById('invCustomerPhone').value.trim();
+    const invDate = document.getElementById('invDateInput').value;
+    const payMode = document.getElementById('invPaymentMode').value;
+    const grandTotal = parseFloat(document.getElementById('invTotalVal').textContent) || 0;
+
+    if (invoiceItems.length === 0) {
+      alert("Please add at least one line item to the invoice.");
+      return;
+    }
+
+    if (isUpdate) {
+      const select = document.getElementById('savedInvoiceSelect');
+      const invId = parseInt(select.value, 10);
+      const existing = savedInvoices.find(i => i.id === invId);
+      if (existing) {
+        existing.customerName = custName;
+        existing.customerPhone = custPhone;
+        existing.date = invDate;
+        existing.paymentMode = payMode;
+        existing.items = [...invoiceItems];
+        existing.totalAmount = grandTotal;
+        alert("Invoice updated successfully!");
+      }
+    } else {
+      const invNumStr = `CSC-${currentInvoiceNumber}`;
+      const newInv = {
+        id: Date.now(),
+        invNum: invNumStr,
+        date: invDate,
+        customerName: custName,
+        customerPhone: custPhone,
+        paymentMode: payMode,
+        items: [...invoiceItems],
+        totalAmount: grandTotal,
+        createdBy: currentUser || 'Admin'
+      };
+      savedInvoices.unshift(newInv);
+      currentInvoiceNumber++;
+      alert(`Invoice ${invNumStr} saved successfully!`);
+    }
+
+    broadcastDataChange();
+    populateSavedInvoicesDropdown();
+  }
+
+  function populateSavedInvoicesDropdown() {
+    const select = document.getElementById('savedInvoiceSelect');
+    if (!select) return;
+    select.innerHTML = '<option value="">-- New Invoice --</option>';
+
+    savedInvoices.forEach(inv => {
+      const opt = document.createElement('option');
+      opt.value = inv.id;
+      opt.textContent = `${inv.invNum} - ${inv.customerName || 'Customer'} (₹${inv.totalAmount.toFixed(2)})`;
+      select.appendChild(opt);
+    });
+  }
+
+  function loadSavedInvoice(invId) {
+    const actionArea = document.getElementById('invoiceActionArea');
+    const saveNewBtn = document.getElementById('btnSaveNewInvoice');
+
+    if (!invId) {
+      resetNewInvoice();
+      return;
+    }
+
+    const inv = savedInvoices.find(i => i.id === parseInt(invId, 10));
+    if (!inv) return;
+
+    document.getElementById('invNumDisplay').textContent = inv.invNum;
+    document.getElementById('invDateInput').value = inv.date;
+    document.getElementById('invDateDisplay').textContent = inv.date;
+    document.getElementById('invCustomerName').value = inv.customerName || '';
+    document.getElementById('invCustomerPhone').value = inv.customerPhone || '';
+    document.getElementById('invPaymentMode').value = inv.paymentMode || 'Cash';
+
+    invoiceItems = [...inv.items];
+    renderInvoiceItems();
+
+    actionArea.style.display = 'flex';
+    if (saveNewBtn) saveNewBtn.style.display = 'none';
+  }
+
+  function resetNewInvoice() {
+    document.getElementById('savedInvoiceSelect').value = '';
+    document.getElementById('invNumDisplay').textContent = `CSC-${currentInvoiceNumber}`;
+    initDefaultDateInputs();
+    document.getElementById('invCustomerName').value = '';
+    document.getElementById('invCustomerPhone').value = '';
+    document.getElementById('invPaymentMode').value = 'Cash';
+
+    invoiceItems = [];
+    renderInvoiceItems();
+
+    document.getElementById('invoiceActionArea').style.display = 'none';
+    const saveNewBtn = document.getElementById('btnSaveNewInvoice');
+    if (saveNewBtn) saveNewBtn.style.display = 'inline-block';
+  }
+
+  function deleteSavedInvoice() {
+    const select = document.getElementById('savedInvoiceSelect');
+    const invId = parseInt(select.value, 10);
+    if (!invId) return;
+
+    if (confirm("Are you sure you want to delete this invoice?")) {
+      savedInvoices = savedInvoices.filter(i => i.id !== invId);
+      broadcastDataChange();
+      resetNewInvoice();
+      alert("Invoice deleted successfully.");
+    }
+  }
+
+  function printCSCInvoice() {
+    window.print();
+  }
+
+  /* CALCULATE OPERATING BALANCES & REFRESH ALL VIEWS */
+  function calculateBalances() {
+    let cash = openingBalances.cash || 0;
+    let bank = openingBalances.bank || 0;
+    let credit = openingBalances.credit || 0;
+
+    // Service collections
+    serviceEntries.forEach(s => {
+      const dept = parseFloat(s.deptFee) || 0;
+      const srv = parseFloat(s.serviceCharge) || 0;
+      const disc = parseFloat(s.discount) || 0;
+      const totalPay = Math.max(0, dept + srv - disc);
+
+      if (s.payMode === 'Cash Drawer') {
+        cash += totalPay;
+      } else if (s.payMode === 'Bank/UPI') {
+        bank += totalPay;
+      } else if (s.payMode === 'Receivables/Credit') {
+        if (!s.settled) {
+          credit += totalPay;
+        }
+      }
+    });
+
+    // Expenses deduction
+    expenseEntries.forEach(e => {
+      const amt = parseFloat(e.amount) || 0;
+      if (e.payMode === 'Cash Drawer') {
+        cash -= amt;
+      } else if (e.payMode === 'Bank/UPI') {
+        bank -= amt;
+      }
+    });
+
+    // Internal transfers
+    internalTransfers.forEach(t => {
+      const amt = parseFloat(t.amount) || 0;
+      if (t.direction === 'CashToBank') {
+        cash -= amt;
+        bank += amt;
+      } else if (t.direction === 'BankToCash') {
+        bank -= amt;
+        cash += amt;
+      }
+    });
+
+    // Fazy transfers
+    fazyTransfers.forEach(f => {
+      const amt = parseFloat(f.amount) || 0;
+      if (f.direction === 'to') {
+        bank -= amt;
+      } else if (f.direction === 'from') {
+        bank += amt;
+      }
+    });
+
+    return { cash, bank, credit, total: (cash + bank + credit) };
+  }
+
+  function refreshAllUIViews() {
+    const bal = calculateBalances();
+
+    if (document.getElementById('dashMetricCash')) document.getElementById('dashMetricCash').textContent = `₹${bal.cash.toFixed(2)}`;
+    if (document.getElementById('dashMetricBank')) document.getElementById('dashMetricBank').textContent = `₹${bal.bank.toFixed(2)}`;
+    if (document.getElementById('dashMetricCredit')) document.getElementById('dashMetricCredit').textContent = `₹${bal.credit.toFixed(2)}`;
+    if (document.getElementById('dashMetricTotalBal')) document.getElementById('dashMetricTotalBal').textContent = `₹${bal.total.toFixed(2)}`;
+
+    if (document.getElementById('expDispCashBal')) document.getElementById('expDispCashBal').textContent = `₹${bal.cash.toFixed(2)}`;
+    if (document.getElementById('expDispBankBal')) document.getElementById('expDispBankBal').textContent = `₹${bal.bank.toFixed(2)}`;
+
+    renderDashboardOverviewForDate();
+    renderServicesTabOverview();
+    renderExpenseTabOverview();
+    renderServiceHistory();
+    renderExpenseHistory();
+    renderTransferHistory();
+    renderStaffReceivablesTable();
+    populateSavedInvoicesDropdown();
+    generateFinancialReport();
+    renderStaffSalaryTable();
+    renderStaffBreakdown();
+    renderAttendanceTable();
+    renderMasterServicesTable();
+    renderStaffPasswordTable();
+    renderProfileData();
+  }
+
+  function renderDashboardOverviewForDate() {
+    const dateInput = document.getElementById('overviewDateSelector');
+    if (!dateInput) return;
+
+    const selDate = dateInput.value;
+    let income = 0;
+    let expense = 0;
+    let deptFee = 0;
+
+    serviceEntries.forEach(s => {
+      if (s.date === selDate) {
+        income += parseFloat(s.serviceCharge) || 0;
+        deptFee += parseFloat(s.deptFee) || 0;
+      }
+    });
+
+    expenseEntries.forEach(e => {
+      if (e.date === selDate) {
+        expense += parseFloat(e.amount) || 0;
+      }
+    });
+
+    const net = income - expense;
+
+    if (document.getElementById('todayIncomeVal')) document.getElementById('todayIncomeVal').textContent = `₹${income.toFixed(2)}`;
+    if (document.getElementById('todayExpenseVal')) document.getElementById('todayExpenseVal').textContent = `₹${expense.toFixed(2)}`;
+    if (document.getElementById('todayDeptFeeVal')) document.getElementById('todayDeptFeeVal').textContent = `₹${deptFee.toFixed(2)}`;
+    
+    const netEl = document.getElementById('todayNetVal');
+    if (netEl) {
+      netEl.textContent = `₹${net.toFixed(2)}`;
+      netEl.className = net >= 0 ? 'net-positive' : 'net-negative';
+    }
+  }
+
+  function resetOverviewToToday() {
+    const today = new Date();
+    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    if (document.getElementById('overviewDateSelector')) {
+      document.getElementById('overviewDateSelector').value = todayStr;
+      renderDashboardOverviewForDate();
+    }
+  }
+
+  function handleStaffBalanceModification(e) {
+    e.preventDefault();
+    const target = document.getElementById('modBalanceTarget').value;
+    const newAmt = parseFloat(document.getElementById('modBalanceAmount').value) || 0;
+
+    const todayStr = new Date().toISOString().split('T')[0];
+    staffBalanceEdits[currentUser] = staffBalanceEdits[currentUser] || {};
+    const count = staffBalanceEdits[currentUser][todayStr] || 0;
+
+    if (count >= 2) {
+      alert("Daily limit reached! Staff members can only modify balances twice per day.");
+      return;
+    }
+
+    const currentBal = calculateBalances();
+
+    if (target === 'Cash') {
+      openingBalances.cash += (newAmt - currentBal.cash);
+    } else if (target === 'Bank') {
+      openingBalances.bank += (newAmt - currentBal.bank);
+    } else if (target === 'Receivables') {
+      openingBalances.credit += (newAmt - currentBal.credit);
+    }
+
+    staffBalanceEdits[currentUser][todayStr] = count + 1;
+    document.getElementById('balanceEditRemainingCount').textContent = 2 - (count + 1);
+
+    broadcastDataChange();
+    alert(`Operating ${target} balance successfully modified to ₹${newAmt.toFixed(2)}`);
+    document.getElementById('modBalanceAmount').value = '';
+  }
+
+  function renderStaffReceivablesTable() {
+    const tbody = document.getElementById('staffReceivablesTableBody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    const creditEntries = serviceEntries.filter(s => s.payMode === 'Receivables/Credit' && !s.settled);
+
+    if (creditEntries.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-muted);">No outstanding credit receivables pending.</td></tr>';
+      return;
+    }
+
+    creditEntries.forEach(s => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><input type="radio" name="selectedReceivableRadio" value="${s.id}"></td>
+        <td>${s.date}</td>
+        <td>${s.serviceName}</td>
+        <td>₹${(s.deptFee || 0).toFixed(2)}</td>
+        <td>₹${(s.serviceCharge || 0).toFixed(2)}</td>
+        <td style="font-weight: 800; color: var(--accent-purple);">₹${(s.totalPay || 0).toFixed(2)}</td>
+        <td>${s.loggedBy}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function settleSelectedReceivable() {
+    const radios = document.getElementsByName('selectedReceivableRadio');
+    let selectedId = null;
+
+    for (const r of radios) {
+      if (r.checked) {
+        selectedId = parseInt(r.value, 10);
+        break;
+      }
+    }
+
+    if (!selectedId) {
+      alert("Please select a receivable to settle.");
+      return;
+    }
+
+    const dest = document.getElementById('receivableSettleDestination').value;
+    const entry = serviceEntries.find(s => s.id === selectedId);
+
+    if (entry) {
+      entry.settled = true;
+      entry.payMode = (dest === 'Cash Drawer') ? 'Cash Drawer' : 'Bank/UPI';
+      broadcastDataChange();
+      alert("Receivable settled successfully!");
+    }
+  }
+
+  function renderServicesTabOverview() {
+    const picker = document.getElementById('servicesOverviewMonthPicker');
+    if (!picker) return;
+
+    const selMonth = picker.value;
+    let count = 0;
+    let deptSum = 0;
+    let revSum = 0;
+
+    serviceEntries.forEach(s => {
+      if (s.date && s.date.startsWith(selMonth)) {
+        count++;
+        deptSum += parseFloat(s.deptFee) || 0;
+        revSum += parseFloat(s.serviceCharge) || 0;
+      }
+    });
+
+    if (document.getElementById('summaryCount')) document.getElementById('summaryCount').textContent = count;
+    if (document.getElementById('summaryTodayDeptFee')) document.getElementById('summaryTodayDeptFee').textContent = `₹${deptSum.toFixed(2)}`;
+    if (document.getElementById('summaryRevenue')) document.getElementById('summaryRevenue').textContent = `₹${revSum.toFixed(2)}`;
+  }
+
+  function renderExpenseTabOverview() {
+    const picker = document.getElementById('expenseMonthPicker');
+    if (!picker) return;
+
+    const selMonth = picker.value;
+    let totalExp = 0;
+
+    expenseEntries.forEach(e => {
+      if (e.date && e.date.startsWith(selMonth)) {
+        totalExp += parseFloat(e.amount) || 0;
+      }
+    });
+
+    if (document.getElementById('expDispTotalDeducted')) document.getElementById('expDispTotalDeducted').textContent = `₹${totalExp.toFixed(2)}`;
+    if (document.getElementById('expenseTotalSum')) document.getElementById('expenseTotalSum').textContent = `₹${totalExp.toFixed(2)}`;
+  }
+
+  function renderServiceHistory() {
+    const tbody = document.getElementById('serviceHistoryTable');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    const picker = document.getElementById('servicesOverviewMonthPicker');
+    const selMonth = picker ? picker.value : '';
+
+    const filtered = serviceEntries.filter(s => !selMonth || (s.date && s.date.startsWith(selMonth)));
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; color: var(--text-muted);">No service transactions logged for this period.</td></tr>';
+      return;
+    }
+
+    filtered.forEach(s => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${s.date} ${s.time || ''}</td>
+        <td style="font-weight: 700;">${s.serviceName}</td>
+        <td>₹${(s.deptFee || 0).toFixed(2)}</td>
+        <td>₹${(s.serviceCharge || 0).toFixed(2)}</td>
+        <td>₹${(s.discount || 0).toFixed(2)}</td>
+        <td style="font-weight: 800; color: var(--accent-green);">₹${(s.totalPay || 0).toFixed(2)}</td>
+        <td><span class="badge ${s.payMode === 'Cash Drawer' ? 'badge-cash' : (s.payMode === 'Bank/UPI' ? 'badge-upi' : 'badge-credit')}">${s.payMode}</span></td>
+        <td>${s.loggedBy || 'Staff'}</td>
+        <td>
+          <button onclick="openEditServiceModal(${s.id})" style="background:transparent; color: var(--atmos-navy); font-size:0.85rem; padding: 2px 4px;"><i class="fa-solid fa-pen"></i></button>
+          <button onclick="deleteServiceEntry(${s.id})" style="background:transparent; color: var(--accent-rose); font-size:0.85rem; padding: 2px 4px;"><i class="fa-solid fa-trash"></i></button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function openEditServiceModal(id) {
+    const s = serviceEntries.find(entry => entry.id === id);
+    if (!s) return;
+
+    document.getElementById('editLoggedServiceId').value = s.id;
+    document.getElementById('editLoggedServiceDate').value = s.date;
+    document.getElementById('editLoggedServiceDesc').value = s.serviceName;
+    document.getElementById('editLoggedDeptFee').value = s.deptFee || 0;
+    document.getElementById('editLoggedServiceCharge').value = s.serviceCharge || 0;
+    document.getElementById('editLoggedDiscount').value = s.discount || 0;
+    document.getElementById('editLoggedFinalPay').value = s.totalPay || 0;
+    document.getElementById('editLoggedPayMode').value = s.payMode;
+
+    document.getElementById('editServiceModal').style.display = 'flex';
+  }
+
+  function calculateEditFinalPrice() {
+    const dept = parseFloat(document.getElementById('editLoggedDeptFee').value) || 0;
+    const srv = parseFloat(document.getElementById('editLoggedServiceCharge').value) || 0;
+    const disc = parseFloat(document.getElementById('editLoggedDiscount').value) || 0;
+    document.getElementById('editLoggedFinalPay').value = Math.max(0, dept + srv - disc);
+  }
+
+  function saveEditedService() {
+    const id = parseInt(document.getElementById('editLoggedServiceId').value, 10);
+    const s = serviceEntries.find(entry => entry.id === id);
+    if (!s) return;
+
+    s.date = document.getElementById('editLoggedServiceDate').value;
+    s.serviceName = document.getElementById('editLoggedServiceDesc').value.trim();
+    s.deptFee = parseFloat(document.getElementById('editLoggedDeptFee').value) || 0;
+    s.serviceCharge = parseFloat(document.getElementById('editLoggedServiceCharge').value) || 0;
+    s.discount = parseFloat(document.getElementById('editLoggedDiscount').value) || 0;
+    s.totalPay = parseFloat(document.getElementById('editLoggedFinalPay').value) || 0;
+    s.payMode = document.getElementById('editLoggedPayMode').value;
+
+    broadcastDataChange();
+    closeEditServiceModal();
+    alert("Service entry updated successfully!");
+  }
+
+  function closeEditServiceModal() {
+    document.getElementById('editServiceModal').style.display = 'none';
   }
 
   function deleteServiceEntry(id) {
@@ -2124,631 +2824,376 @@
     }
   }
 
-  let editingServiceTargetId = null;
-  function openEditServiceModal(id) {
-    const item = serviceEntries.find(s => s.id === id);
-    if (!item) return;
-
-    editingServiceTargetId = id;
-    document.getElementById('editLoggedServiceId').value = id;
-    document.getElementById('editLoggedServiceDate').value = item.date;
-    document.getElementById('editLoggedServiceDesc').value = item.serviceName;
-    document.getElementById('editLoggedDeptFee').value = item.deptFee || 0;
-    document.getElementById('editLoggedServiceCharge').value = item.serviceCharge || 0;
-    document.getElementById('editLoggedDiscount').value = item.discount || 0;
-    document.getElementById('editLoggedFinalPay').value = item.finalPay || 0;
-    document.getElementById('editLoggedPayMode').value = item.payMode;
-
-    document.getElementById('editServiceModal').style.display = 'flex';
-  }
-
-  function calculateEditFinalPrice() {
-    const dept = parseFloat(document.getElementById('editLoggedDeptFee').value) || 0;
-    const srv = parseFloat(document.getElementById('editLoggedServiceCharge').value) || 0;
-    const disc = parseFloat(document.getElementById('editLoggedDiscount').value) || 0;
-    const total = dept + srv - disc;
-    document.getElementById('editLoggedFinalPay').value = total > 0 ? total.toFixed(2) : '0.00';
-  }
-
-  function closeEditServiceModal() {
-    document.getElementById('editServiceModal').style.display = 'none';
-  }
-
-  function saveEditedService() {
-    const item = serviceEntries.find(s => s.id == editingServiceTargetId);
-    if (!item) return;
-
-    item.date = document.getElementById('editLoggedServiceDate').value;
-    item.serviceName = document.getElementById('editLoggedServiceDesc').value;
-    item.deptFee = parseFloat(document.getElementById('editLoggedDeptFee').value) || 0;
-    item.serviceCharge = parseFloat(document.getElementById('editLoggedServiceCharge').value) || 0;
-    item.discount = parseFloat(document.getElementById('editLoggedDiscount').value) || 0;
-    item.finalPay = parseFloat(document.getElementById('editLoggedFinalPay').value) || 0;
-    item.payMode = document.getElementById('editLoggedPayMode').value;
-
-    broadcastDataChange();
-    closeEditServiceModal();
-    alert("Service record updated successfully!");
-  }
-
-  function recordExpenseEntry(event) {
-    event.preventDefault();
-    const dateVal = document.getElementById('expenseDateInput').value;
-    const category = document.getElementById('expenseCategory').value;
-    const desc = document.getElementById('expenseDesc').value;
-    const amount = parseFloat(document.getElementById('expenseAmount').value) || 0;
-    const payMode = document.getElementById('expensePayMode').value;
-
-    const now = new Date();
-    const timeStr = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
-
-    const newEx = {
-      id: Date.now(),
-      date: dateVal,
-      time: timeStr,
-      category,
-      desc,
-      amount,
-      payMode,
-      staff: currentUser || 'Admin'
-    };
-
-    expenseEntries.push(newEx);
-    broadcastDataChange();
-
-    alert("Shop expense logged successfully!");
-    document.getElementById('expenseDesc').value = '';
-    document.getElementById('expenseAmount').value = '';
-  }
-
   function renderExpenseHistory() {
-    const table = document.getElementById('expenseHistoryTable');
-    if (!table) return;
-    table.innerHTML = '';
+    const tbody = document.getElementById('expenseHistoryTable');
+    if (!tbody) return;
+    tbody.innerHTML = '';
 
-    let list = [...expenseEntries].sort((a, b) => b.id - a.id);
+    const picker = document.getElementById('expenseMonthPicker');
+    const selMonth = picker ? picker.value : '';
 
-    list.forEach(ex => {
-      table.innerHTML += `
-        <tr>
-          <td><b>${ex.date}</b><br><small style="color:var(--text-muted);">${ex.time}</small></td>
-          <td><span class="badge badge-credit">${ex.category}</span></td>
-          <td><b>${ex.desc}</b></td>
-          <td><span style="color:var(--accent-rose); font-weight:800;">₹${ex.amount.toFixed(2)}</span></td>
-          <td><span class="badge ${ex.payMode === 'Cash Drawer' ? 'badge-cash' : 'badge-upi'}">${ex.payMode}</span></td>
-          <td><small><b>${ex.staff}</b></small></td>
-          <td>
-            <button class="btn-primary" style="padding: 4px 8px; font-size: 0.7rem; width: auto;" onclick="openEditExpenseModal(${ex.id})"><i class="fa-solid fa-pen"></i></button>
-            <button class="btn-danger" style="padding: 4px 8px; font-size: 0.7rem; width: auto; margin-top: 4px;" onclick="deleteExpenseEntry(${ex.id})"><i class="fa-solid fa-trash"></i></button>
-          </td>
-        </tr>
+    const filtered = expenseEntries.filter(e => !selMonth || (e.date && e.date.startsWith(selMonth)));
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-muted);">No expenses logged for this month.</td></tr>';
+      return;
+    }
+
+    filtered.forEach(e => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${e.date} ${e.time || ''}</td>
+        <td><span class="badge badge-custom-cat">${e.category}</span></td>
+        <td style="font-weight: 700;">${e.desc}</td>
+        <td style="font-weight: 800; color: var(--accent-rose);">₹${(e.amount || 0).toFixed(2)}</td>
+        <td><span class="badge ${e.payMode === 'Cash Drawer' ? 'badge-cash' : 'badge-upi'}">${e.payMode}</span></td>
+        <td>${e.recordedBy || 'Staff'}</td>
+        <td>
+          <button onclick="openEditExpenseModal(${e.id})" style="background:transparent; color: var(--atmos-navy); font-size:0.85rem; padding: 2px 4px;"><i class="fa-solid fa-pen"></i></button>
+          <button onclick="deleteExpenseEntry(${e.id})" style="background:transparent; color: var(--accent-rose); font-size:0.85rem; padding: 2px 4px;"><i class="fa-solid fa-trash"></i></button>
+        </td>
       `;
+      tbody.appendChild(tr);
     });
   }
 
-  function deleteExpenseEntry(id) {
-    if (confirm("Are you sure you want to delete this expense record?")) {
-      expenseEntries = expenseEntries.filter(e => e.id !== id);
-      broadcastDataChange();
-    }
-  }
-
-  let editingExpenseTargetId = null;
   function openEditExpenseModal(id) {
-    const ex = expenseEntries.find(e => e.id === id);
-    if (!ex) return;
+    const e = expenseEntries.find(entry => entry.id === id);
+    if (!e) return;
 
-    editingExpenseTargetId = id;
-    document.getElementById('editExpenseId').value = id;
-    document.getElementById('editExpenseCategory').value = ex.category;
-    document.getElementById('editExpenseDesc').value = ex.desc;
-    document.getElementById('editExpenseAmount').value = ex.amount;
-    document.getElementById('editExpensePayMode').value = ex.payMode;
+    document.getElementById('editExpenseId').value = e.id;
+    document.getElementById('editExpenseCategory').value = e.category;
+    document.getElementById('editExpenseDesc').value = e.desc;
+    document.getElementById('editExpenseAmount').value = e.amount;
+    document.getElementById('editExpensePayMode').value = e.payMode;
 
     document.getElementById('editExpenseModal').style.display = 'flex';
+  }
+
+  function saveEditedExpense() {
+    const id = parseInt(document.getElementById('editExpenseId').value, 10);
+    const e = expenseEntries.find(entry => entry.id === id);
+    if (!e) return;
+
+    e.category = document.getElementById('editExpenseCategory').value;
+    e.desc = document.getElementById('editExpenseDesc').value.trim();
+    e.amount = parseFloat(document.getElementById('editExpenseAmount').value) || 0;
+    e.payMode = document.getElementById('editExpensePayMode').value;
+
+    broadcastDataChange();
+    closeEditExpenseModal();
+    alert("Expense updated successfully!");
   }
 
   function closeEditExpenseModal() {
     document.getElementById('editExpenseModal').style.display = 'none';
   }
 
-  function saveEditedExpense() {
-    const ex = expenseEntries.find(e => e.id == editingExpenseTargetId);
-    if (!ex) return;
-
-    ex.category = document.getElementById('editExpenseCategory').value;
-    ex.desc = document.getElementById('editExpenseDesc').value;
-    ex.amount = parseFloat(document.getElementById('editExpenseAmount').value) || 0;
-    ex.payMode = document.getElementById('editExpensePayMode').value;
-
-    broadcastDataChange();
-    closeEditExpenseModal();
-    alert("Expense record updated successfully!");
-  }
-
-  function recordInternalTransfer(event) {
-    event.preventDefault();
-    const dateVal = document.getElementById('transferDateInput').value;
-    const direction = document.getElementById('domainTransferDirection').value;
-    const amount = parseFloat(document.getElementById('domainTransferAmount').value) || 0;
-
-    const now = new Date();
-    const timeStr = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
-
-    const newTr = {
-      id: Date.now(),
-      date: dateVal,
-      time: timeStr,
-      direction,
-      amount,
-      staff: currentUser || 'Admin'
-    };
-
-    internalTransfers.push(newTr);
-    broadcastDataChange();
-
-    alert("Internal cash transfer recorded successfully!");
-    document.getElementById('domainTransferAmount').value = '';
-  }
-
-  function renderTransferHistory() {
-    const table = document.getElementById('transferHistoryTable');
-    if (!table) return;
-    table.innerHTML = '';
-
-    let list = [...internalTransfers].sort((a, b) => b.id - a.id);
-
-    list.forEach(tr => {
-      const dirText = tr.direction === 'CashToBank' ? 'Cash Drawer ➔ Bank / UPI' : 'Bank / UPI ➔ Cash Drawer';
-      table.innerHTML += `
-        <tr>
-          <td><b>${tr.date}</b><br><small style="color:var(--text-muted);">${tr.time}</small></td>
-          <td><span class="badge badge-upi">${dirText}</span></td>
-          <td><b>₹${tr.amount.toFixed(2)}</b></td>
-          <td><small><b>${tr.staff}</b></small></td>
-          <td>
-            <button class="btn-primary" style="padding: 4px 8px; font-size: 0.7rem; width: auto;" onclick="openEditTransferModal(${tr.id})"><i class="fa-solid fa-pen"></i></button>
-            <button class="btn-danger" style="padding: 4px 8px; font-size: 0.7rem; width: auto; margin-top: 4px;" onclick="deleteTransferEntry(${tr.id})"><i class="fa-solid fa-trash"></i></button>
-          </td>
-        </tr>
-      `;
-    });
-  }
-
-  function deleteTransferEntry(id) {
-    if (confirm("Are you sure you want to delete this internal transfer?")) {
-      internalTransfers = internalTransfers.filter(t => t.id !== id);
+  function deleteExpenseEntry(id) {
+    if (confirm("Are you sure you want to delete this expense entry?")) {
+      expenseEntries = expenseEntries.filter(e => e.id !== id);
       broadcastDataChange();
     }
   }
 
-  let editingTransferTargetId = null;
-  function openEditTransferModal(id) {
-    const tr = internalTransfers.find(t => t.id === id);
-    if (!tr) return;
+  function renderTransferHistory() {
+    const tbody = document.getElementById('transferHistoryTable');
+    if (!tbody) return;
+    tbody.innerHTML = '';
 
-    editingTransferTargetId = id;
-    document.getElementById('editTransferId').value = id;
-    document.getElementById('editTransferDate').value = tr.date;
-    document.getElementById('editTransferDirection').value = tr.direction;
-    document.getElementById('editTransferAmount').value = tr.amount;
+    if (internalTransfers.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">No internal cash transfers recorded yet.</td></tr>';
+      return;
+    }
+
+    internalTransfers.forEach(t => {
+      const dirText = (t.direction === 'CashToBank') ? 'Cash Drawer ➔ Bank / UPI' : 'Bank / UPI ➔ Cash Drawer';
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${t.date} ${t.time || ''}</td>
+        <td style="font-weight: 800; color: var(--primary);">${dirText}</td>
+        <td style="font-weight: 800;">₹${(t.amount || 0).toFixed(2)}</td>
+        <td>${t.recordedBy || 'Staff'}</td>
+        <td>
+          <button onclick="openEditTransferModal(${t.id})" style="background:transparent; color: var(--atmos-navy); font-size:0.85rem; padding: 2px 4px;"><i class="fa-solid fa-pen"></i></button>
+          <button onclick="deleteTransferEntry(${t.id})" style="background:transparent; color: var(--accent-rose); font-size:0.85rem; padding: 2px 4px;"><i class="fa-solid fa-trash"></i></button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function openEditTransferModal(id) {
+    const t = internalTransfers.find(entry => entry.id === id);
+    if (!t) return;
+
+    document.getElementById('editTransferId').value = t.id;
+    document.getElementById('editTransferDate').value = t.date;
+    document.getElementById('editTransferDirection').value = t.direction;
+    document.getElementById('editTransferAmount').value = t.amount;
 
     document.getElementById('editTransferModal').style.display = 'flex';
+  }
+
+  function saveEditedTransfer() {
+    const id = parseInt(document.getElementById('editTransferId').value, 10);
+    const t = internalTransfers.find(entry => entry.id === id);
+    if (!t) return;
+
+    t.date = document.getElementById('editTransferDate').value;
+    t.direction = document.getElementById('editTransferDirection').value;
+    t.amount = parseFloat(document.getElementById('editTransferAmount').value) || 0;
+
+    broadcastDataChange();
+    closeEditTransferModal();
+    alert("Transfer entry updated successfully!");
   }
 
   function closeEditTransferModal() {
     document.getElementById('editTransferModal').style.display = 'none';
   }
 
-  function saveEditedTransfer() {
-    const tr = internalTransfers.find(t => t.id == editingTransferTargetId);
-    if (!tr) return;
-
-    tr.date = document.getElementById('editTransferDate').value;
-    tr.direction = document.getElementById('editTransferDirection').value;
-    tr.amount = parseFloat(document.getElementById('editTransferAmount').value) || 0;
-
-    broadcastDataChange();
-    closeEditTransferModal();
-    alert("Transfer record updated successfully!");
-  }
-
-  function updateInvoiceDateDisplay() {
-    const dateVal = document.getElementById('invDateInput').value;
-    if (dateVal) {
-      const parts = dateVal.split('-');
-      document.getElementById('invDateDisplay').innerText = `${parts[2]}/${parts[1]}/${parts[0]}`;
-    }
-  }
-
-  function calcInvItemRowTotal() {
-    const dept = parseFloat(document.getElementById('invItemDept').value) || 0;
-    const srv = parseFloat(document.getElementById('invItemSrv').value) || 0;
-    document.getElementById('invItemAmt').value = dept + srv;
-  }
-
-  function addInvoiceRow() {
-    const desc = document.getElementById('invItemDesc').value.trim();
-    const dept = parseFloat(document.getElementById('invItemDept').value) || 0;
-    const srv = parseFloat(document.getElementById('invItemSrv').value) || 0;
-    const amt = dept + srv;
-
-    if (!desc || amt <= 0) {
-      alert("Please enter a valid description and amount.");
-      return;
-    }
-
-    invoiceItems.push({ desc, dept, srv, amt });
-    renderInvoiceItemsTable();
-
-    document.getElementById('invItemDesc').value = '';
-    document.getElementById('invItemDept').value = '';
-    document.getElementById('invItemSrv').value = '';
-    document.getElementById('invItemAmt').value = '';
-  }
-
-  function renderInvoiceItemsTable() {
-    const tbody = document.getElementById('invoiceItemsTableBody');
-    tbody.innerHTML = '';
-
-    let totalSum = 0;
-    invoiceItems.forEach((item, index) => {
-      totalSum += item.amt;
-      tbody.innerHTML += `
-        <tr>
-          <td><b>${item.desc}</b></td>
-          <td style="text-align: right;">₹${item.dept.toFixed(2)}</td>
-          <td style="text-align: right;">₹${item.srv.toFixed(2)}</td>
-          <td style="text-align: right;"><b>₹${item.amt.toFixed(2)}</b></td>
-          <td class="no-print" style="text-align: center;">
-            <button class="btn-danger" style="padding: 2px 6px; font-size: 0.65rem;" onclick="removeInvoiceItem(${index})"><i class="fa-solid fa-xmark"></i></button>
-          </td>
-        </tr>
-      `;
-    });
-
-    document.getElementById('invTotalVal').innerText = totalSum.toFixed(2);
-  }
-
-  function removeInvoiceItem(index) {
-    invoiceItems.splice(index, 1);
-    renderInvoiceItemsTable();
-  }
-
-  let currentlyLoadedInvoiceId = null;
-
-  function saveInvoiceToHistory(isUpdate = false) {
-    if (invoiceItems.length === 0) {
-      alert("Please add at least one item to the invoice.");
-      return;
-    }
-
-    const customerName = document.getElementById('invCustomerName').value.trim() || 'Walk-in Customer';
-    const customerPhone = document.getElementById('invCustomerPhone').value.trim() || '';
-    const paymentMode = document.getElementById('invPaymentMode').value;
-    const invoiceDate = document.getElementById('invDateInput').value;
-    const totalAmount = invoiceItems.reduce((acc, item) => acc + item.amt, 0);
-
-    if (isUpdate && currentlyLoadedInvoiceId) {
-      let inv = savedInvoices.find(i => i.id === currentlyLoadedInvoiceId);
-      if (inv) {
-        inv.customerName = customerName;
-        inv.customerPhone = customerPhone;
-        inv.paymentMode = paymentMode;
-        inv.invoiceDate = invoiceDate;
-        inv.items = [...invoiceItems];
-        inv.totalAmount = totalAmount;
-      }
-      alert("Invoice updated successfully!");
-    } else {
-      const newInv = {
-        id: Date.now(),
-        invoiceNumber: `CSC-${currentInvoiceNumber}`,
-        invoiceDate,
-        customerName,
-        customerPhone,
-        paymentMode,
-        items: [...invoiceItems],
-        totalAmount,
-        staff: currentUser || 'Admin'
-      };
-
-      currentInvoiceNumber++;
-      savedInvoices.push(newInv);
-      currentlyLoadedInvoiceId = newInv.id;
-      alert("Invoice saved successfully!");
-    }
-
-    broadcastDataChange();
-    populateSavedInvoicesDropdown();
-    document.getElementById('invoiceActionArea').style.display = 'flex';
-  }
-
-  function populateSavedInvoicesDropdown() {
-    const select = document.getElementById('savedInvoiceSelect');
-    if (!select) return;
-    select.innerHTML = '<option value="">-- New Invoice --</option>';
-
-    savedInvoices.forEach(inv => {
-      select.innerHTML += `<option value="${inv.id}">${inv.invoiceNumber} - ${inv.customerName} (₹${inv.totalAmount.toFixed(2)})</option>`;
-    });
-  }
-
-  function loadSavedInvoice(id) {
-    if (!id) {
-      resetNewInvoice();
-      return;
-    }
-
-    const inv = savedInvoices.find(i => i.id == id);
-    if (!inv) return;
-
-    currentlyLoadedInvoiceId = inv.id;
-    document.getElementById('invNumDisplay').innerText = inv.invoiceNumber;
-    document.getElementById('invDateInput').value = inv.invoiceDate;
-    updateInvoiceDateDisplay();
-    document.getElementById('invCustomerName').value = inv.customerName;
-    document.getElementById('invCustomerPhone').value = inv.customerPhone;
-    document.getElementById('invPaymentMode').value = inv.paymentMode;
-
-    invoiceItems = [...inv.items];
-    renderInvoiceItemsTable();
-
-    document.getElementById('invoiceActionArea').style.display = 'flex';
-  }
-
-  function deleteSavedInvoice() {
-    if (!currentlyLoadedInvoiceId) return;
-    if (confirm("Are you sure you want to delete this saved invoice?")) {
-      savedInvoices = savedInvoices.filter(i => i.id !== currentlyLoadedInvoiceId);
+  function deleteTransferEntry(id) {
+    if (confirm("Are you sure you want to delete this internal transfer record?")) {
+      internalTransfers = internalTransfers.filter(t => t.id !== id);
       broadcastDataChange();
-      resetNewInvoice();
-      alert("Invoice deleted successfully!");
     }
   }
 
-  function resetNewInvoice() {
-    currentlyLoadedInvoiceId = null;
-    invoiceItems = [];
-    document.getElementById('savedInvoiceSelect').value = '';
-    document.getElementById('invCustomerName').value = '';
-    document.getElementById('invCustomerPhone').value = '';
-    document.getElementById('invNumDisplay').innerText = `CSC-${currentInvoiceNumber}`;
-    document.getElementById('invoiceActionArea').style.display = 'none';
-    renderInvoiceItemsTable();
-  }
-
-  function printCSCInvoice() {
-    window.print();
-  }
-
+  /* Financial Statements & PDF */
   function generateFinancialReport() {
-    const monthPickerVal = document.getElementById('reportMonthPicker').value;
-    if (!monthPickerVal) return;
+    const picker = document.getElementById('reportMonthPicker');
+    if (!picker) return;
 
-    const filteredServices = serviceEntries.filter(s => s.date && s.date.startsWith(monthPickerVal));
-    const filteredExpenses = expenseEntries.filter(e => e.date && e.date.startsWith(monthPickerVal));
+    const selMonth = picker.value;
+    let totalIncome = 0;
+    let totalExpense = 0;
+    let totalDeptFee = 0;
 
-    const totalIncome = filteredServices.reduce((acc, s) => acc + ((s.serviceCharge || 0) - (s.discount || 0)), 0);
-    const totalExpenses = filteredExpenses.reduce((acc, e) => acc + e.amount, 0);
-    const totalDeptFee = filteredServices.reduce((acc, s) => acc + (s.deptFee || 0), 0);
-    const netBalance = totalIncome - totalExpenses;
+    const tbody = document.getElementById('reportItemizedTable');
+    if (tbody) tbody.innerHTML = '';
 
-    document.getElementById('rptRevenue').innerText = `₹${totalIncome.toFixed(2)}`;
-    document.getElementById('rptExpenses').innerText = `₹${totalExpenses.toFixed(2)}`;
-    document.getElementById('rptDeptFee').innerText = `₹${totalDeptFee.toFixed(2)}`;
+    const combined = [];
 
-    const netBalEl = document.getElementById('rptNetBalance');
-    netBalEl.innerText = `₹${netBalance.toFixed(2)}`;
-    netBalEl.className = netBalance >= 0 ? 'net-positive' : 'net-negative';
-
-    const tableBody = document.getElementById('reportItemizedTable');
-    tableBody.innerHTML = '';
-
-    let combined = [];
-    filteredServices.forEach(s => {
-      combined.push({
-        type: 'Service Income',
-        timestamp: `${s.date} ${s.time || ''}`,
-        desc: s.serviceName,
-        income: (s.serviceCharge || 0) - (s.discount || 0),
-        deptFee: s.deptFee || 0,
-        expense: 0,
-        staff: s.staff
-      });
+    serviceEntries.forEach(s => {
+      if (s.date && s.date.startsWith(selMonth)) {
+        totalIncome += parseFloat(s.serviceCharge) || 0;
+        totalDeptFee += parseFloat(s.deptFee) || 0;
+        combined.push({
+          type: 'Service Collection',
+          time: `${s.date} ${s.time || ''}`,
+          desc: s.serviceName,
+          income: s.serviceCharge,
+          deptFee: s.deptFee,
+          expense: 0,
+          staff: s.loggedBy
+        });
+      }
     });
 
-    filteredExpenses.forEach(e => {
-      combined.push({
-        type: 'Shop Expense',
-        timestamp: `${e.date} ${e.time || ''}`,
-        desc: `${e.category} - ${e.desc}`,
-        income: 0,
-        deptFee: 0,
-        expense: e.amount,
-        staff: e.staff
-      });
+    expenseEntries.forEach(e => {
+      if (e.date && e.date.startsWith(selMonth)) {
+        totalExpense += parseFloat(e.amount) || 0;
+        combined.push({
+          type: 'Shop Expense',
+          time: `${e.date} ${e.time || ''}`,
+          desc: `${e.category} - ${e.desc}`,
+          income: 0,
+          deptFee: 0,
+          expense: e.amount,
+          staff: e.recordedBy
+        });
+      }
     });
 
-    combined.sort((a, b) => b.timestamp.localeCompare(a.timestamp));
+    const netBal = totalIncome - totalExpense;
 
-    combined.forEach(item => {
-      tableBody.innerHTML += `
-        <tr>
-          <td><span class="badge ${item.type === 'Service Income' ? 'badge-cash' : 'badge-credit'}">${item.type}</span></td>
-          <td>${item.timestamp}</td>
-          <td><b>${item.desc}</b></td>
-          <td style="color:var(--accent-green); font-weight:800;">${item.income > 0 ? '₹' + item.income.toFixed(2) : '-'}</td>
-          <td style="color:var(--accent-amber); font-weight:800;">${item.deptFee > 0 ? '₹' + item.deptFee.toFixed(2) : '-'}</td>
-          <td style="color:var(--accent-rose); font-weight:800;">${item.expense > 0 ? '₹' + item.expense.toFixed(2) : '-'}</td>
-          <td><small><b>${item.staff}</b></small></td>
-        </tr>
-      `;
-    });
+    if (document.getElementById('rptRevenue')) document.getElementById('rptRevenue').textContent = `₹${totalIncome.toFixed(2)}`;
+    if (document.getElementById('rptExpenses')) document.getElementById('rptExpenses').textContent = `₹${totalExpense.toFixed(2)}`;
+    if (document.getElementById('rptDeptFee')) document.getElementById('rptDeptFee').textContent = `₹${totalDeptFee.toFixed(2)}`;
+    if (document.getElementById('rptNetBalance')) document.getElementById('rptNetBalance').textContent = `₹${netBal.toFixed(2)}`;
+
+    if (tbody) {
+      if (combined.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-muted);">No financial records for this month.</td></tr>';
+      } else {
+        combined.forEach(item => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><span class="badge ${item.type === 'Service Collection' ? 'badge-cash' : 'badge-credit'}">${item.type}</span></td>
+            <td>${item.time}</td>
+            <td style="font-weight:700;">${item.desc}</td>
+            <td style="color: var(--accent-green); font-weight:800;">₹${(item.income || 0).toFixed(2)}</td>
+            <td style="color: var(--accent-amber); font-weight:800;">₹${(item.deptFee || 0).toFixed(2)}</td>
+            <td style="color: var(--accent-rose); font-weight:800;">₹${(item.expense || 0).toFixed(2)}</td>
+            <td>${item.staff || 'Staff'}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+    }
   }
 
   function exportReportPDF(type) {
-    const monthPickerVal = document.getElementById('reportMonthPicker').value;
-    const template = document.getElementById('pdfReportTemplate');
+    const monthVal = document.getElementById('reportMonthPicker').value;
+    document.getElementById('pdfReportTitle').textContent = `STATEMENT FOR ${monthVal}`;
+    document.getElementById('pdfReportDate').textContent = `Exported: ${new Date().toLocaleDateString()}`;
 
-    const filteredServices = serviceEntries.filter(s => s.date && s.date.startsWith(monthPickerVal));
-    const filteredExpenses = expenseEntries.filter(e => e.date && e.date.startsWith(monthPickerVal));
-
-    const totalIncome = filteredServices.reduce((acc, s) => acc + ((s.serviceCharge || 0) - (s.discount || 0)), 0);
-    const totalExpenses = filteredExpenses.reduce((acc, e) => acc + e.amount, 0);
-    const totalDeptFee = filteredServices.reduce((acc, s) => acc + (s.deptFee || 0), 0);
-    const netBalance = totalIncome - totalExpenses;
-
-    document.getElementById('pdfReportTitle').innerText = `Financial Report (${monthPickerVal})`;
-    document.getElementById('pdfReportDate').innerText = `Generated on: ${new Date().toLocaleDateString('en-IN')}`;
-    document.getElementById('pdfGrossIncome').innerText = `₹${totalIncome.toFixed(2)}`;
-    document.getElementById('pdfTotalExpense').innerText = `₹${totalExpenses.toFixed(2)}`;
-    document.getElementById('pdfDeptFee').innerText = `₹${totalDeptFee.toFixed(2)}`;
-    document.getElementById('pdfNetBalance').innerText = `₹${netBalance.toFixed(2)}`;
+    document.getElementById('pdfGrossIncome').textContent = document.getElementById('rptRevenue').textContent;
+    document.getElementById('pdfTotalExpense').textContent = document.getElementById('rptExpenses').textContent;
+    document.getElementById('pdfDeptFee').textContent = document.getElementById('rptDeptFee').textContent;
+    document.getElementById('pdfNetBalance').textContent = document.getElementById('rptNetBalance').textContent;
 
     const tbody = document.getElementById('pdfTableBody');
-    tbody.innerHTML = '';
+    tbody.innerHTML = document.getElementById('reportItemizedTable').innerHTML;
 
-    let combined = [];
-    filteredServices.forEach(s => {
-      combined.push({
-        type: 'Service',
-        time: `${s.date}`,
-        desc: s.serviceName,
-        income: (s.serviceCharge || 0) - (s.discount || 0),
-        deptFee: s.deptFee || 0,
-        expense: 0,
-        staff: s.staff
-      });
-    });
+    const element = document.getElementById('pdfReportTemplate');
+    element.style.display = 'block';
 
-    filteredExpenses.forEach(e => {
-      combined.push({
-        type: 'Expense',
-        time: `${e.date}`,
-        desc: `${e.category} - ${e.desc}`,
-        income: 0,
-        deptFee: 0,
-        expense: e.amount,
-        staff: e.staff
-      });
-    });
+    const opt = {
+      margin: 0.5,
+      filename: `ATMOS_Financial_Report_${monthVal}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
 
-    combined.forEach(item => {
-      tbody.innerHTML += `
-        <tr style="border-bottom: 1px solid #e2e8f0;">
-          <td style="padding: 5px;">${item.type}</td>
-          <td style="padding: 5px;">${item.time}</td>
-          <td style="padding: 5px;">${item.desc}</td>
-          <td style="padding: 5px; text-align: right; color: #059669;">${item.income > 0 ? '₹' + item.income.toFixed(2) : '-'}</td>
-          <td style="padding: 5px; text-align: right; color: #d97706;">${item.deptFee > 0 ? '₹' + item.deptFee.toFixed(2) : '-'}</td>
-          <td style="padding: 5px; text-align: right; color: #e11d48;">${item.expense > 0 ? '₹' + item.expense.toFixed(2) : '-'}</td>
-          <td style="padding: 5px;">${item.staff}</td>
-        </tr>
-      `;
-    });
-
-    template.style.display = 'block';
-    html2pdf().from(template).save(`ATMOS_Financial_Report_${monthPickerVal}.pdf`).then(() => {
-      template.style.display = 'none';
+    html2pdf().set(opt).from(element).save().then(() => {
+      element.style.display = 'none';
     });
   }
 
-  function exportAttendancePDF(type) {
-    const template = document.getElementById('pdfReportTemplate');
-    document.getElementById('pdfReportTitle').innerText = `Staff Attendance Tracker Report`;
-    document.getElementById('pdfReportDate').innerText = `Generated on: ${new Date().toLocaleDateString('en-IN')}`;
-    document.getElementById('pdfGrossIncome').innerText = `${attendanceLogs.length} Records`;
-    document.getElementById('pdfTotalExpense').innerText = `Verified`;
-    document.getElementById('pdfDeptFee').innerText = `Active`;
-    document.getElementById('pdfNetBalance').innerText = `Secured`;
+  /* Admin Control Functions */
+  function closeSelectedMonth() {
+    const monthVal = document.getElementById('closingMonthPicker').value;
+    if (!monthVal) return;
 
-    const tbody = document.getElementById('pdfTableBody');
-    tbody.innerHTML = '';
+    closedMonths[monthVal] = true;
+    broadcastDataChange();
+    document.getElementById('closingStatusMsg').textContent = `Month ${monthVal} is locked and closed.`;
+  }
 
-    attendanceLogs.forEach(log => {
-      tbody.innerHTML += `
-        <tr style="border-bottom: 1px solid #e2e8f0;">
-          <td style="padding: 5px;">Attendance</td>
-          <td style="padding: 5px;">${log.date}</td>
-          <td style="padding: 5px;">${log.name} (First Check-in: ${log.firstCheckIn})</td>
-          <td style="padding: 5px; text-align: right;">-</td>
-          <td style="padding: 5px; text-align: right;">-</td>
-          <td style="padding: 5px; text-align: right;">-</td>
-          <td style="padding: 5px;">${log.status || 'Active'}</td>
-        </tr>
-      `;
+  function editClosedMonth() {
+    const monthVal = document.getElementById('closingMonthPicker').value;
+    if (!monthVal) return;
+
+    delete closedMonths[monthVal];
+    broadcastDataChange();
+    document.getElementById('closingStatusMsg').textContent = `Month ${monthVal} unlocked for editing.`;
+  }
+
+  function handleFazyTransfer(dir) {
+    const amt = parseFloat(document.getElementById('fazyAmountInput').value) || 0;
+    if (amt <= 0) {
+      alert("Enter valid amount.");
+      return;
+    }
+
+    fazyTransfers.push({
+      id: Date.now(),
+      date: new Date().toISOString().split('T')[0],
+      direction: dir,
+      amount: amt
     });
 
-    template.style.display = 'block';
-    html2pdf().from(template).save(`ATMOS_Attendance_Report.pdf`).then(() => {
-      template.style.display = 'none';
-    });
+    broadcastDataChange();
+    alert(`Fazy transfer of ₹${amt} recorded.`);
+    document.getElementById('fazyAmountInput').value = '';
+  }
+
+  function saveManualBalanceEdits() {
+    const cash = parseFloat(document.getElementById('manualEditCashInput').value);
+    const bank = parseFloat(document.getElementById('manualEditBankInput').value);
+
+    const cur = calculateBalances();
+
+    if (!isNaN(cash)) openingBalances.cash += (cash - cur.cash);
+    if (!isNaN(bank)) openingBalances.bank += (bank - cur.bank);
+
+    broadcastDataChange();
+    alert("Manual balance overrides saved.");
+    document.getElementById('manualEditCashInput').value = '';
+    document.getElementById('manualEditBankInput').value = '';
   }
 
   function extractHistoricalData() {
-    const val = document.getElementById('historicalMonth').value;
-    if (!val) return;
+    const month = document.getElementById('historicalMonth').value;
+    let srvCount = 0;
+    let netIncome = 0;
+    let expenses = 0;
 
-    const filteredServices = serviceEntries.filter(s => s.date && s.date.startsWith(val));
-    const filteredExpenses = expenseEntries.filter(e => e.date && e.date.startsWith(val));
+    serviceEntries.forEach(s => {
+      if (s.date && s.date.startsWith(month)) {
+        srvCount++;
+        netIncome += parseFloat(s.serviceCharge) || 0;
+      }
+    });
 
-    const totalIncome = filteredServices.reduce((acc, s) => acc + ((s.serviceCharge || 0) - (s.discount || 0)), 0);
-    const totalExpenses = filteredExpenses.reduce((acc, e) => acc + e.amount, 0);
-    const netBal = totalIncome - totalExpenses;
+    expenseEntries.forEach(e => {
+      if (e.date && e.date.startsWith(month)) {
+        expenses += parseFloat(e.amount) || 0;
+      }
+    });
 
-    document.getElementById('histReportTitle').innerText = `Extraction Report for ${val}`;
-    document.getElementById('histTotalServices').innerText = filteredServices.length;
-    document.getElementById('histNetIncome').innerText = `₹${totalIncome.toFixed(2)}`;
-    document.getElementById('histExpenses').innerText = `₹${totalExpenses.toFixed(2)}`;
-    document.getElementById('histNetBalance').innerText = `₹${netBal.toFixed(2)}`;
-
+    document.getElementById('histReportTitle').textContent = `Historical Report for ${month}`;
+    document.getElementById('histTotalServices').textContent = srvCount;
+    document.getElementById('histNetIncome').textContent = `₹${netIncome.toFixed(2)}`;
+    document.getElementById('histExpenses').textContent = `₹${expenses.toFixed(2)}`;
+    document.getElementById('histNetBalance').textContent = `₹${(netIncome - expenses).toFixed(2)}`;
     document.getElementById('historicalReportContent').style.display = 'block';
   }
 
   function renderStaffSalaryTable() {
-    const table = document.getElementById('staffSalaryTableBody');
-    if (!table) return;
-    table.innerHTML = '';
+    const tbody = document.getElementById('staffSalaryTableBody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
 
-    const staffNames = ["Manu Joseph", "Jasim", "Staff 3"];
+    const picker = document.getElementById('salaryMonthPicker');
+    const selMonth = picker ? picker.value : '';
 
-    staffNames.forEach(name => {
-      const basic = staffSalaries[name] !== undefined ? staffSalaries[name] : 0;
-      
-      const srvCollected = serviceEntries
-        .filter(s => s.staff === name)
-        .reduce((acc, s) => acc + ((s.serviceCharge || 0) - (s.discount || 0)), 0);
+    const staffList = userAccounts.filter(a => a.role === 'Staff');
+
+    staffList.forEach(stf => {
+      const basic = parseFloat(staffSalaries[stf.name]) || 0;
+
+      let srvChargeCollected = 0;
+      serviceEntries.forEach(s => {
+        if (s.loggedBy === stf.name && (!selMonth || (s.date && s.date.startsWith(selMonth)))) {
+          srvChargeCollected += parseFloat(s.serviceCharge) || 0;
+        }
+      });
 
       let incentive = 0;
-      if (srvCollected > basic) {
-        let diff = srvCollected - basic;
-        if (diff > 9000) diff = 9000;
-        incentive = diff * 0.20;
+      if (srvChargeCollected > basic) {
+        const excess = srvChargeCollected - basic;
+        const cappedExcess = Math.min(excess, 9000);
+        incentive = cappedExcess * 0.20;
       }
 
       const totalPayable = basic + incentive;
 
-      table.innerHTML += `
-        <tr>
-          <td><b>${name}</b></td>
-          <td><input type="number" min="0" value="${basic}" onchange="updateStaffSalaryVal('${name}', this.value)" style="width: 120px; padding: 6px;"></td>
-          <td><b>₹${srvCollected.toFixed(2)}</b></td>
-          <td style="color:var(--accent-green); font-weight:800;">₹${incentive.toFixed(2)}</td>
-          <td style="color:var(--primary); font-weight:900;">₹${totalPayable.toFixed(2)}</td>
-        </tr>
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td style="font-weight: 800;">${stf.name}</td>
+        <td><input type="number" value="${basic}" id="salaryInput_${stf.name.replace(/\s+/g, '')}" style="width: 110px; padding: 4px;"></td>
+        <td style="font-weight: 800; color: var(--primary);">₹${srvChargeCollected.toFixed(2)}</td>
+        <td style="font-weight: 800; color: var(--accent-green);">₹${incentive.toFixed(2)}</td>
+        <td style="font-weight: 900; color: var(--atmos-navy);">₹${totalPayable.toFixed(2)}</td>
       `;
+      tbody.appendChild(tr);
     });
   }
 
-  function updateStaffSalaryVal(name, val) {
-    staffSalaries[name] = parseFloat(val) || 0;
-  }
-
   function saveStaffSalaries() {
+    const staffList = userAccounts.filter(a => a.role === 'Staff');
+    staffList.forEach(stf => {
+      const el = document.getElementById(`salaryInput_${stf.name.replace(/\s+/g, '')}`);
+      if (el) {
+        staffSalaries[stf.name] = parseFloat(el.value) || 0;
+      }
+    });
     broadcastDataChange();
-    alert("Staff salary configurations saved successfully!");
-    renderStaffSalaryTable();
+    alert("Salary settings saved successfully.");
   }
 
   function saveAdminOpeningBalances() {
@@ -2757,155 +3202,156 @@
     openingBalances.credit = parseFloat(document.getElementById('adminOpeningCreditInput').value) || 0;
 
     broadcastDataChange();
-    alert("Opening balances updated successfully!");
-    updateDrawerBalance();
+    alert("Base opening balances saved successfully.");
   }
 
   function saveFirebaseSettings() {
     const url = document.getElementById('firebaseDbUrlInput').value.trim();
     if (url) {
       firebaseConfig.databaseURL = url;
-      firebaseDbUrl = url;
-      broadcastDataChange();
-      alert("Firebase configuration saved successfully!");
+      alert("Firebase Database URL configured!");
       initFirebaseIfConfigured();
     }
   }
 
   function renderStaffBreakdown() {
-    const manuEntries = serviceEntries.filter(s => s.staff === 'Manu Joseph');
-    const jasimEntries = serviceEntries.filter(s => s.staff === 'Jasim');
-    const staff3Entries = serviceEntries.filter(s => s.staff === 'Staff 3');
+    const picker = document.getElementById('staffCollectionMonthPicker');
+    const month = picker ? picker.value : '';
 
-    const manuRev = manuEntries.reduce((acc, s) => acc + ((s.serviceCharge || 0) - (s.discount || 0)), 0);
-    const jasimRev = jasimEntries.reduce((acc, s) => acc + ((s.serviceCharge || 0) - (s.discount || 0)), 0);
-    const staff3Rev = staff3Entries.reduce((acc, s) => acc + ((s.serviceCharge || 0) - (s.discount || 0)), 0);
+    const staffRevs = { "Manu Joseph": 0, "Jasim": 0, "Staff 3": 0 };
+    const staffCounts = { "Manu Joseph": 0, "Jasim": 0, "Staff 3": 0 };
 
-    document.getElementById('staffRevManu').innerText = `₹${manuRev.toFixed(2)}`;
-    document.getElementById('staffCountManu').innerText = `${manuEntries.length} transactions`;
+    serviceEntries.forEach(s => {
+      if (!month || (s.date && s.date.startsWith(month))) {
+        if (staffRevs[s.loggedBy] !== undefined) {
+          staffRevs[s.loggedBy] += parseFloat(s.serviceCharge) || 0;
+          staffCounts[s.loggedBy]++;
+        }
+      }
+    });
 
-    document.getElementById('staffRevJasim').innerText = `₹${jasimRev.toFixed(2)}`;
-    document.getElementById('staffCountJasim').innerText = `${jasimEntries.length} transactions`;
+    if (document.getElementById('staffRevManu')) document.getElementById('staffRevManu').textContent = `₹${staffRevs["Manu Joseph"].toFixed(2)}`;
+    if (document.getElementById('staffCountManu')) document.getElementById('staffCountManu').textContent = `${staffCounts["Manu Joseph"]} transactions`;
 
-    document.getElementById('staffRevStaff3').innerText = `₹${staff3Rev.toFixed(2)}`;
-    document.getElementById('staffCountStaff3').innerText = `${staff3Entries.length} transactions`;
+    if (document.getElementById('staffRevJasim')) document.getElementById('staffRevJasim').textContent = `₹${staffRevs["Jasim"].toFixed(2)}`;
+    if (document.getElementById('staffCountJasim')) document.getElementById('staffCountJasim').textContent = `${staffCounts["Jasim"]} transactions`;
+
+    if (document.getElementById('staffRevStaff3')) document.getElementById('staffRevStaff3').textContent = `₹${staffRevs["Staff 3"].toFixed(2)}`;
+    if (document.getElementById('staffCountStaff3')) document.getElementById('staffCountStaff3').textContent = `${staffCounts["Staff 3"]} transactions`;
   }
 
-  function initThreeAnalyticsCharts() {
+  function renderAnalyticsCharts() {
     chartsInstance.forEach(c => c.destroy());
     chartsInstance = [];
 
-    const growthCtx = document.getElementById('growthChart').getContext('2d');
-    chartsInstance.push(new Chart(growthCtx, {
-      type: 'line',
-      data: {
-        labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-        datasets: [{
-          label: 'Net Income Growth',
-          data: [1200, 2400, 3100, serviceEntries.reduce((acc, s) => acc + ((s.serviceCharge || 0) - (s.discount || 0)), 0)],
-          borderColor: '#2563eb',
-          backgroundColor: 'rgba(37, 99, 235, 0.1)',
-          fill: true,
-          tension: 0.3
-        }]
-      },
-      options: { responsive: true, maintainAspectRatio: false }
-    }));
+    const ctx1 = document.getElementById('growthChart');
+    if (ctx1) {
+      const chart1 = new Chart(ctx1, {
+        type: 'line',
+        data: {
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+          datasets: [{ label: 'Revenue (₹)', data: [12000, 15000, 18000, 22000, 26000, 31000], borderColor: '#2563eb', fill: false }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+      });
+      chartsInstance.push(chart1);
+    }
 
-    const intCtx = document.getElementById('interactionsChart').getContext('2d');
-    chartsInstance.push(new Chart(intCtx, {
-      type: 'bar',
-      data: {
-        labels: ['Standard', 'Custom', 'Expenses'],
-        datasets: [{
-          label: 'Volume',
-          data: [
-            serviceEntries.filter(s => s.deptFee === 0).length,
-            serviceEntries.filter(s => s.deptFee > 0).length,
-            expenseEntries.length
-          ],
-          backgroundColor: ['#2563eb', '#7c3aed', '#e11d48']
-        }]
-      },
-      options: { responsive: true, maintainAspectRatio: false }
-    }));
+    const ctx2 = document.getElementById('interactionsChart');
+    if (ctx2) {
+      const chart2 = new Chart(ctx2, {
+        type: 'doughnut',
+        data: {
+          labels: ['Standard Services', 'Custom Bill Services'],
+          datasets: [{ data: [65, 35], backgroundColor: ['#059669', '#7c3aed'] }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+      });
+      chartsInstance.push(chart2);
+    }
 
-    const staffCtx = document.getElementById('staffChart').getContext('2d');
-    chartsInstance.push(new Chart(staffCtx, {
-      type: 'doughnut',
-      data: {
-        labels: ['Manu Joseph', 'Jasim', 'Staff 3'],
-        datasets: [{
-          data: [
-            serviceEntries.filter(s => s.staff === 'Manu Joseph').length,
-            serviceEntries.filter(s => s.staff === 'Jasim').length,
-            serviceEntries.filter(s => s.staff === 'Staff 3').length
-          ],
-          backgroundColor: ['#2563eb', '#059669', '#d97706']
-        }]
-      },
-      options: { responsive: true, maintainAspectRatio: false }
-    }));
+    const ctx3 = document.getElementById('staffChart');
+    if (ctx3) {
+      const chart3 = new Chart(ctx3, {
+        type: 'bar',
+        data: {
+          labels: ['Manu Joseph', 'Jasim', 'Staff 3'],
+          datasets: [{ label: 'Service Volume', data: [120, 95, 40], backgroundColor: '#0B1E2D' }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+      });
+      chartsInstance.push(chart3);
+    }
   }
 
-  function saveMasterService(event) {
-    event.preventDefault();
+  function renderAttendanceTable() {
+    const tbody = document.getElementById('attendanceTable');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    const picker = document.getElementById('attendanceMonthPicker');
+    const month = picker ? picker.value : '';
+
+    const filtered = attendanceLogs.filter(log => !month || (log.date && log.date.startsWith(month)));
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">No attendance records found.</td></tr>';
+      return;
+    }
+
+    filtered.forEach(log => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td style="font-weight: 800;">${log.staffName}</td>
+        <td>${log.date}</td>
+        <td>${log.firstCheckIn}</td>
+        <td>${log.lastActive}</td>
+        <td>${log.relogins}</td>
+        <td><span class="badge ${log.status.includes('Late') ? 'badge-credit' : 'badge-cash'}">${log.status}</span></td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function exportAttendancePDF(type) {
+    alert("Exporting Attendance PDF report...");
+  }
+
+  function saveMasterService(e) {
+    e.preventDefault();
     const editId = document.getElementById('editServiceId').value;
-    const category = document.getElementById('newServiceCategory').value;
+    const cat = document.getElementById('newServiceCategory').value;
     const name = document.getElementById('newServiceName').value.trim();
     const price = parseFloat(document.getElementById('newServicePrice').value) || 0;
-    const defaultDeptFee = parseFloat(document.getElementById('newServiceDeptFee').value) || 0;
+    const deptFee = parseFloat(document.getElementById('newServiceDeptFee').value) || 0;
 
     if (editId) {
-      let srv = masterServices.find(s => s.id == editId);
+      const srv = masterServices.find(s => s.id === parseInt(editId, 10));
       if (srv) {
-        srv.category = category;
+        srv.category = cat;
         srv.name = name;
         srv.price = price;
-        srv.defaultDeptFee = defaultDeptFee;
+        srv.defaultDeptFee = deptFee;
       }
-      alert("Master service updated successfully!");
-      document.getElementById('editServiceId').value = '';
-      document.getElementById('saveServiceBtn').innerText = 'Add to Master Catalog';
     } else {
       const newSrv = {
         id: Date.now(),
-        category,
-        name,
-        price,
-        defaultDeptFee
+        category: cat,
+        name: name,
+        price: price,
+        defaultDeptFee: deptFee
       };
       masterServices.push(newSrv);
-      alert("Master service added successfully!");
     }
 
     broadcastDataChange();
-    renderMasterTable();
-    populateServiceDropdown();
-
+    populateMasterServiceDropdown();
+    document.getElementById('editServiceId').value = '';
     document.getElementById('newServiceName').value = '';
     document.getElementById('newServicePrice').value = '';
     document.getElementById('newServiceDeptFee').value = '0';
-  }
-
-  function renderMasterTable() {
-    const table = document.getElementById('masterServicesTable');
-    if (!table) return;
-    table.innerHTML = '';
-
-    masterServices.forEach(srv => {
-      table.innerHTML += `
-        <tr>
-          <td><span class="badge ${srv.category === 'Standard Services' ? 'badge-std-cat' : 'badge-custom-cat'}">${srv.category}</span></td>
-          <td><b>${srv.name}</b></td>
-          <td>₹${srv.price.toFixed(2)}${srv.defaultDeptFee > 0 ? ' <small>(Dept: ₹' + srv.defaultDeptFee + ')</small>' : ''}</td>
-          <td>
-            <button class="btn-primary" style="padding: 4px 8px; font-size: 0.7rem; width: auto;" onclick="editMasterService(${srv.id})"><i class="fa-solid fa-pen"></i></button>
-            <button class="btn-danger" style="padding: 4px 8px; font-size: 0.7rem; width: auto; margin-top: 4px;" onclick="deleteMasterService(${srv.id})"><i class="fa-solid fa-trash"></i></button>
-          </td>
-        </tr>
-      `;
-    });
+    document.getElementById('saveServiceBtn').textContent = "Add to Master Catalog";
+    alert("Master catalog updated successfully!");
   }
 
   function editMasterService(id) {
@@ -2917,150 +3363,260 @@
     document.getElementById('newServiceName').value = srv.name;
     document.getElementById('newServicePrice').value = srv.price;
     document.getElementById('newServiceDeptFee').value = srv.defaultDeptFee || 0;
-
-    if (srv.category === 'Custom Utility & Bill Services') {
-      document.getElementById('adminDeptFeeGroup').style.display = 'block';
-    } else {
-      document.getElementById('adminDeptFeeGroup').style.display = 'none';
-    }
-
-    document.getElementById('saveServiceBtn').innerText = 'Update Service Catalog';
+    document.getElementById('saveServiceBtn').textContent = "Save Changes to Catalog";
   }
 
   function deleteMasterService(id) {
-    if (confirm("Are you sure you want to delete this service from the master catalog?")) {
+    if (confirm("Delete this service from the catalog?")) {
       masterServices = masterServices.filter(s => s.id !== id);
       broadcastDataChange();
-      renderMasterTable();
-      populateServiceDropdown();
+      populateMasterServiceDropdown();
     }
   }
 
-  function renderStaffPasswordTable() {
-    const table = document.getElementById('staffPasswordTable');
-    if (!table) return;
-    table.innerHTML = '';
-
-    userAccounts.forEach((acc, index) => {
-      table.innerHTML += `
-        <tr>
-          <td><b>${acc.name}</b></td>
-          <td><span class="badge ${acc.role === 'Admin' ? 'badge-credit' : 'badge-upi'}">${acc.role}</span></td>
-          <td>
-            <input type="text" value="${acc.password}" onchange="updateStaffPwd(${index}, this.value)" style="width: 160px; padding: 4px 8px; font-size: 0.8rem;">
-          </td>
-        </tr>
-      `;
-    });
-  }
-
-  function updateStaffPwd(index, val) {
-    userAccounts[index].password = val;
-    broadcastDataChange();
-  }
-
-  function renderStaffControlsArea() {
-    const usedCountToday = staffBalanceEdits[currentUser] || 0;
-    const remaining = 2 - usedCountToday;
-    document.getElementById('balanceEditRemainingCount').innerText = remaining > 0 ? remaining : 0;
-
-    const tbody = document.getElementById('staffReceivablesTableBody');
+  function renderMasterServicesTable() {
+    const tbody = document.getElementById('masterServicesTable');
     if (!tbody) return;
     tbody.innerHTML = '';
 
-    const unpaidReceivables = serviceEntries.filter(s => s.payMode === 'Receivables/Credit' && !s.settled);
-
-    if (unpaidReceivables.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: var(--text-muted);">No unpaid receivables found.</td></tr>`;
-      return;
-    }
-
-    unpaidReceivables.forEach(item => {
-      tbody.innerHTML += `
-        <tr>
-          <td><input type="radio" name="selectedReceivableRadio" value="${item.id}"></td>
-          <td>${item.date}</td>
-          <td><b>${item.serviceName}</b></td>
-          <td>₹${(item.deptFee || 0).toFixed(2)}</td>
-          <td>₹${(item.serviceCharge || 0).toFixed(2)}</td>
-          <td><b>₹${(item.finalPay || 0).toFixed(2)}</b></td>
-          <td><small><b>${item.staff}</b></small></td>
-        </tr>
+    masterServices.forEach(s => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><span class="badge ${s.category.includes('Standard') ? 'badge-std-cat' : 'badge-custom-cat'}">${s.category}</span></td>
+        <td style="font-weight: 700;">${s.name}</td>
+        <td style="font-weight: 800; color: var(--accent-green);">₹${s.price.toFixed(2)}</td>
+        <td>
+          <button onclick="editMasterService(${s.id})" style="background:transparent; color: var(--atmos-navy);"><i class="fa-solid fa-pen"></i></button>
+          <button onclick="deleteMasterService(${s.id})" style="background:transparent; color: var(--accent-rose);"><i class="fa-solid fa-trash"></i></button>
+        </td>
       `;
+      tbody.appendChild(tr);
     });
   }
 
-  function handleStaffBalanceModification(event) {
-    event.preventDefault();
-    let usedCountToday = staffBalanceEdits[currentUser] || 0;
-    if (usedCountToday >= 2) {
-      alert("You have reached the maximum limit of 2 balance modifications per day.");
-      return;
-    }
+  function renderStaffPasswordTable() {
+    const tbody = document.getElementById('staffPasswordTable');
+    if (!tbody) return;
+    tbody.innerHTML = '';
 
-    const target = document.getElementById('modBalanceTarget').value;
-    const newAmt = parseFloat(document.getElementById('modBalanceAmount').value) || 0;
-
-    const { cashBal, bankBal, creditBal } = calculateCurrentBalances();
-
-    if (target === 'Cash') {
-      const diff = newAmt - cashBal;
-      internalTransfers.push({
-        id: Date.now(),
-        date: new Date().toISOString().split('T')[0],
-        time: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }),
-        direction: diff >= 0 ? 'BankToCash' : 'CashToBank',
-        amount: Math.abs(diff),
-        staff: currentUser
-      });
-    } else if (target === 'Bank') {
-      const diff = newAmt - bankBal;
-      internalTransfers.push({
-        id: Date.now(),
-        date: new Date().toISOString().split('T')[0],
-        time: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }),
-        direction: diff >= 0 ? 'CashToBank' : 'BankToCash',
-        amount: Math.abs(diff),
-        staff: currentUser
-      });
-    } else if (target === 'Receivables') {
-      openingBalances.credit = newAmt;
-    }
-
-    staffBalanceEdits[currentUser] = usedCountToday + 1;
-    broadcastDataChange();
-
-    alert("Operating balance modified successfully!");
-    document.getElementById('modBalanceAmount').value = '';
-    refreshAllUIViews();
+    userAccounts.forEach(acc => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td style="font-weight: 800;">${acc.name} (${acc.id})</td>
+        <td><span class="badge ${acc.role === 'Admin' ? 'badge-credit' : 'badge-cash'}">${acc.role}</span></td>
+        <td>
+          <input type="password" id="passInput_${acc.id}" value="${acc.password}" style="width: 120px; padding: 4px; display: inline-block;">
+          <button onclick="updateStaffPassword('${acc.id}')" class="btn-primary" style="width: auto; padding: 4px 10px; font-size: 0.75rem;">Save</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
   }
 
-  function settleSelectedReceivable() {
-    const radios = document.getElementsByName('selectedReceivableRadio');
-    let selectedId = null;
-    for (let r of radios) {
-      if (r.checked) {
-        selectedId = r.value;
-        break;
+  function updateStaffPassword(id) {
+    const acc = userAccounts.find(a => a.id === id);
+    if (!acc) return;
+    const input = document.getElementById(`passInput_${id}`);
+    if (input) {
+      acc.password = input.value.trim();
+      broadcastDataChange();
+      alert(`Password updated for ${acc.name}!`);
+    }
+  }
+
+  /* ==========================================================================
+     8. STAFF PROFILE & HR SUMMARY - FIXED ABSENT DAYS & ENHANCED LIGHT GRADIENT
+     ========================================================================== */
+
+  function renderProfileData() {
+    const staffSelect = document.getElementById('profileStaffSelect');
+    const selectedStaff = (currentRole === 'Admin' && staffSelect) ? staffSelect.value : (currentUser || 'Manu Joseph');
+
+    document.getElementById('profileStaffName').textContent = selectedStaff;
+    document.getElementById('profileStaffRole').textContent = (selectedStaff === 'Admin') ? 'System Administrator' : 'Staff Member';
+
+    const mobileInput = document.getElementById('profileStaffMobile');
+    if (mobileInput) mobileInput.value = staffMobiles[selectedStaff] || '9895638115';
+
+    const salaryInput = document.getElementById('profileStaffSalary');
+    if (salaryInput) salaryInput.value = staffSalaries[selectedStaff] || 0;
+
+    const imgEl = document.getElementById('profileStaffImg');
+    const placeholderEl = document.getElementById('profileStaffPlaceholder');
+    if (staffPhotos[selectedStaff]) {
+      imgEl.src = staffPhotos[selectedStaff];
+      imgEl.style.display = 'block';
+      placeholderEl.style.display = 'none';
+    } else {
+      imgEl.style.display = 'none';
+      placeholderEl.style.display = 'flex';
+    }
+
+    const profileMonthPicker = document.getElementById('profileAttendanceMonthPicker');
+    let selectedMonthVal = profileMonthPicker ? profileMonthPicker.value : '';
+    if (!selectedMonthVal) {
+      const now = new Date();
+      selectedMonthVal = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+      if (profileMonthPicker) profileMonthPicker.value = selectedMonthVal;
+    }
+
+    const [yearStr, monthStr] = selectedMonthVal.split('-');
+    const selYear = parseInt(yearStr, 10);
+    const selMonthIndex = parseInt(monthStr, 10) - 1; // 0-indexed month
+
+    // Calculate Month Incentives
+    let monthServiceCharge = 0;
+    serviceEntries.forEach(s => {
+      if (s.loggedBy === selectedStaff && s.date) {
+        const parts = s.date.split('-');
+        if (parseInt(parts[0], 10) === selYear && (parseInt(parts[1], 10) - 1) === selMonthIndex) {
+          monthServiceCharge += parseFloat(s.serviceCharge) || 0;
+        }
+      }
+    });
+
+    const basicSalary = parseFloat(staffSalaries[selectedStaff]) || 0;
+    let incentive = 0;
+    if (monthServiceCharge > basicSalary) {
+      const excess = monthServiceCharge - basicSalary;
+      const cappedExcess = Math.min(excess, 9000);
+      incentive = cappedExcess * 0.20;
+    }
+
+    const incEl = document.getElementById('profileStaffIncentive');
+    if (incEl) incEl.value = `₹${incentive.toFixed(2)}`;
+
+    // Calculate Working Days, Sundays, Present, On-time, Late, and ABSENT DAYS
+    const daysInMonth = new Date(selYear, selMonthIndex + 1, 0).getDate();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    let totalWorkingDays = 0;
+    let sundayOff = 0;
+    let presentDays = 0;
+    let onTimeCount = 0;
+    let lateCount = 0;
+    let absentDays = 0;
+
+    const staffMonthLogs = attendanceLogs.filter(log => {
+      if (log.staffName !== selectedStaff || !log.date) return false;
+      const parts = log.date.split('-');
+      if (parts.length < 3) return false;
+      return parseInt(parts[0], 10) === selYear && (parseInt(parts[1], 10) - 1) === selMonthIndex;
+    });
+
+    const logMap = {};
+    staffMonthLogs.forEach(log => {
+      logMap[log.date] = log;
+    });
+
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dateObj = new Date(selYear, selMonthIndex, d);
+      dateObj.setHours(0, 0, 0, 0);
+
+      const dateStr = `${selYear}-${String(selMonthIndex + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+      const isSunday = (dateObj.getDay() === 0);
+
+      if (isSunday) {
+        sundayOff++;
+      } else {
+        totalWorkingDays++;
+      }
+
+      const log = logMap[dateStr];
+
+      if (log) {
+        presentDays++;
+        if (log.status && log.status.toLowerCase().includes('late')) {
+          lateCount++;
+        } else {
+          onTimeCount++;
+        }
+      } else {
+        // STRICT ABSENT DAYS FIX: Only evaluate past days strictly before today
+        if (dateObj < today && !isSunday) {
+          absentDays++;
+        }
       }
     }
 
-    if (!selectedId) {
-      alert("Please select a receivable to settle.");
+    if (document.getElementById('sumTotalWorkingDays')) document.getElementById('sumTotalWorkingDays').textContent = totalWorkingDays;
+    if (document.getElementById('sumSundayOff')) document.getElementById('sumSundayOff').textContent = sundayOff;
+    if (document.getElementById('sumPresent')) document.getElementById('sumPresent').textContent = presentDays;
+    if (document.getElementById('sumOnTime')) document.getElementById('sumOnTime').textContent = onTimeCount;
+    if (document.getElementById('sumLate')) document.getElementById('sumLate').textContent = lateCount;
+    if (document.getElementById('sumAbsent')) document.getElementById('sumAbsent').textContent = absentDays;
+
+    renderProfileAttendanceTable(selectedStaff, selYear, selMonthIndex);
+  }
+
+  function renderProfileAttendanceTable(staffName, selYear, selMonthIndex) {
+    const tbody = document.getElementById('profileAttendanceTableBody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    const staffMonthLogs = attendanceLogs.filter(log => {
+      if (log.staffName !== staffName || !log.date) return false;
+      const parts = log.date.split('-');
+      if (parts.length < 3) return false;
+      return parseInt(parts[0], 10) === selYear && (parseInt(parts[1], 10) - 1) === selMonthIndex;
+    });
+
+    if (staffMonthLogs.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">No check-in logs recorded for this month.</td></tr>';
       return;
     }
 
-    const item = serviceEntries.find(s => s.id == selectedId);
-    if (!item) return;
+    staffMonthLogs.forEach(log => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td style="font-weight: 700;">${log.date}</td>
+        <td>${log.firstCheckIn}</td>
+        <td>${log.lastActive}</td>
+        <td>${log.relogins}</td>
+        <td><span class="badge ${log.status.includes('Late') ? 'badge-credit' : 'badge-cash'}">${log.status}</span></td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
 
-    const dest = document.getElementById('receivableSettleDestination').value;
-    item.settled = true;
-    item.payMode = dest === 'Cash Drawer' ? 'Cash Drawer' : 'Bank/UPI';
+  function handleStaffPhotoUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const staffSelect = document.getElementById('profileStaffSelect');
+    const selectedStaff = (currentRole === 'Admin' && staffSelect) ? staffSelect.value : currentUser;
+
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+      staffPhotos[selectedStaff] = evt.target.result;
+      broadcastDataChange();
+      renderProfileData();
+      alert("Staff photo updated successfully!");
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function saveProfileAdminEdits() {
+    const staffSelect = document.getElementById('profileStaffSelect');
+    const selectedStaff = (currentRole === 'Admin' && staffSelect) ? staffSelect.value : currentUser;
+
+    const mobile = document.getElementById('profileStaffMobile').value.trim();
+    const salary = parseFloat(document.getElementById('profileStaffSalary').value) || 0;
+
+    staffMobiles[selectedStaff] = mobile;
+    staffSalaries[selectedStaff] = salary;
 
     broadcastDataChange();
-    alert("Receivable settled successfully!");
-    refreshAllUIViews();
+    alert("Profile details saved successfully!");
   }
+
+  /* Initialization on DOM Load */
+  window.addEventListener('DOMContentLoaded', () => {
+    initFirebaseIfConfigured();
+    setLoginMode('Staff');
+    document.getElementById('loginModal').style.display = 'flex';
+  });
 </script>
 
 </body>
