@@ -738,7 +738,7 @@
           </div>
         </div>
         <div style="font-size: 0.75rem; color: var(--text-muted); background: rgba(255, 255, 255, 0.7); padding: 10px; border-radius: var(--radius-md); margin-top: 14px; border: 1px solid var(--border);">
-          <i class="fa-solid fa-circle-info"></i> Department fees paid via Bank/UPI reduce Bank balance; if paid by cash, cash drawer is updated accordingly.
+          <i class="fa-solid fa-circle-info"></i> Department fees strictly deduct from Bank/UPI balance. Cash drawer collections directly add to Cash Drawer balance.
         </div>
       </div>
 
@@ -1426,7 +1426,7 @@
 
   </div>
 
-  <!-- TAB 8: STAFF PROFILE PAGE (ENHANCED VISUAL DESIGN & FIXED ABSENT DAYS LOGIC) -->
+  <!-- TAB 8: STAFF PROFILE PAGE -->
   <div id="profileTab" class="tab-content">
     <div class="section-header">
       <i class="fa-solid fa-user"></i> Staff Profile & HR Summary
@@ -1477,7 +1477,7 @@
         </div>
       </div>
 
-      <!-- MONTH-WISE ATTENDANCE SUMMARY WIDGET (STRICT ABSENT DAYS PAST LOGIC) -->
+      <!-- MONTH-WISE ATTENDANCE SUMMARY WIDGET -->
       <div class="app-card" style="display: flex; flex-direction: column; justify-content: space-between; background: linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #f1f5f9 100%); border: 1px solid #cbd5e1; box-shadow: 0 12px 30px -8px rgba(15, 23, 42, 0.08);">
         <div>
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
@@ -1530,7 +1530,7 @@
               </div>
             </div>
 
-            <!-- Absent Widget Box (Fixed Past Days Tracking Only) -->
+            <!-- Absent Widget Box -->
             <div style="padding: 12px 14px; background: linear-gradient(135deg, #fff1f2 0%, #ffffff 100%); border-radius: var(--radius-md); border: 1px solid #fecdd3; display: flex; justify-content: space-between; align-items: center;">
               <div>
                 <span style="font-size: 0.8rem; font-weight: 800; color: var(--accent-rose); text-transform: uppercase;">
@@ -1769,21 +1769,22 @@
   let masterServices = JSON.parse(localStorage.getItem('atmosMasterServices_v11')) || [
     { id: 1, category: "Standard Services", name: "Photo Stat (Photocopy)", price: 5, defaultDeptFee: 0 },
     { id: 2, category: "Standard Services", name: "Color Printout", price: 15, defaultDeptFee: 0 },
-    { id: 3, category: "Standard Services", name: "Lamination (A4)", price: 40, defaultDeptFee: 0 },
-    { id: 4, category: "Standard Services", name: "Passport Photo Set", price: 100, defaultDeptFee: 0 },
-    { id: 5, category: "Custom Utility & Bill Services", name: "KSEB Electricity Bill Payment", price: 30, defaultDeptFee: 0 },
-    { id: 6, category: "Custom Utility & Bill Services", name: "KWA Water Bill Payment", price: 30, defaultDeptFee: 0 },
-    { id: 7, category: "Custom Utility & Bill Services", name: "University Fee Payment", price: 50, defaultDeptFee: 0 },
-    { id: 8, category: "Custom Utility & Bill Services", name: "Mobile / DTH Recharge", price: 20, defaultDeptFee: 0 },
-    { id: 9, category: "Standard Services", name: "Others (Custom Manual Input)", price: 0, defaultDeptFee: 0 }
+    { id: 3, category: "Standard Services", name: "DTP / Typing", price: 30, defaultDeptFee: 0 },
+    { id: 4, category: "Standard Services", name: "Lamination", price: 20, defaultDeptFee: 0 },
+    { id: 5, category: "Standard Services", name: "Scan & Email", price: 20, defaultDeptFee: 0 },
+    { id: 6, category: "Standard Services", name: "Passport Size Photo", price: 50, defaultDeptFee: 0 },
+    { id: 7, category: "Custom Utility & Bill Services", name: "KSEB Electricity Bill Payment", price: 30, defaultDeptFee: 0 },
+    { id: 8, category: "Custom Utility & Bill Services", name: "KWA Water Bill Payment", price: 30, defaultDeptFee: 0 },
+    { id: 9, category: "Custom Utility & Bill Services", name: "Vehicle Tax / Challan Payment", price: 50, defaultDeptFee: 0 },
+    { id: 10, category: "Custom Utility & Bill Services", name: "Aadhaar / PAN Services", price: 50, defaultDeptFee: 0 },
+    { id: 11, category: "Standard Services", name: "Other Service", price: 0, defaultDeptFee: 0 }
   ];
 
-  let serviceEntries = JSON.parse(localStorage.getItem('atmosDailyServices_v11')) || [];
-  let expenseEntries = JSON.parse(localStorage.getItem('atmosDailyExpenses_v11')) || [];
-  let internalTransfers = JSON.parse(localStorage.getItem('atmosInternalTransfers_v11')) || [];
-  let savedInvoices = JSON.parse(localStorage.getItem('atmosSavedInvoices_v11')) || [];
-  let closedMonths = JSON.parse(localStorage.getItem('atmosClosedMonths_v11')) || {};
-  let fazyTransfers = JSON.parse(localStorage.getItem('atmosFazyTransfers_v11')) || [];
+  let serviceLogs = JSON.parse(localStorage.getItem('atmosServiceLogs_v11')) || [];
+  let expenseLogs = JSON.parse(localStorage.getItem('atmosExpenseLogs_v11')) || [];
+  let transferLogs = JSON.parse(localStorage.getItem('atmosTransferLogs_v11')) || [];
+  let invoices = JSON.parse(localStorage.getItem('atmosInvoices_v11')) || [];
+  let closedMonths = JSON.parse(localStorage.getItem('atmosClosedMonths_v11')) || [];
   
   let openingBalances = JSON.parse(localStorage.getItem('atmosOpeningBalances_v11')) || {
     cash: 399,
@@ -1791,137 +1792,255 @@
     credit: 0
   };
 
-  let staffBalanceEdits = JSON.parse(localStorage.getItem('atmosStaffBalanceEdits_v11')) || {};
+  let staffEditCounters = JSON.parse(localStorage.getItem('atmosStaffEditCounters_v11')) || {};
 
-  let firebaseDbUrl = firebaseConfig.databaseURL;
-  let currentUser = "";
-  let currentRole = "";
-  let activeLoginMode = "Staff";
+  let currentUser = null;
+  let loginMode = 'Staff';
+  let firebaseApp = null;
+  let firebaseDb = null;
+  let isFirebaseConnected = false;
 
-  let invoiceItems = [];
-  let currentInvoiceNumber = parseInt(localStorage.getItem('atmosInvNum_v11')) || 1001;
+  let currentInvoiceItems = [];
+  let growthChartInst = null;
+  let interactionsChartInst = null;
+  let staffChartInst = null;
 
-  let showAllStaffServices = false;
-  let chartsInstance = [];
-
-  const syncChannel = new BroadcastChannel('atmos_sync_channel_v11');
-  syncChannel.onmessage = function(event) {
-    if (event.data === 'sync_update') {
-      reloadAllLocalData();
-    }
-  };
-
-  let firebaseDbRef = null;
-  function initFirebaseIfConfigured() {
-    if (window.firebase) {
-      try {
-        if (!firebase.apps.length) {
-          firebase.initializeApp(firebaseConfig);
-        }
-        firebaseDbRef = firebase.database().ref('atmos_hub_data_v11');
-        
-        const syncBadge = document.getElementById('cloudSyncStatusBadge');
-        if (syncBadge) {
-          syncBadge.className = 'sync-badge sync-online';
-          syncBadge.innerHTML = '<i class="fa-solid fa-cloud"></i> Cloud Sync Active';
-        }
-
-        firebaseDbRef.on('value', (snapshot) => {
-          const val = snapshot.val();
-          if (val) {
-            if (val.serviceEntries) serviceEntries = val.serviceEntries;
-            if (val.expenseEntries) expenseEntries = val.expenseEntries;
-            if (val.internalTransfers) internalTransfers = val.internalTransfers;
-            if (val.openingBalances) openingBalances = val.openingBalances;
-            if (val.masterServices) masterServices = val.masterServices;
-            if (val.attendanceLogs) attendanceLogs = val.attendanceLogs;
-            if (val.userAccounts) userAccounts = val.userAccounts;
-            if (val.savedInvoices) savedInvoices = val.savedInvoices;
-            if (val.staffBalanceEdits) staffBalanceEdits = val.staffBalanceEdits;
-            if (val.staffSalaries) staffSalaries = val.staffSalaries;
-            if (val.staffMobiles) staffMobiles = val.staffMobiles;
-            if (val.staffPhotos) staffPhotos = val.staffPhotos;
-            if (val.closedMonths) closedMonths = val.closedMonths;
-            if (val.fazyTransfers) fazyTransfers = val.fazyTransfers;
-            
-            cleanAyishaBill();
-            saveAllToLocalStorageLocally();
-            refreshAllUIViews();
-          }
-        });
-      } catch (e) {
-        console.warn("Firebase initialization error:", e);
-      }
-    }
-  }
-
-  function cleanAyishaBill() {
-    savedInvoices = savedInvoices.filter(inv => !inv.customerName || !inv.customerName.toLowerCase().includes('ayisha vazhayil'));
-  }
-
-  function broadcastDataChange() {
-    saveAllToLocalStorageLocally();
-    syncChannel.postMessage('sync_update');
-
-    if (firebaseDbRef) {
-      firebaseDbRef.set({
-        serviceEntries,
-        expenseEntries,
-        internalTransfers,
-        openingBalances,
-        masterServices,
-        attendanceLogs,
-        userAccounts,
-        savedInvoices,
-        staffBalanceEdits,
-        staffSalaries,
-        staffMobiles,
-        staffPhotos,
-        closedMonths,
-        fazyTransfers,
-        lastUpdated: Date.now()
-      });
-    }
-  }
-
-  function saveAllToLocalStorageLocally() {
-    localStorage.setItem('atmosUserAccounts_v11', JSON.stringify(userAccounts));
-    localStorage.setItem('atmosAttendanceLogs_v11', JSON.stringify(attendanceLogs));
-    localStorage.setItem('atmosMasterServices_v11', JSON.stringify(masterServices));
-    localStorage.setItem('atmosDailyServices_v11', JSON.stringify(serviceEntries));
-    localStorage.setItem('atmosDailyExpenses_v11', JSON.stringify(expenseEntries));
-    localStorage.setItem('atmosInternalTransfers_v11', JSON.stringify(internalTransfers));
-    localStorage.setItem('atmosOpeningBalances_v11', JSON.stringify(openingBalances));
-    localStorage.setItem('atmosSavedInvoices_v11', JSON.stringify(savedInvoices));
-    localStorage.setItem('atmosStaffBalanceEdits_v11', JSON.stringify(staffBalanceEdits));
-    localStorage.setItem('atmosStaffSalaries_v11', JSON.stringify(staffSalaries));
-    localStorage.setItem('atmosStaffMobiles_v11', JSON.stringify(staffMobiles));
-    localStorage.setItem('atmosStaffPhotos_v11', JSON.stringify(staffPhotos));
-    localStorage.setItem('atmosClosedMonths_v11', JSON.stringify(closedMonths));
-    localStorage.setItem('atmosFazyTransfers_v11', JSON.stringify(fazyTransfers));
-    localStorage.setItem('atmosInvNum_v11', currentInvoiceNumber);
-  }
-
-  function reloadAllLocalData() {
-    userAccounts = JSON.parse(localStorage.getItem('atmosUserAccounts_v11')) || userAccounts;
-    attendanceLogs = JSON.parse(localStorage.getItem('atmosAttendanceLogs_v11')) || attendanceLogs;
-    masterServices = JSON.parse(localStorage.getItem('atmosMasterServices_v11')) || masterServices;
-    serviceEntries = JSON.parse(localStorage.getItem('atmosDailyServices_v11')) || serviceEntries;
-    expenseEntries = JSON.parse(localStorage.getItem('atmosDailyExpenses_v11')) || expenseEntries;
-    internalTransfers = JSON.parse(localStorage.getItem('atmosInternalTransfers_v11')) || internalTransfers;
-    openingBalances = JSON.parse(localStorage.getItem('atmosOpeningBalances_v11')) || openingBalances;
-    savedInvoices = JSON.parse(localStorage.getItem('atmosSavedInvoices_v11')) || savedInvoices;
-    staffBalanceEdits = JSON.parse(localStorage.getItem('atmosStaffBalanceEdits_v11')) || staffBalanceEdits;
-    staffSalaries = JSON.parse(localStorage.getItem('atmosStaffSalaries_v11')) || staffSalaries;
-    staffMobiles = JSON.parse(localStorage.getItem('atmosStaffMobiles_v11')) || staffMobiles;
-    staffPhotos = JSON.parse(localStorage.getItem('atmosStaffPhotos_v11')) || staffPhotos;
-    closedMonths = JSON.parse(localStorage.getItem('atmosClosedMonths_v11')) || closedMonths;
-    fazyTransfers = JSON.parse(localStorage.getItem('atmosFazyTransfers_v11')) || fazyTransfers;
-    cleanAyishaBill();
+  // Initialize Application
+  window.addEventListener('DOMContentLoaded', () => {
+    initDates();
+    initFirebase();
+    populateUserSelect();
+    populateMasterServicesDropdown();
+    recalculateBalances();
     refreshAllUIViews();
+  });
+
+  function initDates() {
+    const todayStr = new Date().toISOString().split('T')[0];
+    const currentMonthStr = todayStr.substring(0, 7);
+
+    if (document.getElementById('serviceDateInput')) document.getElementById('serviceDateInput').value = todayStr;
+    if (document.getElementById('expenseDateInput')) document.getElementById('expenseDateInput').value = todayStr;
+    if (document.getElementById('transferDateInput')) document.getElementById('transferDateInput').value = todayStr;
+    if (document.getElementById('invDateInput')) document.getElementById('invDateInput').value = todayStr;
+    if (document.getElementById('overviewDateSelector')) document.getElementById('overviewDateSelector').value = todayStr;
+
+    if (document.getElementById('servicesOverviewMonthPicker')) document.getElementById('servicesOverviewMonthPicker').value = currentMonthStr;
+    if (document.getElementById('expenseMonthPicker')) document.getElementById('expenseMonthPicker').value = currentMonthStr;
+    if (document.getElementById('reportMonthPicker')) document.getElementById('reportMonthPicker').value = currentMonthStr;
+    if (document.getElementById('salaryMonthPicker')) document.getElementById('salaryMonthPicker').value = currentMonthStr;
+    if (document.getElementById('staffCollectionMonthPicker')) document.getElementById('staffCollectionMonthPicker').value = currentMonthStr;
+    if (document.getElementById('attendanceMonthPicker')) document.getElementById('attendanceMonthPicker').value = currentMonthStr;
+    if (document.getElementById('profileAttendanceMonthPicker')) document.getElementById('profileAttendanceMonthPicker').value = currentMonthStr;
+    if (document.getElementById('closingMonthPicker')) document.getElementById('closingMonthPicker').value = currentMonthStr;
+
+    updateInvoiceDateDisplay();
   }
 
-  /* Drawer Menu & Tabs */
+  /* ==========================================================================
+     RECALCULATION LOGIC FOR CASH DRAWER & BANK/UPI BALANCES
+     ========================================================================== */
+  function recalculateBalances() {
+    let cash = parseFloat(openingBalances.cash) || 0;
+    let bank = parseFloat(openingBalances.bank) || 0;
+    let credit = parseFloat(openingBalances.credit) || 0;
+
+    // 1. Process Service Collections
+    serviceLogs.forEach(item => {
+      const deptFee = parseFloat(item.deptFee) || 0;
+      const srvCharge = parseFloat(item.basePrice || item.serviceCharge) || 0;
+      const discount = parseFloat(item.discountAmt || item.discount) || 0;
+      const finalPrice = parseFloat(item.finalPrice) || (srvCharge + deptFee - discount);
+      const mode = (item.payMode || item.mode || '').trim();
+
+      // Rule 2: Department fees strictly deduct from Bank UPI Balance
+      bank -= deptFee;
+
+      // Rules 1 & 2: Customer payment mode allocation
+      if (mode === 'Cash Drawer' || mode === 'Cash') {
+        cash += finalPrice;
+      } else if (mode === 'Bank/UPI' || mode === 'Bank UPI' || mode === 'UPI') {
+        bank += finalPrice;
+      } else if (mode === 'Receivables/Credit' || mode === 'Credit' || mode === 'Receivables') {
+        credit += finalPrice;
+      }
+    });
+
+    // 2. Process Shop Expenses
+    expenseLogs.forEach(item => {
+      const amt = parseFloat(item.amount) || 0;
+      const mode = (item.payMode || '').trim();
+      if (mode === 'Cash Drawer' || mode === 'Cash') {
+        cash -= amt;
+      } else if (mode === 'Bank/UPI' || mode === 'Bank UPI' || mode === 'UPI') {
+        bank -= amt;
+      }
+    });
+
+    // 3. Process Internal Cash Transfers
+    transferLogs.forEach(item => {
+      const amt = parseFloat(item.amount) || 0;
+      const dir = item.direction;
+      if (dir === 'CashToBank') {
+        cash -= amt;
+        bank += amt;
+      } else if (dir === 'BankToCash') {
+        bank -= amt;
+        cash += amt;
+      }
+    });
+
+    // Update UI Metrics
+    if (document.getElementById('dashMetricCash')) document.getElementById('dashMetricCash').innerText = '₹' + cash.toFixed(2);
+    if (document.getElementById('dashMetricBank')) document.getElementById('dashMetricBank').innerText = '₹' + bank.toFixed(2);
+    if (document.getElementById('dashMetricCredit')) document.getElementById('dashMetricCredit').innerText = '₹' + credit.toFixed(2);
+    if (document.getElementById('dashMetricTotalBal')) document.getElementById('dashMetricTotalBal').innerText = '₹' + (cash + bank + credit).toFixed(2);
+
+    if (document.getElementById('expDispCashBal')) document.getElementById('expDispCashBal').innerText = '₹' + cash.toFixed(2);
+    if (document.getElementById('expDispBankBal')) document.getElementById('expDispBankBal').innerText = '₹' + bank.toFixed(2);
+
+    if (document.getElementById('adminOpeningCashInput')) document.getElementById('adminOpeningCashInput').value = openingBalances.cash;
+    if (document.getElementById('adminOpeningBankInput')) document.getElementById('adminOpeningBankInput').value = openingBalances.bank;
+    if (document.getElementById('adminOpeningCreditInput')) document.getElementById('adminOpeningCreditInput').value = openingBalances.credit;
+
+    // Save state locally
+    localStorage.setItem('atmosServiceLogs_v11', JSON.stringify(serviceLogs));
+    localStorage.setItem('atmosExpenseLogs_v11', JSON.stringify(expenseLogs));
+    localStorage.setItem('atmosTransferLogs_v11', JSON.stringify(transferLogs));
+    localStorage.setItem('atmosOpeningBalances_v11', JSON.stringify(openingBalances));
+
+    syncWithFirebase();
+  }
+
+  /* ==========================================================================
+     FIREBASE REALTIME SYNCHRONIZATION
+     ========================================================================== */
+  function initFirebase() {
+    const savedUrl = localStorage.getItem('atmosFirebaseDbUrl_v11');
+    if (savedUrl) {
+      firebaseConfig.databaseURL = savedUrl;
+      if (document.getElementById('firebaseDbUrlInput')) document.getElementById('firebaseDbUrlInput').value = savedUrl;
+    }
+
+    try {
+      if (!firebase.apps.length) {
+        firebaseApp = firebase.initializeApp(firebaseConfig);
+      } else {
+        firebaseApp = firebase.app();
+      }
+      firebaseDb = firebase.database();
+      
+      const statusBadge = document.getElementById('cloudSyncStatusBadge');
+      
+      firebaseDb.ref('.info/connected').on('value', snapshot => {
+        if (snapshot.val() === true) {
+          isFirebaseConnected = true;
+          if (statusBadge) {
+            statusBadge.className = 'sync-badge sync-online';
+            statusBadge.innerHTML = '<i class="fa-solid fa-cloud"></i> Live Cloud Sync';
+          }
+        } else {
+          isFirebaseConnected = false;
+          if (statusBadge) {
+            statusBadge.className = 'sync-badge sync-local';
+            statusBadge.innerHTML = '<i class="fa-solid fa-wifi"></i> Local Sync';
+          }
+        }
+      });
+
+      // Listeners for live sync across devices
+      firebaseDb.ref('serviceLogs').on('value', snapshot => {
+        const val = snapshot.val();
+        if (val) {
+          serviceLogs = Array.isArray(val) ? val : Object.values(val);
+          recalculateBalances();
+          refreshAllUIViews();
+        }
+      });
+
+      firebaseDb.ref('expenseLogs').on('value', snapshot => {
+        const val = snapshot.val();
+        if (val) {
+          expenseLogs = Array.isArray(val) ? val : Object.values(val);
+          recalculateBalances();
+          refreshAllUIViews();
+        }
+      });
+
+      firebaseDb.ref('transferLogs').on('value', snapshot => {
+        const val = snapshot.val();
+        if (val) {
+          transferLogs = Array.isArray(val) ? val : Object.values(val);
+          recalculateBalances();
+          refreshAllUIViews();
+        }
+      });
+
+      firebaseDb.ref('openingBalances').on('value', snapshot => {
+        const val = snapshot.val();
+        if (val) {
+          openingBalances = val;
+          recalculateBalances();
+          refreshAllUIViews();
+        }
+      });
+
+      firebaseDb.ref('masterServices').on('value', snapshot => {
+        const val = snapshot.val();
+        if (val) {
+          masterServices = Array.isArray(val) ? val : Object.values(val);
+          populateMasterServicesDropdown();
+          renderMasterServicesTable();
+        }
+      });
+
+    } catch (e) {
+      console.warn("Firebase initialization skipped or running local:", e);
+    }
+  }
+
+  function syncWithFirebase() {
+    if (!firebaseDb || !isFirebaseConnected) return;
+    try {
+      firebaseDb.ref('serviceLogs').set(serviceLogs);
+      firebaseDb.ref('expenseLogs').set(expenseLogs);
+      firebaseDb.ref('transferLogs').set(transferLogs);
+      firebaseDb.ref('openingBalances').set(openingBalances);
+      firebaseDb.ref('masterServices').set(masterServices);
+    } catch (e) {
+      console.error("Firebase sync error:", e);
+    }
+  }
+
+  function saveFirebaseSettings() {
+    const url = document.getElementById('firebaseDbUrlInput').value.trim();
+    if (url) {
+      localStorage.setItem('atmosFirebaseDbUrl_v11', url);
+      alert('Firebase URL updated! Reloading application to connect...');
+      location.reload();
+    }
+  }
+
+  /* ==========================================================================
+     UI REFRESH & NAVIGATION
+     ========================================================================== */
+  function refreshAllUIViews() {
+    renderServicesTable();
+    renderExpenseTable();
+    renderTransferTable();
+    renderDashboardOverview();
+    renderMasterServicesTable();
+    renderStaffSalaryTable();
+    renderStaffBreakdown();
+    renderStaffPasswordTable();
+    renderStaffReceivables();
+    renderAttendanceTable();
+    renderProfileData();
+    populateSavedInvoicesDropdown();
+    generateFinancialReport();
+    renderAnalyticsCharts();
+  }
+
   function openDrawer() {
     document.getElementById('sideDrawer').classList.add('open');
     document.getElementById('drawerOverlay').classList.add('active');
@@ -1932,250 +2051,157 @@
     document.getElementById('drawerOverlay').classList.remove('active');
   }
 
-  function switchTab(tabId, btnElement) {
-    document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(tb => tb.classList.remove('active'));
-    document.querySelectorAll('.drawer-menu-item').forEach(dmi => dmi.classList.remove('active'));
-
-    const activeTab = document.getElementById(tabId);
-    if (activeTab) activeTab.classList.add('active');
-
-    if (btnElement) {
-      btnElement.classList.add('active');
-    } else {
-      const matchBtn = document.getElementById(`btn-${tabId}`);
-      if (matchBtn) matchBtn.classList.add('active');
-    }
-
-    const matchDrawer = document.getElementById(`drawer-${tabId}`);
-    if (matchDrawer) matchDrawer.classList.add('active');
-
-    if (tabId === 'profileTab') {
-      renderProfileData();
-    } else if (tabId === 'adminTab') {
-      renderAnalyticsCharts();
-    }
-  }
-
   function navigateFromDrawer(tabId) {
     closeDrawer();
-    switchTab(tabId, document.getElementById(`btn-${tabId}`));
+    const targetBtn = document.getElementById('btn-' + tabId);
+    if (targetBtn) switchTab(tabId, targetBtn);
   }
 
-  /* Login System */
-  function setLoginMode(mode) {
-    activeLoginMode = mode;
-    const staffBtn = document.getElementById('loginTabStaff');
-    const adminBtn = document.getElementById('loginTabAdmin');
-    const userSelect = document.getElementById('loginUserSelect');
-    const forgotBtnContainer = document.getElementById('forgotPasswordBtnContainer');
+  function switchTab(tabId, btnElement) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.drawer-menu-item').forEach(el => el.classList.remove('active'));
 
-    userSelect.innerHTML = '';
-    if (mode === 'Staff') {
-      staffBtn.style.background = 'white';
-      staffBtn.style.color = 'var(--atmos-navy)';
-      adminBtn.style.background = 'transparent';
-      adminBtn.style.color = 'var(--text-muted)';
-      if (forgotBtnContainer) forgotBtnContainer.style.display = 'none';
+    const content = document.getElementById(tabId);
+    if (content) content.classList.add('active');
 
-      userAccounts.filter(acc => acc.role === 'Staff').forEach(acc => {
-        const opt = document.createElement('option');
-        opt.value = acc.id;
-        opt.textContent = `${acc.name} (${acc.id})`;
-        userSelect.appendChild(opt);
-      });
-    } else {
-      adminBtn.style.background = 'white';
-      adminBtn.style.color = 'var(--atmos-navy)';
-      staffBtn.style.background = 'transparent';
-      staffBtn.style.color = 'var(--text-muted)';
-      if (forgotBtnContainer) forgotBtnContainer.style.display = 'block';
+    if (btnElement) btnElement.classList.add('active');
+    const drawerItem = document.getElementById('drawer-' + tabId);
+    if (drawerItem) drawerItem.classList.add('active');
 
-      userAccounts.filter(acc => acc.role === 'Admin').forEach(acc => {
-        const opt = document.createElement('option');
-        opt.value = acc.id;
-        opt.textContent = `${acc.name} (${acc.id})`;
-        userSelect.appendChild(opt);
-      });
+    if (tabId === 'adminTab' && currentUser && currentUser.role !== 'Admin') {
+      alert('Access restricted to Admin users only.');
+      switchTab('dashboardTab', document.getElementById('btn-dashboardTab'));
     }
+  }
+
+  /* ==========================================================================
+     AUTH & USER MANAGEMENT
+     ========================================================================== */
+  function setLoginMode(mode) {
+    loginMode = mode;
+    const staffTab = document.getElementById('loginTabStaff');
+    const adminTab = document.getElementById('loginTabAdmin');
+    const forgotContainer = document.getElementById('forgotPasswordBtnContainer');
+
+    if (mode === 'Staff') {
+      staffTab.style.background = 'white';
+      staffTab.style.color = 'var(--atmos-navy)';
+      adminTab.style.background = 'transparent';
+      adminTab.style.color = 'var(--text-muted)';
+      forgotContainer.style.display = 'none';
+    } else {
+      adminTab.style.background = 'white';
+      adminTab.style.color = 'var(--atmos-navy)';
+      staffTab.style.background = 'transparent';
+      staffTab.style.color = 'var(--text-muted)';
+      forgotContainer.style.display = 'block';
+    }
+    populateUserSelect();
+  }
+
+  function populateUserSelect() {
+    const sel = document.getElementById('loginUserSelect');
+    if (!sel) return;
+    sel.innerHTML = '';
+    const filtered = userAccounts.filter(a => modeRoleFilter(a));
+    filtered.forEach(acc => {
+      const opt = document.createElement('option');
+      opt.value = acc.id;
+      opt.innerText = acc.name + ' (' + acc.id + ')';
+      sel.appendChild(opt);
+    });
+  }
+
+  function modeRoleFilter(account) {
+    return loginMode === 'Admin' ? account.role === 'Admin' : account.role === 'Staff';
   }
 
   function performLogin() {
-    const selectedId = document.getElementById('loginUserSelect').value;
-    const passwordInput = document.getElementById('loginPassword').value;
-    const account = userAccounts.find(acc => acc.id === selectedId);
+    const accountId = document.getElementById('loginUserSelect').value;
+    const pwd = document.getElementById('loginPassword').value;
 
-    if (!account) {
-      alert("Invalid account selected.");
-      return;
-    }
+    const user = userAccounts.find(a => a.id === accountId && a.password === pwd);
+    if (user) {
+      currentUser = user;
+      document.getElementById('activeUserBadge').innerText = user.name + ' (' + user.role + ')';
+      document.getElementById('loginModal').style.display = 'none';
 
-    if (account.password !== passwordInput) {
-      alert("Incorrect password. Please try again.");
-      return;
-    }
-
-    currentUser = account.name;
-    currentRole = account.role;
-
-    document.getElementById('loginModal').style.display = 'none';
-    document.getElementById('activeUserBadge').textContent = `${currentUser} (${currentRole})`;
-
-    const adminTabBtn = document.getElementById('btn-adminTab');
-    const drawerAdminTab = document.getElementById('drawer-adminTab');
-    if (currentRole === 'Admin') {
-      if (adminTabBtn) adminTabBtn.style.display = 'inline-block';
-      if (drawerAdminTab) drawerAdminTab.style.display = 'flex';
-      document.getElementById('staffControlsDashboardCard').style.display = 'none';
-      document.getElementById('adminStaffSelectorContainer').style.display = 'block';
-      document.getElementById('profileAdminActionsContainer').style.display = 'flex';
+      if (user.role === 'Admin') {
+        document.getElementById('btn-adminTab').style.display = 'inline-block';
+        document.getElementById('drawer-adminTab').style.display = 'flex';
+        document.getElementById('staffControlsDashboardCard').style.display = 'block';
+        document.getElementById('adminStaffSelectorContainer').style.display = 'block';
+        document.getElementById('profileAdminActionsContainer').style.display = 'flex';
+      } else {
+        document.getElementById('btn-adminTab').style.display = 'none';
+        document.getElementById('drawer-adminTab').style.display = 'none';
+        document.getElementById('staffControlsDashboardCard').style.display = 'block';
+        document.getElementById('adminStaffSelectorContainer').style.display = 'none';
+        document.getElementById('profileAdminActionsContainer').style.display = 'none';
+        recordStaffAttendance(user.name);
+      }
+      refreshAllUIViews();
     } else {
-      if (adminTabBtn) adminTabBtn.style.display = 'none';
-      if (drawerAdminTab) drawerAdminTab.style.display = 'none';
-      document.getElementById('staffControlsDashboardCard').style.display = 'block';
-      document.getElementById('adminStaffSelectorContainer').style.display = 'none';
-      document.getElementById('profileAdminActionsContainer').style.display = 'none';
+      alert('Invalid password or account selection.');
     }
-
-    recordAttendanceLog(account);
-    initDefaultDateInputs();
-    populateMasterServiceDropdown();
-    refreshAllUIViews();
   }
 
-  function recordAttendanceLog(account) {
-    if (account.role !== 'Staff') return;
+  function recordStaffAttendance(staffName) {
+    const todayStr = new Date().toISOString().split('T')[0];
+    const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    let existing = attendanceLogs.find(l => l.date === todayStr && l.name === staffName);
 
-    const now = new Date();
-    const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-    const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
-
-    let existingLog = attendanceLogs.find(log => log.staffName === account.name && log.date === dateStr);
-
-    if (!existingLog) {
-      const workStartTime = new Date();
-      workStartTime.setHours(9, 30, 0, 0);
-
-      let status = 'On-time';
-      let lateMinutes = 0;
-      if (now > workStartTime) {
-        lateMinutes = Math.floor((now - workStartTime) / (1000 * 60));
-        status = `Late (${lateMinutes} min)`;
-        
-        const alertMsg = `Good morning, ${account.name}! You checked in at ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })} (${lateMinutes} minutes past scheduled start time 9:30 AM). Recorded in attendance portal.`;
-        document.getElementById('lateAlertMessage').textContent = alertMsg;
+    if (existing) {
+      existing.lastTime = timeStr;
+      existing.relogins = (existing.relogins || 0) + 1;
+    } else {
+      const now = new Date();
+      const isLate = now.getHours() > 9 || (now.getHours() === 9 && now.getMinutes() > 15);
+      attendanceLogs.push({
+        date: todayStr,
+        name: staffName,
+        firstCheckin: timeStr,
+        lastTime: timeStr,
+        relogins: 1,
+        status: isLate ? 'Late' : 'On-time'
+      });
+      if (isLate) {
+        document.getElementById('lateAlertMessage').innerText = 'Checked in at ' + timeStr + ' (Standard time is 09:15 AM). Late status logged.';
         document.getElementById('lateLoginModal').style.display = 'flex';
       }
-
-      existingLog = {
-        id: Date.now(),
-        staffName: account.name,
-        date: dateStr,
-        firstCheckIn: timeStr,
-        lastActive: timeStr,
-        relogins: 1,
-        status: status
-      };
-      attendanceLogs.push(existingLog);
-    } else {
-      existingLog.lastActive = timeStr;
-      existingLog.relogins = (existingLog.relogins || 1) + 1;
     }
-
-    broadcastDataChange();
+    localStorage.setItem('atmosAttendanceLogs_v11', JSON.stringify(attendanceLogs));
   }
 
   function closeLateLoginModal() {
     document.getElementById('lateLoginModal').style.display = 'none';
   }
 
-  function openForgotPasswordModal() {
-    document.getElementById('forgotPasswordModal').style.display = 'flex';
-    document.getElementById('otpStep1').style.display = 'block';
-    document.getElementById('otpStep2').style.display = 'none';
-  }
-
-  function closeForgotPasswordModal() {
-    document.getElementById('forgotPasswordModal').style.display = 'none';
-  }
-
-  let generatedOtp = "";
-  function sendAdminOTP() {
-    generatedOtp = Math.floor(1000 + Math.random() * 9000).toString();
-    alert(`OTP Sent to Admin Mobile via WhatsApp: ${generatedOtp}`);
-    document.getElementById('otpStep1').style.display = 'none';
-    document.getElementById('otpStep2').style.display = 'block';
-  }
-
-  function verifyAndResetAdminPassword() {
-    const inputOtp = document.getElementById('adminOtpInput').value.trim();
-    const newPass = document.getElementById('newAdminPasswordInput').value.trim();
-
-    if (inputOtp !== generatedOtp) {
-      alert("Invalid OTP code entered.");
-      return;
-    }
-    if (!newPass) {
-      alert("Please enter a valid new password.");
-      return;
-    }
-
-    const adminAcc = userAccounts.find(acc => acc.role === 'Admin');
-    if (adminAcc) {
-      adminAcc.password = newPass;
-      broadcastDataChange();
-      alert("Admin password updated successfully! You can now log in with your new password.");
-      closeForgotPasswordModal();
-    }
-  }
-
-  function initDefaultDateInputs() {
-    const today = new Date();
-    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-    const monthStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
-
-    if (document.getElementById('serviceDateInput')) document.getElementById('serviceDateInput').value = todayStr;
-    if (document.getElementById('expenseDateInput')) document.getElementById('expenseDateInput').value = todayStr;
-    if (document.getElementById('transferDateInput')) document.getElementById('transferDateInput').value = todayStr;
-    if (document.getElementById('invDateInput')) document.getElementById('invDateInput').value = todayStr;
-    if (document.getElementById('overviewDateSelector')) document.getElementById('overviewDateSelector').value = todayStr;
-
-    if (document.getElementById('servicesOverviewMonthPicker')) document.getElementById('servicesOverviewMonthPicker').value = monthStr;
-    if (document.getElementById('expenseMonthPicker')) document.getElementById('expenseMonthPicker').value = monthStr;
-    if (document.getElementById('reportMonthPicker')) document.getElementById('reportMonthPicker').value = monthStr;
-    if (document.getElementById('staffCollectionMonthPicker')) document.getElementById('staffCollectionMonthPicker').value = monthStr;
-    if (document.getElementById('attendanceMonthPicker')) document.getElementById('attendanceMonthPicker').value = monthStr;
-    if (document.getElementById('salaryMonthPicker')) document.getElementById('salaryMonthPicker').value = monthStr;
-    if (document.getElementById('profileAttendanceMonthPicker')) document.getElementById('profileAttendanceMonthPicker').value = monthStr;
-    if (document.getElementById('closingMonthPicker')) document.getElementById('closingMonthPicker').value = monthStr;
-
-    updateInvoiceDateDisplay();
-  }
-
-  /* Catalog Selection & Pricing Logic */
-  function populateMasterServiceDropdown() {
-    const select = document.getElementById('serviceSelect');
-    if (!select) return;
-    select.innerHTML = '<option value="">-- Select Service --</option>';
-
-    masterServices.forEach(srv => {
+  /* ==========================================================================
+     SERVICES MANAGEMENT
+     ========================================================================== */
+  function populateMasterServicesDropdown() {
+    const sel = document.getElementById('serviceSelect');
+    if (!sel) return;
+    sel.innerHTML = '<option value="">-- Select Service --</option>';
+    masterServices.forEach(s => {
       const opt = document.createElement('option');
-      opt.value = srv.id;
-      opt.textContent = `${srv.name} (₹${srv.price})`;
-      select.appendChild(opt);
+      opt.value = s.id;
+      opt.innerText = s.name + (s.price > 0 ? ' (₹' + s.price + ')' : '');
+      sel.appendChild(opt);
     });
   }
 
   function handleServiceSelectionChange() {
-    const select = document.getElementById('serviceSelect');
+    const serviceId = document.getElementById('serviceSelect').value;
     const customGroup = document.getElementById('otherServiceCustomGroup');
-    const selectedId = parseInt(select.value, 10);
-    const srv = masterServices.find(s => s.id === selectedId);
+    const srv = masterServices.find(s => s.id == serviceId);
 
     if (srv) {
       document.getElementById('basePrice').value = srv.price || 0;
       document.getElementById('deptFeeInput').value = srv.defaultDeptFee || 0;
-      if (srv.name.includes("Others")) {
+      if (srv.name === 'Other Service') {
         customGroup.style.display = 'block';
       } else {
         customGroup.style.display = 'none';
@@ -2187,585 +2213,68 @@
   }
 
   function calculateFinalPrice() {
-    const deptFee = parseFloat(document.getElementById('deptFeeInput').value) || 0;
-    const srvCharge = parseFloat(document.getElementById('basePrice').value) || 0;
-    const discount = parseFloat(document.getElementById('discountAmt').value) || 0;
-    const totalPay = Math.max(0, deptFee + srvCharge - discount);
-    document.getElementById('finalPrice').value = totalPay;
+    const dept = parseFloat(document.getElementById('deptFeeInput').value) || 0;
+    const base = parseFloat(document.getElementById('basePrice').value) || 0;
+    const disc = parseFloat(document.getElementById('discountAmt').value) || 0;
+    const total = dept + base - disc;
+    document.getElementById('finalPrice').value = total >= 0 ? total : 0;
   }
 
-  /* Service Transactions */
   function recordServiceEntry(e) {
     e.preventDefault();
-    const dateVal = document.getElementById('serviceDateInput').value;
-    const select = document.getElementById('serviceSelect');
-    const srvId = parseInt(select.value, 10);
-    const masterSrv = masterServices.find(s => s.id === srvId);
-
-    let srvName = masterSrv ? masterSrv.name : "Custom Service";
-    if (srvName.includes("Others")) {
-      srvName = document.getElementById('customServiceNameInput').value.trim() || "Custom Service";
+    const serviceId = document.getElementById('serviceSelect').value;
+    const srvObj = masterServices.find(s => s.id == serviceId);
+    let desc = srvObj ? srvObj.name : 'Service';
+    if (desc === 'Other Service') {
+      desc = document.getElementById('customServiceNameInput').value.trim() || 'Custom Service';
     }
 
+    const dateVal = document.getElementById('serviceDateInput').value;
     const deptFee = parseFloat(document.getElementById('deptFeeInput').value) || 0;
     const srvCharge = parseFloat(document.getElementById('basePrice').value) || 0;
     const discount = parseFloat(document.getElementById('discountAmt').value) || 0;
-    const totalPay = Math.max(0, deptFee + srvCharge - discount);
+    const finalPrice = parseFloat(document.getElementById('finalPrice').value) || 0;
     const payMode = document.getElementById('payMode').value;
 
     const newEntry = {
       id: Date.now(),
       date: dateVal,
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      serviceName: srvName,
-      deptFee: deptFee,
-      serviceCharge: srvCharge,
-      discount: discount,
-      totalPay: totalPay,
-      payMode: payMode,
-      loggedBy: currentUser || 'Staff',
-      settled: (payMode !== 'Receivables/Credit')
-    };
-
-    serviceEntries.unshift(newEntry);
-    broadcastDataChange();
-    alert("Service transaction logged successfully!");
-
-    document.getElementById('deptFeeInput').value = 0;
-    document.getElementById('basePrice').value = 0;
-    document.getElementById('discountAmt').value = 0;
-    document.getElementById('finalPrice').value = 0;
-    document.getElementById('customServiceNameInput').value = '';
-    select.value = '';
-    document.getElementById('otherServiceCustomGroup').style.display = 'none';
-  }
-
-  /* Expenses Logging */
-  function recordExpenseEntry(e) {
-    e.preventDefault();
-    const dateVal = document.getElementById('expenseDateInput').value;
-    const category = document.getElementById('expenseCategory').value;
-    const desc = document.getElementById('expenseDesc').value.trim();
-    const amount = parseFloat(document.getElementById('expenseAmount').value) || 0;
-    const payMode = document.getElementById('expensePayMode').value;
-
-    if (amount <= 0) {
-      alert("Please enter a valid expense amount.");
-      return;
-    }
-
-    const newExpense = {
-      id: Date.now(),
-      date: dateVal,
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      category: category,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       desc: desc,
-      amount: amount,
+      deptFee: deptFee,
+      basePrice: srvCharge,
+      discountAmt: discount,
+      finalPrice: finalPrice,
       payMode: payMode,
-      recordedBy: currentUser || 'Staff'
+      staff: currentUser ? currentUser.name : 'System'
     };
 
-    expenseEntries.unshift(newExpense);
-    broadcastDataChange();
-    alert("Expense logged successfully!");
-
-    document.getElementById('expenseDesc').value = '';
-    document.getElementById('expenseAmount').value = '';
+    serviceLogs.unshift(newEntry);
+    recalculateBalances();
+    refreshAllUIViews();
+    alert('Service logged successfully!');
   }
 
-  /* Internal Cash Transfers */
-  function recordInternalTransfer(e) {
-    e.preventDefault();
-    const dateVal = document.getElementById('transferDateInput').value;
-    const direction = document.getElementById('domainTransferDirection').value;
-    const amount = parseFloat(document.getElementById('domainTransferAmount').value) || 0;
-
-    if (amount <= 0) {
-      alert("Please enter a valid transfer amount.");
-      return;
-    }
-
-    const newTransfer = {
-      id: Date.now(),
-      date: dateVal,
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      direction: direction,
-      amount: amount,
-      recordedBy: currentUser || 'Staff'
-    };
-
-    internalTransfers.unshift(newTransfer);
-    broadcastDataChange();
-    alert("Internal transfer ledger updated successfully!");
-
-    document.getElementById('domainTransferAmount').value = '';
-  }
-
-  /* CSC Invoice Logic */
-  function updateInvoiceDateDisplay() {
-    const input = document.getElementById('invDateInput');
-    const disp = document.getElementById('invDateDisplay');
-    if (input && disp) disp.textContent = input.value;
-  }
-
-  function calcInvItemRowTotal() {
-    const dept = parseFloat(document.getElementById('invItemDept').value) || 0;
-    const srv = parseFloat(document.getElementById('invItemSrv').value) || 0;
-    document.getElementById('invItemAmt').value = (dept + srv).toFixed(2);
-  }
-
-  function addInvoiceRow() {
-    const desc = document.getElementById('invItemDesc').value.trim();
-    const dept = parseFloat(document.getElementById('invItemDept').value) || 0;
-    const srv = parseFloat(document.getElementById('invItemSrv').value) || 0;
-    const total = dept + srv;
-
-    if (!desc && total <= 0) {
-      alert("Please enter item details or an amount.");
-      return;
-    }
-
-    invoiceItems.push({ desc: desc || "Service Item", dept, srv, total });
-    renderInvoiceItems();
-
-    document.getElementById('invItemDesc').value = '';
-    document.getElementById('invItemDept').value = '';
-    document.getElementById('invItemSrv').value = '';
-    document.getElementById('invItemAmt').value = '';
-  }
-
-  function deleteInvoiceRow(index) {
-    invoiceItems.splice(index, 1);
-    renderInvoiceItems();
-  }
-
-  function renderInvoiceItems() {
-    const tbody = document.getElementById('invoiceItemsTableBody');
-    tbody.innerHTML = '';
-    let grandTotal = 0;
-
-    invoiceItems.forEach((item, idx) => {
-      grandTotal += item.total;
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${item.desc}</td>
-        <td style="text-align: right;">₹${item.dept.toFixed(2)}</td>
-        <td style="text-align: right;">₹${item.srv.toFixed(2)}</td>
-        <td style="text-align: right; font-weight: 800;">₹${item.total.toFixed(2)}</td>
-        <td class="no-print" style="text-align: center;">
-          <button onclick="deleteInvoiceRow(${idx})" style="background:transparent; color: var(--accent-rose); font-size: 0.9rem; padding: 2px;"><i class="fa-solid fa-trash"></i></button>
-        </td>
-      `;
-      tbody.appendChild(tr);
-    });
-
-    document.getElementById('invTotalVal').textContent = grandTotal.toFixed(2);
-  }
-
-  function saveInvoiceToHistory(isUpdate) {
-    const custName = document.getElementById('invCustomerName').value.trim();
-    const custPhone = document.getElementById('invCustomerPhone').value.trim();
-    const invDate = document.getElementById('invDateInput').value;
-    const payMode = document.getElementById('invPaymentMode').value;
-    const grandTotal = parseFloat(document.getElementById('invTotalVal').textContent) || 0;
-
-    if (invoiceItems.length === 0) {
-      alert("Please add at least one line item to the invoice.");
-      return;
-    }
-
-    if (isUpdate) {
-      const select = document.getElementById('savedInvoiceSelect');
-      const invId = parseInt(select.value, 10);
-      const existing = savedInvoices.find(i => i.id === invId);
-      if (existing) {
-        existing.customerName = custName;
-        existing.customerPhone = custPhone;
-        existing.date = invDate;
-        existing.paymentMode = payMode;
-        existing.items = [...invoiceItems];
-        existing.totalAmount = grandTotal;
-        alert("Invoice updated successfully!");
-      }
-    } else {
-      const invNumStr = `CSC-${currentInvoiceNumber}`;
-      const newInv = {
-        id: Date.now(),
-        invNum: invNumStr,
-        date: invDate,
-        customerName: custName,
-        customerPhone: custPhone,
-        paymentMode: payMode,
-        items: [...invoiceItems],
-        totalAmount: grandTotal,
-        createdBy: currentUser || 'Admin'
-      };
-      savedInvoices.unshift(newInv);
-      currentInvoiceNumber++;
-      alert(`Invoice ${invNumStr} saved successfully!`);
-    }
-
-    broadcastDataChange();
-    populateSavedInvoicesDropdown();
-  }
-
-  function populateSavedInvoicesDropdown() {
-    const select = document.getElementById('savedInvoiceSelect');
-    if (!select) return;
-    select.innerHTML = '<option value="">-- New Invoice --</option>';
-
-    savedInvoices.forEach(inv => {
-      const opt = document.createElement('option');
-      opt.value = inv.id;
-      opt.textContent = `${inv.invNum} - ${inv.customerName || 'Customer'} (₹${inv.totalAmount.toFixed(2)})`;
-      select.appendChild(opt);
-    });
-  }
-
-  function loadSavedInvoice(invId) {
-    const actionArea = document.getElementById('invoiceActionArea');
-    const saveNewBtn = document.getElementById('btnSaveNewInvoice');
-
-    if (!invId) {
-      resetNewInvoice();
-      return;
-    }
-
-    const inv = savedInvoices.find(i => i.id === parseInt(invId, 10));
-    if (!inv) return;
-
-    document.getElementById('invNumDisplay').textContent = inv.invNum;
-    document.getElementById('invDateInput').value = inv.date;
-    document.getElementById('invDateDisplay').textContent = inv.date;
-    document.getElementById('invCustomerName').value = inv.customerName || '';
-    document.getElementById('invCustomerPhone').value = inv.customerPhone || '';
-    document.getElementById('invPaymentMode').value = inv.paymentMode || 'Cash';
-
-    invoiceItems = [...inv.items];
-    renderInvoiceItems();
-
-    actionArea.style.display = 'flex';
-    if (saveNewBtn) saveNewBtn.style.display = 'none';
-  }
-
-  function resetNewInvoice() {
-    document.getElementById('savedInvoiceSelect').value = '';
-    document.getElementById('invNumDisplay').textContent = `CSC-${currentInvoiceNumber}`;
-    initDefaultDateInputs();
-    document.getElementById('invCustomerName').value = '';
-    document.getElementById('invCustomerPhone').value = '';
-    document.getElementById('invPaymentMode').value = 'Cash';
-
-    invoiceItems = [];
-    renderInvoiceItems();
-
-    document.getElementById('invoiceActionArea').style.display = 'none';
-    const saveNewBtn = document.getElementById('btnSaveNewInvoice');
-    if (saveNewBtn) saveNewBtn.style.display = 'inline-block';
-  }
-
-  function deleteSavedInvoice() {
-    const select = document.getElementById('savedInvoiceSelect');
-    const invId = parseInt(select.value, 10);
-    if (!invId) return;
-
-    if (confirm("Are you sure you want to delete this invoice?")) {
-      savedInvoices = savedInvoices.filter(i => i.id !== invId);
-      broadcastDataChange();
-      resetNewInvoice();
-      alert("Invoice deleted successfully.");
-    }
-  }
-
-  function printCSCInvoice() {
-    window.print();
-  }
-
-  /* CALCULATE OPERATING BALANCES & REFRESH ALL VIEWS */
-  function calculateBalances() {
-    let cash = openingBalances.cash || 0;
-    let bank = openingBalances.bank || 0;
-    let credit = openingBalances.credit || 0;
-
-    // Service collections
-    serviceEntries.forEach(s => {
-      const dept = parseFloat(s.deptFee) || 0;
-      const srv = parseFloat(s.serviceCharge) || 0;
-      const disc = parseFloat(s.discount) || 0;
-      const totalPay = Math.max(0, dept + srv - disc);
-
-      if (s.payMode === 'Cash Drawer') {
-        cash += totalPay;
-      } else if (s.payMode === 'Bank/UPI') {
-        bank += totalPay;
-      } else if (s.payMode === 'Receivables/Credit') {
-        if (!s.settled) {
-          credit += totalPay;
-        }
-      }
-    });
-
-    // Expenses deduction
-    expenseEntries.forEach(e => {
-      const amt = parseFloat(e.amount) || 0;
-      if (e.payMode === 'Cash Drawer') {
-        cash -= amt;
-      } else if (e.payMode === 'Bank/UPI') {
-        bank -= amt;
-      }
-    });
-
-    // Internal transfers
-    internalTransfers.forEach(t => {
-      const amt = parseFloat(t.amount) || 0;
-      if (t.direction === 'CashToBank') {
-        cash -= amt;
-        bank += amt;
-      } else if (t.direction === 'BankToCash') {
-        bank -= amt;
-        cash += amt;
-      }
-    });
-
-    // Fazy transfers
-    fazyTransfers.forEach(f => {
-      const amt = parseFloat(f.amount) || 0;
-      if (f.direction === 'to') {
-        bank -= amt;
-      } else if (f.direction === 'from') {
-        bank += amt;
-      }
-    });
-
-    return { cash, bank, credit, total: (cash + bank + credit) };
-  }
-
-  function refreshAllUIViews() {
-    const bal = calculateBalances();
-
-    if (document.getElementById('dashMetricCash')) document.getElementById('dashMetricCash').textContent = `₹${bal.cash.toFixed(2)}`;
-    if (document.getElementById('dashMetricBank')) document.getElementById('dashMetricBank').textContent = `₹${bal.bank.toFixed(2)}`;
-    if (document.getElementById('dashMetricCredit')) document.getElementById('dashMetricCredit').textContent = `₹${bal.credit.toFixed(2)}`;
-    if (document.getElementById('dashMetricTotalBal')) document.getElementById('dashMetricTotalBal').textContent = `₹${bal.total.toFixed(2)}`;
-
-    if (document.getElementById('expDispCashBal')) document.getElementById('expDispCashBal').textContent = `₹${bal.cash.toFixed(2)}`;
-    if (document.getElementById('expDispBankBal')) document.getElementById('expDispBankBal').textContent = `₹${bal.bank.toFixed(2)}`;
-
-    renderDashboardOverviewForDate();
-    renderServicesTabOverview();
-    renderExpenseTabOverview();
-    renderServiceHistory();
-    renderExpenseHistory();
-    renderTransferHistory();
-    renderStaffReceivablesTable();
-    populateSavedInvoicesDropdown();
-    generateFinancialReport();
-    renderStaffSalaryTable();
-    renderStaffBreakdown();
-    renderAttendanceTable();
-    renderMasterServicesTable();
-    renderStaffPasswordTable();
-    renderProfileData();
-  }
-
-  function renderDashboardOverviewForDate() {
-    const dateInput = document.getElementById('overviewDateSelector');
-    if (!dateInput) return;
-
-    const selDate = dateInput.value;
-    let income = 0;
-    let expense = 0;
-    let deptFee = 0;
-
-    serviceEntries.forEach(s => {
-      if (s.date === selDate) {
-        income += parseFloat(s.serviceCharge) || 0;
-        deptFee += parseFloat(s.deptFee) || 0;
-      }
-    });
-
-    expenseEntries.forEach(e => {
-      if (e.date === selDate) {
-        expense += parseFloat(e.amount) || 0;
-      }
-    });
-
-    const net = income - expense;
-
-    if (document.getElementById('todayIncomeVal')) document.getElementById('todayIncomeVal').textContent = `₹${income.toFixed(2)}`;
-    if (document.getElementById('todayExpenseVal')) document.getElementById('todayExpenseVal').textContent = `₹${expense.toFixed(2)}`;
-    if (document.getElementById('todayDeptFeeVal')) document.getElementById('todayDeptFeeVal').textContent = `₹${deptFee.toFixed(2)}`;
-    
-    const netEl = document.getElementById('todayNetVal');
-    if (netEl) {
-      netEl.textContent = `₹${net.toFixed(2)}`;
-      netEl.className = net >= 0 ? 'net-positive' : 'net-negative';
-    }
-  }
-
-  function resetOverviewToToday() {
-    const today = new Date();
-    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-    if (document.getElementById('overviewDateSelector')) {
-      document.getElementById('overviewDateSelector').value = todayStr;
-      renderDashboardOverviewForDate();
-    }
-  }
-
-  function handleStaffBalanceModification(e) {
-    e.preventDefault();
-    const target = document.getElementById('modBalanceTarget').value;
-    const newAmt = parseFloat(document.getElementById('modBalanceAmount').value) || 0;
-
-    const todayStr = new Date().toISOString().split('T')[0];
-    staffBalanceEdits[currentUser] = staffBalanceEdits[currentUser] || {};
-    const count = staffBalanceEdits[currentUser][todayStr] || 0;
-
-    if (count >= 2) {
-      alert("Daily limit reached! Staff members can only modify balances twice per day.");
-      return;
-    }
-
-    const currentBal = calculateBalances();
-
-    if (target === 'Cash') {
-      openingBalances.cash += (newAmt - currentBal.cash);
-    } else if (target === 'Bank') {
-      openingBalances.bank += (newAmt - currentBal.bank);
-    } else if (target === 'Receivables') {
-      openingBalances.credit += (newAmt - currentBal.credit);
-    }
-
-    staffBalanceEdits[currentUser][todayStr] = count + 1;
-    document.getElementById('balanceEditRemainingCount').textContent = 2 - (count + 1);
-
-    broadcastDataChange();
-    alert(`Operating ${target} balance successfully modified to ₹${newAmt.toFixed(2)}`);
-    document.getElementById('modBalanceAmount').value = '';
-  }
-
-  function renderStaffReceivablesTable() {
-    const tbody = document.getElementById('staffReceivablesTableBody');
-    if (!tbody) return;
-    tbody.innerHTML = '';
-
-    const creditEntries = serviceEntries.filter(s => s.payMode === 'Receivables/Credit' && !s.settled);
-
-    if (creditEntries.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-muted);">No outstanding credit receivables pending.</td></tr>';
-      return;
-    }
-
-    creditEntries.forEach(s => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td><input type="radio" name="selectedReceivableRadio" value="${s.id}"></td>
-        <td>${s.date}</td>
-        <td>${s.serviceName}</td>
-        <td>₹${(s.deptFee || 0).toFixed(2)}</td>
-        <td>₹${(s.serviceCharge || 0).toFixed(2)}</td>
-        <td style="font-weight: 800; color: var(--accent-purple);">₹${(s.totalPay || 0).toFixed(2)}</td>
-        <td>${s.loggedBy}</td>
-      `;
-      tbody.appendChild(tr);
-    });
-  }
-
-  function settleSelectedReceivable() {
-    const radios = document.getElementsByName('selectedReceivableRadio');
-    let selectedId = null;
-
-    for (const r of radios) {
-      if (r.checked) {
-        selectedId = parseInt(r.value, 10);
-        break;
-      }
-    }
-
-    if (!selectedId) {
-      alert("Please select a receivable to settle.");
-      return;
-    }
-
-    const dest = document.getElementById('receivableSettleDestination').value;
-    const entry = serviceEntries.find(s => s.id === selectedId);
-
-    if (entry) {
-      entry.settled = true;
-      entry.payMode = (dest === 'Cash Drawer') ? 'Cash Drawer' : 'Bank/UPI';
-      broadcastDataChange();
-      alert("Receivable settled successfully!");
-    }
-  }
-
-  function renderServicesTabOverview() {
-    const picker = document.getElementById('servicesOverviewMonthPicker');
-    if (!picker) return;
-
-    const selMonth = picker.value;
-    let count = 0;
-    let deptSum = 0;
-    let revSum = 0;
-
-    serviceEntries.forEach(s => {
-      if (s.date && s.date.startsWith(selMonth)) {
-        count++;
-        deptSum += parseFloat(s.deptFee) || 0;
-        revSum += parseFloat(s.serviceCharge) || 0;
-      }
-    });
-
-    if (document.getElementById('summaryCount')) document.getElementById('summaryCount').textContent = count;
-    if (document.getElementById('summaryTodayDeptFee')) document.getElementById('summaryTodayDeptFee').textContent = `₹${deptSum.toFixed(2)}`;
-    if (document.getElementById('summaryRevenue')) document.getElementById('summaryRevenue').textContent = `₹${revSum.toFixed(2)}`;
-  }
-
-  function renderExpenseTabOverview() {
-    const picker = document.getElementById('expenseMonthPicker');
-    if (!picker) return;
-
-    const selMonth = picker.value;
-    let totalExp = 0;
-
-    expenseEntries.forEach(e => {
-      if (e.date && e.date.startsWith(selMonth)) {
-        totalExp += parseFloat(e.amount) || 0;
-      }
-    });
-
-    if (document.getElementById('expDispTotalDeducted')) document.getElementById('expDispTotalDeducted').textContent = `₹${totalExp.toFixed(2)}`;
-    if (document.getElementById('expenseTotalSum')) document.getElementById('expenseTotalSum').textContent = `₹${totalExp.toFixed(2)}`;
-  }
-
-  function renderServiceHistory() {
+  function renderServicesTable() {
     const tbody = document.getElementById('serviceHistoryTable');
     if (!tbody) return;
     tbody.innerHTML = '';
 
-    const picker = document.getElementById('servicesOverviewMonthPicker');
-    const selMonth = picker ? picker.value : '';
-
-    const filtered = serviceEntries.filter(s => !selMonth || (s.date && s.date.startsWith(selMonth)));
-
-    if (filtered.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; color: var(--text-muted);">No service transactions logged for this period.</td></tr>';
-      return;
-    }
-
-    filtered.forEach(s => {
+    serviceLogs.forEach(item => {
       const tr = document.createElement('tr');
+      const badgeClass = item.payMode === 'Cash Drawer' ? 'badge-cash' : (item.payMode === 'Bank/UPI' ? 'badge-upi' : 'badge-credit');
       tr.innerHTML = `
-        <td>${s.date} ${s.time || ''}</td>
-        <td style="font-weight: 700;">${s.serviceName}</td>
-        <td>₹${(s.deptFee || 0).toFixed(2)}</td>
-        <td>₹${(s.serviceCharge || 0).toFixed(2)}</td>
-        <td>₹${(s.discount || 0).toFixed(2)}</td>
-        <td style="font-weight: 800; color: var(--accent-green);">₹${(s.totalPay || 0).toFixed(2)}</td>
-        <td><span class="badge ${s.payMode === 'Cash Drawer' ? 'badge-cash' : (s.payMode === 'Bank/UPI' ? 'badge-upi' : 'badge-credit')}">${s.payMode}</span></td>
-        <td>${s.loggedBy || 'Staff'}</td>
+        <td>${item.date} ${item.timestamp || ''}</td>
+        <td><strong>${item.desc}</strong></td>
+        <td>₹${(parseFloat(item.deptFee)||0).toFixed(2)}</td>
+        <td>₹${(parseFloat(item.basePrice||item.serviceCharge)||0).toFixed(2)}</td>
+        <td>₹${(parseFloat(item.discountAmt||item.discount)||0).toFixed(2)}</td>
+        <td style="font-weight:800; color:var(--accent-green);">₹${(parseFloat(item.finalPrice)||0).toFixed(2)}</td>
+        <td><span class="badge ${badgeClass}">${item.payMode}</span></td>
+        <td>${item.staff || 'Staff'}</td>
         <td>
-          <button onclick="openEditServiceModal(${s.id})" style="background:transparent; color: var(--atmos-navy); font-size:0.85rem; padding: 2px 4px;"><i class="fa-solid fa-pen"></i></button>
-          <button onclick="deleteServiceEntry(${s.id})" style="background:transparent; color: var(--accent-rose); font-size:0.85rem; padding: 2px 4px;"><i class="fa-solid fa-trash"></i></button>
+          <button style="background:transparent; color:var(--primary); padding:2px 6px;" onclick="openEditServiceModal(${item.id})"><i class="fa-solid fa-pen"></i></button>
+          <button style="background:transparent; color:var(--accent-rose); padding:2px 6px;" onclick="deleteServiceLog(${item.id})"><i class="fa-solid fa-trash"></i></button>
         </td>
       `;
       tbody.appendChild(tr);
@@ -2773,18 +2282,16 @@
   }
 
   function openEditServiceModal(id) {
-    const s = serviceEntries.find(entry => entry.id === id);
-    if (!s) return;
-
-    document.getElementById('editLoggedServiceId').value = s.id;
-    document.getElementById('editLoggedServiceDate').value = s.date;
-    document.getElementById('editLoggedServiceDesc').value = s.serviceName;
-    document.getElementById('editLoggedDeptFee').value = s.deptFee || 0;
-    document.getElementById('editLoggedServiceCharge').value = s.serviceCharge || 0;
-    document.getElementById('editLoggedDiscount').value = s.discount || 0;
-    document.getElementById('editLoggedFinalPay').value = s.totalPay || 0;
-    document.getElementById('editLoggedPayMode').value = s.payMode;
-
+    const item = serviceLogs.find(s => s.id == id);
+    if (!item) return;
+    document.getElementById('editLoggedServiceId').value = item.id;
+    document.getElementById('editLoggedServiceDate').value = item.date;
+    document.getElementById('editLoggedServiceDesc').value = item.desc;
+    document.getElementById('editLoggedDeptFee').value = item.deptFee || 0;
+    document.getElementById('editLoggedServiceCharge').value = item.basePrice || item.serviceCharge || 0;
+    document.getElementById('editLoggedDiscount').value = item.discountAmt || item.discount || 0;
+    document.getElementById('editLoggedFinalPay').value = item.finalPrice || 0;
+    document.getElementById('editLoggedPayMode').value = item.payMode || 'Cash Drawer';
     document.getElementById('editServiceModal').style.display = 'flex';
   }
 
@@ -2796,93 +2303,118 @@
   }
 
   function saveEditedService() {
-    const id = parseInt(document.getElementById('editLoggedServiceId').value, 10);
-    const s = serviceEntries.find(entry => entry.id === id);
-    if (!s) return;
-
-    s.date = document.getElementById('editLoggedServiceDate').value;
-    s.serviceName = document.getElementById('editLoggedServiceDesc').value.trim();
-    s.deptFee = parseFloat(document.getElementById('editLoggedDeptFee').value) || 0;
-    s.serviceCharge = parseFloat(document.getElementById('editLoggedServiceCharge').value) || 0;
-    s.discount = parseFloat(document.getElementById('editLoggedDiscount').value) || 0;
-    s.totalPay = parseFloat(document.getElementById('editLoggedFinalPay').value) || 0;
-    s.payMode = document.getElementById('editLoggedPayMode').value;
-
-    broadcastDataChange();
-    closeEditServiceModal();
-    alert("Service entry updated successfully!");
+    const id = document.getElementById('editLoggedServiceId').value;
+    const item = serviceLogs.find(s => s.id == id);
+    if (item) {
+      item.date = document.getElementById('editLoggedServiceDate').value;
+      item.desc = document.getElementById('editLoggedServiceDesc').value;
+      item.deptFee = parseFloat(document.getElementById('editLoggedDeptFee').value) || 0;
+      item.basePrice = parseFloat(document.getElementById('editLoggedServiceCharge').value) || 0;
+      item.discountAmt = parseFloat(document.getElementById('editLoggedDiscount').value) || 0;
+      item.finalPrice = parseFloat(document.getElementById('editLoggedFinalPay').value) || 0;
+      item.payMode = document.getElementById('editLoggedPayMode').value;
+      
+      closeEditServiceModal();
+      recalculateBalances();
+      refreshAllUIViews();
+    }
   }
 
   function closeEditServiceModal() {
     document.getElementById('editServiceModal').style.display = 'none';
   }
 
-  function deleteServiceEntry(id) {
-    if (confirm("Are you sure you want to delete this service record?")) {
-      serviceEntries = serviceEntries.filter(s => s.id !== id);
-      broadcastDataChange();
+  function deleteServiceLog(id) {
+    if (confirm('Delete this service log entry? Balances will auto-recalculate.')) {
+      serviceLogs = serviceLogs.filter(s => s.id != id);
+      recalculateBalances();
+      refreshAllUIViews();
     }
   }
 
-  function renderExpenseHistory() {
+  /* ==========================================================================
+     SHOP EXPENSES MANAGEMENT
+     ========================================================================== */
+  function recordExpenseEntry(e) {
+    e.preventDefault();
+    const dateVal = document.getElementById('expenseDateInput').value;
+    const cat = document.getElementById('expenseCategory').value;
+    const desc = document.getElementById('expenseDesc').value;
+    const amt = parseFloat(document.getElementById('expenseAmount').value) || 0;
+    const payMode = document.getElementById('expensePayMode').value;
+
+    expenseLogs.unshift({
+      id: Date.now(),
+      date: dateVal,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      category: cat,
+      desc: desc,
+      amount: amt,
+      payMode: payMode,
+      staff: currentUser ? currentUser.name : 'System'
+    });
+
+    recalculateBalances();
+    refreshAllUIViews();
+    alert('Shop expense recorded!');
+  }
+
+  function renderExpenseTable() {
     const tbody = document.getElementById('expenseHistoryTable');
     if (!tbody) return;
     tbody.innerHTML = '';
 
-    const picker = document.getElementById('expenseMonthPicker');
-    const selMonth = picker ? picker.value : '';
+    const selectedMonth = document.getElementById('expenseMonthPicker').value;
+    let monthTotal = 0;
 
-    const filtered = expenseEntries.filter(e => !selMonth || (e.date && e.date.startsWith(selMonth)));
-
-    if (filtered.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-muted);">No expenses logged for this month.</td></tr>';
-      return;
-    }
-
-    filtered.forEach(e => {
+    expenseLogs.forEach(item => {
+      if (!selectedMonth || item.date.startsWith(selectedMonth)) {
+        monthTotal += parseFloat(item.amount) || 0;
+      }
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td>${e.date} ${e.time || ''}</td>
-        <td><span class="badge badge-custom-cat">${e.category}</span></td>
-        <td style="font-weight: 700;">${e.desc}</td>
-        <td style="font-weight: 800; color: var(--accent-rose);">₹${(e.amount || 0).toFixed(2)}</td>
-        <td><span class="badge ${e.payMode === 'Cash Drawer' ? 'badge-cash' : 'badge-upi'}">${e.payMode}</span></td>
-        <td>${e.recordedBy || 'Staff'}</td>
+        <td>${item.date} ${item.timestamp || ''}</td>
+        <td><span class="badge badge-custom-cat">${item.category}</span></td>
+        <td>${item.desc}</td>
+        <td style="font-weight:800; color:var(--accent-rose);">₹${(parseFloat(item.amount)||0).toFixed(2)}</td>
+        <td>${item.payMode}</td>
+        <td>${item.staff || 'Staff'}</td>
         <td>
-          <button onclick="openEditExpenseModal(${e.id})" style="background:transparent; color: var(--atmos-navy); font-size:0.85rem; padding: 2px 4px;"><i class="fa-solid fa-pen"></i></button>
-          <button onclick="deleteExpenseEntry(${e.id})" style="background:transparent; color: var(--accent-rose); font-size:0.85rem; padding: 2px 4px;"><i class="fa-solid fa-trash"></i></button>
+          <button style="background:transparent; color:var(--primary); padding:2px 6px;" onclick="openEditExpenseModal(${item.id})"><i class="fa-solid fa-pen"></i></button>
+          <button style="background:transparent; color:var(--accent-rose); padding:2px 6px;" onclick="deleteExpenseEntry(${item.id})"><i class="fa-solid fa-trash"></i></button>
         </td>
       `;
       tbody.appendChild(tr);
     });
+
+    if (document.getElementById('expDispTotalDeducted')) document.getElementById('expDispTotalDeducted').innerText = '₹' + monthTotal.toFixed(2);
+    if (document.getElementById('expenseTotalSum')) document.getElementById('expenseTotalSum').innerText = '₹' + monthTotal.toFixed(2);
   }
 
   function openEditExpenseModal(id) {
-    const e = expenseEntries.find(entry => entry.id === id);
-    if (!e) return;
-
-    document.getElementById('editExpenseId').value = e.id;
-    document.getElementById('editExpenseCategory').value = e.category;
-    document.getElementById('editExpenseDesc').value = e.desc;
-    document.getElementById('editExpenseAmount').value = e.amount;
-    document.getElementById('editExpensePayMode').value = e.payMode;
-
+    const item = expenseLogs.find(e => e.id == id);
+    if (!item) return;
+    document.getElementById('editExpenseId').value = item.id;
+    document.getElementById('editExpenseCategory').value = item.category;
+    document.getElementById('editExpenseDesc').value = item.desc;
+    document.getElementById('editExpenseAmount').value = item.amount;
+    document.getElementById('editExpensePayMode').value = item.payMode;
     document.getElementById('editExpenseModal').style.display = 'flex';
   }
 
   function saveEditedExpense() {
-    const id = parseInt(document.getElementById('editExpenseId').value, 10);
-    const e = expenseEntries.find(entry => entry.id === id);
-    if (!e) return;
+    const id = document.getElementById('editExpenseId').value;
+    const item = expenseLogs.find(e => e.id == id);
+    if (item) {
+      item.category = document.getElementById('editExpenseCategory').value;
+      item.desc = document.getElementById('editExpenseDesc').value;
+      item.amount = parseFloat(document.getElementById('editExpenseAmount').value) || 0;
+      item.payMode = document.getElementById('editExpensePayMode').value;
 
-    e.category = document.getElementById('editExpenseCategory').value;
-    e.desc = document.getElementById('editExpenseDesc').value.trim();
-    e.amount = parseFloat(document.getElementById('editExpenseAmount').value) || 0;
-    e.payMode = document.getElementById('editExpensePayMode').value;
-
-    broadcastDataChange();
-    closeEditExpenseModal();
-    alert("Expense updated successfully!");
+      closeEditExpenseModal();
+      recalculateBalances();
+      refreshAllUIViews();
+    }
   }
 
   function closeEditExpenseModal() {
@@ -2890,33 +2422,52 @@
   }
 
   function deleteExpenseEntry(id) {
-    if (confirm("Are you sure you want to delete this expense entry?")) {
-      expenseEntries = expenseEntries.filter(e => e.id !== id);
-      broadcastDataChange();
+    if (confirm('Delete this expense entry?')) {
+      expenseLogs = expenseLogs.filter(e => e.id != id);
+      recalculateBalances();
+      refreshAllUIViews();
     }
   }
 
-  function renderTransferHistory() {
+  /* ==========================================================================
+     INTERNAL CASH TRANSFERS
+     ========================================================================== */
+  function recordInternalTransfer(e) {
+    e.preventDefault();
+    const dateVal = document.getElementById('transferDateInput').value;
+    const dir = document.getElementById('domainTransferDirection').value;
+    const amt = parseFloat(document.getElementById('domainTransferAmount').value) || 0;
+
+    transferLogs.unshift({
+      id: Date.now(),
+      date: dateVal,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      direction: dir,
+      amount: amt,
+      staff: currentUser ? currentUser.name : 'System'
+    });
+
+    recalculateBalances();
+    refreshAllUIViews();
+    alert('Internal cash transfer recorded!');
+  }
+
+  function renderTransferTable() {
     const tbody = document.getElementById('transferHistoryTable');
     if (!tbody) return;
     tbody.innerHTML = '';
 
-    if (internalTransfers.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">No internal cash transfers recorded yet.</td></tr>';
-      return;
-    }
-
-    internalTransfers.forEach(t => {
-      const dirText = (t.direction === 'CashToBank') ? 'Cash Drawer ➔ Bank / UPI' : 'Bank / UPI ➔ Cash Drawer';
+    transferLogs.forEach(item => {
       const tr = document.createElement('tr');
+      const dirText = item.direction === 'CashToBank' ? 'Cash Drawer ➔ Bank / UPI' : 'Bank / UPI ➔ Cash Drawer';
       tr.innerHTML = `
-        <td>${t.date} ${t.time || ''}</td>
-        <td style="font-weight: 800; color: var(--primary);">${dirText}</td>
-        <td style="font-weight: 800;">₹${(t.amount || 0).toFixed(2)}</td>
-        <td>${t.recordedBy || 'Staff'}</td>
+        <td>${item.date} ${item.timestamp || ''}</td>
+        <td><strong>${dirText}</strong></td>
+        <td style="font-weight:800; color:var(--primary);">₹${(parseFloat(item.amount)||0).toFixed(2)}</td>
+        <td>${item.staff || 'Staff'}</td>
         <td>
-          <button onclick="openEditTransferModal(${t.id})" style="background:transparent; color: var(--atmos-navy); font-size:0.85rem; padding: 2px 4px;"><i class="fa-solid fa-pen"></i></button>
-          <button onclick="deleteTransferEntry(${t.id})" style="background:transparent; color: var(--accent-rose); font-size:0.85rem; padding: 2px 4px;"><i class="fa-solid fa-trash"></i></button>
+          <button style="background:transparent; color:var(--primary); padding:2px 6px;" onclick="openEditTransferModal(${item.id})"><i class="fa-solid fa-pen"></i></button>
+          <button style="background:transparent; color:var(--accent-rose); padding:2px 6px;" onclick="deleteTransferEntry(${item.id})"><i class="fa-solid fa-trash"></i></button>
         </td>
       `;
       tbody.appendChild(tr);
@@ -2924,29 +2475,27 @@
   }
 
   function openEditTransferModal(id) {
-    const t = internalTransfers.find(entry => entry.id === id);
-    if (!t) return;
-
-    document.getElementById('editTransferId').value = t.id;
-    document.getElementById('editTransferDate').value = t.date;
-    document.getElementById('editTransferDirection').value = t.direction;
-    document.getElementById('editTransferAmount').value = t.amount;
-
+    const item = transferLogs.find(t => t.id == id);
+    if (!item) return;
+    document.getElementById('editTransferId').value = item.id;
+    document.getElementById('editTransferDate').value = item.date;
+    document.getElementById('editTransferDirection').value = item.direction;
+    document.getElementById('editTransferAmount').value = item.amount;
     document.getElementById('editTransferModal').style.display = 'flex';
   }
 
   function saveEditedTransfer() {
-    const id = parseInt(document.getElementById('editTransferId').value, 10);
-    const t = internalTransfers.find(entry => entry.id === id);
-    if (!t) return;
+    const id = document.getElementById('editTransferId').value;
+    const item = transferLogs.find(t => t.id == id);
+    if (item) {
+      item.date = document.getElementById('editTransferDate').value;
+      item.direction = document.getElementById('editTransferDirection').value;
+      item.amount = parseFloat(document.getElementById('editTransferAmount').value) || 0;
 
-    t.date = document.getElementById('editTransferDate').value;
-    t.direction = document.getElementById('editTransferDirection').value;
-    t.amount = parseFloat(document.getElementById('editTransferAmount').value) || 0;
-
-    broadcastDataChange();
-    closeEditTransferModal();
-    alert("Transfer entry updated successfully!");
+      closeEditTransferModal();
+      recalculateBalances();
+      refreshAllUIViews();
+    }
   }
 
   function closeEditTransferModal() {
@@ -2954,192 +2503,460 @@
   }
 
   function deleteTransferEntry(id) {
-    if (confirm("Are you sure you want to delete this internal transfer record?")) {
-      internalTransfers = internalTransfers.filter(t => t.id !== id);
-      broadcastDataChange();
+    if (confirm('Delete this internal transfer entry?')) {
+      transferLogs = transferLogs.filter(t => t.id != id);
+      recalculateBalances();
+      refreshAllUIViews();
     }
   }
 
-  /* Financial Statements & PDF */
-  function generateFinancialReport() {
-    const picker = document.getElementById('reportMonthPicker');
-    if (!picker) return;
+  /* ==========================================================================
+     DASHBOARD OVERVIEW & STAFF CONTROLS
+     ========================================================================== */
+  function renderDashboardOverview() {
+    const selectedDate = document.getElementById('overviewDateSelector').value;
+    let srvIncome = 0;
+    let deptFeeTotal = 0;
+    let expenseTotal = 0;
 
-    const selMonth = picker.value;
-    let totalIncome = 0;
+    serviceLogs.forEach(s => {
+      if (s.date === selectedDate) {
+        deptFeeTotal += parseFloat(s.deptFee) || 0;
+        srvIncome += parseFloat(s.basePrice || s.serviceCharge || 0) - (parseFloat(s.discountAmt || s.discount) || 0);
+      }
+    });
+
+    expenseLogs.forEach(e => {
+      if (e.date === selectedDate) {
+        expenseTotal += parseFloat(e.amount) || 0;
+      }
+    });
+
+    if (document.getElementById('todayIncomeVal')) document.getElementById('todayIncomeVal').innerText = '₹' + srvIncome.toFixed(2);
+    if (document.getElementById('todayExpenseVal')) document.getElementById('todayExpenseVal').innerText = '₹' + expenseTotal.toFixed(2);
+    if (document.getElementById('todayDeptFeeVal')) document.getElementById('todayDeptFeeVal').innerText = '₹' + deptFeeTotal.toFixed(2);
+
+    const netVal = srvIncome - expenseTotal;
+    const netEl = document.getElementById('todayNetVal');
+    if (netEl) {
+      netEl.innerText = '₹' + netVal.toFixed(2);
+      netEl.className = netVal >= 0 ? 'net-positive' : 'net-negative';
+    }
+
+    // Update Services Overview Tab summary card
+    const srvMonth = document.getElementById('servicesOverviewMonthPicker').value;
+    let mCount = 0, mDept = 0, mSrv = 0;
+    serviceLogs.forEach(s => {
+      if (!srvMonth || s.date.startsWith(srvMonth)) {
+        mCount++;
+        mDept += parseFloat(s.deptFee) || 0;
+        mSrv += (parseFloat(s.basePrice || s.serviceCharge) || 0) - (parseFloat(s.discountAmt || s.discount) || 0);
+      }
+    });
+    if (document.getElementById('summaryCount')) document.getElementById('summaryCount').innerText = mCount;
+    if (document.getElementById('summaryTodayDeptFee')) document.getElementById('summaryTodayDeptFee').innerText = '₹' + mDept.toFixed(2);
+    if (document.getElementById('summaryRevenue')) document.getElementById('summaryRevenue').innerText = '₹' + mSrv.toFixed(2);
+  }
+
+  function renderDashboardOverviewForDate() {
+    renderDashboardOverview();
+  }
+
+  function resetOverviewToToday() {
+    const todayStr = new Date().toISOString().split('T')[0];
+    document.getElementById('overviewDateSelector').value = todayStr;
+    renderDashboardOverview();
+  }
+
+  function handleStaffBalanceModification(e) {
+    e.preventDefault();
+    if (!currentUser) return;
+    
+    const todayStr = new Date().toISOString().split('T')[0];
+    if (currentUser.role !== 'Admin') {
+      const count = staffEditCounters[todayStr + '_' + currentUser.name] || 0;
+      if (count >= 2) {
+        alert('Daily modification limit reached (2/2 allowed for staff). Contact Admin.');
+        return;
+      }
+      staffEditCounters[todayStr + '_' + currentUser.name] = count + 1;
+      localStorage.setItem('atmosStaffEditCounters_v11', JSON.stringify(staffEditCounters));
+      document.getElementById('balanceEditRemainingCount').innerText = 2 - (count + 1);
+    }
+
+    const target = document.getElementById('modBalanceTarget').value;
+    const newAmt = parseFloat(document.getElementById('modBalanceAmount').value) || 0;
+
+    if (target === 'Cash') openingBalances.cash = newAmt;
+    else if (target === 'Bank') openingBalances.bank = newAmt;
+    else if (target === 'Receivables') openingBalances.credit = newAmt;
+
+    recalculateBalances();
+    refreshAllUIViews();
+    alert('Operating balance updated!');
+  }
+
+  function renderStaffReceivables() {
+    const tbody = document.getElementById('staffReceivablesTableBody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    const creditServices = serviceLogs.filter(s => (s.payMode === 'Receivables/Credit' || s.payMode === 'Credit'));
+    if (creditServices.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:var(--text-muted);">No pending receivables found.</td></tr>';
+      return;
+    }
+
+    creditServices.forEach(item => {
+      const tr = document.createElement('tr');
+      const dept = parseFloat(item.deptFee) || 0;
+      const srv = parseFloat(item.basePrice || item.serviceCharge) || 0;
+      const total = parseFloat(item.finalPrice) || (dept + srv);
+      tr.innerHTML = `
+        <td><input type="radio" name="receivableSelect" value="${item.id}"></td>
+        <td>${item.date}</td>
+        <td>${item.desc}</td>
+        <td>₹${dept.toFixed(2)}</td>
+        <td>₹${srv.toFixed(2)}</td>
+        <td style="font-weight:800; color:var(--accent-purple);">₹${total.toFixed(2)}</td>
+        <td>${item.staff}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function settleSelectedReceivable() {
+    const selected = document.querySelector('input[name="receivableSelect"]:checked');
+    if (!selected) {
+      alert('Please select a receivable to settle.');
+      return;
+    }
+    const id = selected.value;
+    const dest = document.getElementById('receivableSettleDestination').value;
+    const item = serviceLogs.find(s => s.id == id);
+
+    if (item) {
+      item.payMode = dest;
+      recalculateBalances();
+      refreshAllUIViews();
+      alert('Receivable settled into ' + dest + '!');
+    }
+  }
+
+  /* ==========================================================================
+     CSC INVOICE GENERATOR
+     ========================================================================== */
+  function updateInvoiceDateDisplay() {
+    const d = document.getElementById('invDateInput').value;
+    document.getElementById('invDateDisplay').innerText = d;
+  }
+
+  function calcInvItemRowTotal() {
+    const dept = parseFloat(document.getElementById('invItemDept').value) || 0;
+    const srv = parseFloat(document.getElementById('invItemSrv').value) || 0;
+    document.getElementById('invItemAmt').value = dept + srv;
+  }
+
+  function addInvoiceRow() {
+    const desc = document.getElementById('invItemDesc').value.trim();
+    const dept = parseFloat(document.getElementById('invItemDept').value) || 0;
+    const srv = parseFloat(document.getElementById('invItemSrv').value) || 0;
+    const total = dept + srv;
+
+    if (!desc) {
+      alert('Enter item description.');
+      return;
+    }
+
+    currentInvoiceItems.push({ desc, dept, srv, total });
+    renderInvoiceItemsTable();
+
+    document.getElementById('invItemDesc').value = '';
+    document.getElementById('invItemDept').value = '';
+    document.getElementById('invItemSrv').value = '';
+    document.getElementById('invItemAmt').value = '';
+  }
+
+  function deleteInvoiceItem(index) {
+    currentInvoiceItems.splice(index, 1);
+    renderInvoiceItemsTable();
+  }
+
+  function renderInvoiceItemsTable() {
+    const tbody = document.getElementById('invoiceItemsTableBody');
+    tbody.innerHTML = '';
+    let grandTotal = 0;
+
+    currentInvoiceItems.forEach((item, index) => {
+      grandTotal += item.total;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${item.desc}</td>
+        <td style="text-align:right;">₹${item.dept.toFixed(2)}</td>
+        <td style="text-align:right;">₹${item.srv.toFixed(2)}</td>
+        <td style="text-align:right; font-weight:800;">₹${item.total.toFixed(2)}</td>
+        <td class="no-print"><button style="background:transparent; color:var(--accent-rose);" onclick="deleteInvoiceItem(${index})"><i class="fa-solid fa-xmark"></i></button></td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    document.getElementById('invTotalVal').innerText = grandTotal.toFixed(2);
+  }
+
+  function saveInvoiceToHistory(isUpdate = false) {
+    const invNum = document.getElementById('invNumDisplay').innerText;
+    const date = document.getElementById('invDateInput').value;
+    const custName = document.getElementById('invCustomerName').value.trim();
+    const custPhone = document.getElementById('invCustomerPhone').value.trim();
+    const payMode = document.getElementById('invPaymentMode').value;
+    const total = parseFloat(document.getElementById('invTotalVal').innerText) || 0;
+
+    if (currentInvoiceItems.length === 0) {
+      alert('Add at least one item to invoice.');
+      return;
+    }
+
+    const invData = {
+      id: isUpdate ? invNum : 'CSC-' + (1000 + invoices.length + 1),
+      date, custName, custPhone, payMode, total,
+      items: [...currentInvoiceItems]
+    };
+
+    if (isUpdate) {
+      const idx = invoices.findIndex(i => i.id === invNum);
+      if (idx !== -1) invoices[idx] = invData;
+    } else {
+      invoices.unshift(invData);
+    }
+
+    localStorage.setItem('atmosInvoices_v11', JSON.stringify(invoices));
+    populateSavedInvoicesDropdown();
+    alert('Invoice saved successfully!');
+  }
+
+  function populateSavedInvoicesDropdown() {
+    const sel = document.getElementById('savedInvoiceSelect');
+    if (!sel) return;
+    sel.innerHTML = '<option value="">-- New Invoice --</option>';
+    invoices.forEach(i => {
+      const opt = document.createElement('option');
+      opt.value = i.id;
+      opt.innerText = `${i.id} - ${i.custName || 'Customer'} (₹${i.total})`;
+      sel.appendChild(opt);
+    });
+  }
+
+  function loadSavedInvoice(invId) {
+    if (!invId) {
+      resetNewInvoice();
+      return;
+    }
+    const inv = invoices.find(i => i.id === invId);
+    if (!inv) return;
+
+    document.getElementById('invNumDisplay').innerText = inv.id;
+    document.getElementById('invDateInput').value = inv.date;
+    document.getElementById('invDateDisplay').innerText = inv.date;
+    document.getElementById('invCustomerName').value = inv.custName || '';
+    document.getElementById('invCustomerPhone').value = inv.custPhone || '';
+    document.getElementById('invPaymentMode').value = inv.payMode || 'Cash';
+
+    currentInvoiceItems = [...inv.items];
+    renderInvoiceItemsTable();
+
+    document.getElementById('invoiceActionArea').style.display = 'flex';
+  }
+
+  function resetNewInvoice() {
+    document.getElementById('invNumDisplay').innerText = 'CSC-' + (1000 + invoices.length + 1);
+    document.getElementById('invCustomerName').value = '';
+    document.getElementById('invCustomerPhone').value = '';
+    currentInvoiceItems = [];
+    renderInvoiceItemsTable();
+    document.getElementById('invoiceActionArea').style.display = 'none';
+  }
+
+  function deleteSavedInvoice() {
+    const invId = document.getElementById('invNumDisplay').innerText;
+    if (confirm('Delete saved invoice ' + invId + '?')) {
+      invoices = invoices.filter(i => i.id !== invId);
+      localStorage.setItem('atmosInvoices_v11', JSON.stringify(invoices));
+      populateSavedInvoicesDropdown();
+      resetNewInvoice();
+    }
+  }
+
+  function printCSCInvoice() {
+    window.print();
+  }
+
+  /* ==========================================================================
+     FINANCIAL REPORTS & EXPORTS
+     ========================================================================== */
+  function generateFinancialReport() {
+    const month = document.getElementById('reportMonthPicker').value;
+    const tbody = document.getElementById('reportItemizedTable');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    let netIncome = 0;
     let totalExpense = 0;
     let totalDeptFee = 0;
 
-    const tbody = document.getElementById('reportItemizedTable');
-    if (tbody) tbody.innerHTML = '';
+    serviceLogs.forEach(s => {
+      if (!month || s.date.startsWith(month)) {
+        const dept = parseFloat(s.deptFee) || 0;
+        const srv = (parseFloat(s.basePrice || s.serviceCharge) || 0) - (parseFloat(s.discountAmt || s.discount) || 0);
+        
+        totalDeptFee += dept;
+        netIncome += srv;
 
-    const combined = [];
-
-    serviceEntries.forEach(s => {
-      if (s.date && s.date.startsWith(selMonth)) {
-        totalIncome += parseFloat(s.serviceCharge) || 0;
-        totalDeptFee += parseFloat(s.deptFee) || 0;
-        combined.push({
-          type: 'Service Collection',
-          time: `${s.date} ${s.time || ''}`,
-          desc: s.serviceName,
-          income: s.serviceCharge,
-          deptFee: s.deptFee,
-          expense: 0,
-          staff: s.loggedBy
-        });
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><span class="badge badge-cash">Service</span></td>
+          <td>${s.date} ${s.timestamp || ''}</td>
+          <td>${s.desc}</td>
+          <td style="color:var(--accent-green); font-weight:800;">₹${srv.toFixed(2)}</td>
+          <td style="color:var(--accent-amber);">₹${dept.toFixed(2)}</td>
+          <td>-</td>
+          <td>${s.staff || ''}</td>
+        `;
+        tbody.appendChild(tr);
       }
     });
 
-    expenseEntries.forEach(e => {
-      if (e.date && e.date.startsWith(selMonth)) {
-        totalExpense += parseFloat(e.amount) || 0;
-        combined.push({
-          type: 'Shop Expense',
-          time: `${e.date} ${e.time || ''}`,
-          desc: `${e.category} - ${e.desc}`,
-          income: 0,
-          deptFee: 0,
-          expense: e.amount,
-          staff: e.recordedBy
-        });
+    expenseLogs.forEach(e => {
+      if (!month || e.date.startsWith(month)) {
+        const amt = parseFloat(e.amount) || 0;
+        totalExpense += amt;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><span class="badge badge-credit">Expense</span></td>
+          <td>${e.date} ${e.timestamp || ''}</td>
+          <td>${e.desc} (${e.category})</td>
+          <td>-</td>
+          <td>-</td>
+          <td style="color:var(--accent-rose); font-weight:800;">₹${amt.toFixed(2)}</td>
+          <td>${e.staff || ''}</td>
+        `;
+        tbody.appendChild(tr);
       }
     });
 
-    const netBal = totalIncome - totalExpense;
-
-    if (document.getElementById('rptRevenue')) document.getElementById('rptRevenue').textContent = `₹${totalIncome.toFixed(2)}`;
-    if (document.getElementById('rptExpenses')) document.getElementById('rptExpenses').textContent = `₹${totalExpense.toFixed(2)}`;
-    if (document.getElementById('rptDeptFee')) document.getElementById('rptDeptFee').textContent = `₹${totalDeptFee.toFixed(2)}`;
-    if (document.getElementById('rptNetBalance')) document.getElementById('rptNetBalance').textContent = `₹${netBal.toFixed(2)}`;
-
-    if (tbody) {
-      if (combined.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-muted);">No financial records for this month.</td></tr>';
-      } else {
-        combined.forEach(item => {
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td><span class="badge ${item.type === 'Service Collection' ? 'badge-cash' : 'badge-credit'}">${item.type}</span></td>
-            <td>${item.time}</td>
-            <td style="font-weight:700;">${item.desc}</td>
-            <td style="color: var(--accent-green); font-weight:800;">₹${(item.income || 0).toFixed(2)}</td>
-            <td style="color: var(--accent-amber); font-weight:800;">₹${(item.deptFee || 0).toFixed(2)}</td>
-            <td style="color: var(--accent-rose); font-weight:800;">₹${(item.expense || 0).toFixed(2)}</td>
-            <td>${item.staff || 'Staff'}</td>
-          `;
-          tbody.appendChild(tr);
-        });
-      }
-    }
+    if (document.getElementById('rptRevenue')) document.getElementById('rptRevenue').innerText = '₹' + netIncome.toFixed(2);
+    if (document.getElementById('rptExpenses')) document.getElementById('rptExpenses').innerText = '₹' + totalExpense.toFixed(2);
+    if (document.getElementById('rptDeptFee')) document.getElementById('rptDeptFee').innerText = '₹' + totalDeptFee.toFixed(2);
+    
+    const netBal = netIncome - totalExpense;
+    if (document.getElementById('rptNetBalance')) document.getElementById('rptNetBalance').innerText = '₹' + netBal.toFixed(2);
   }
 
   function exportReportPDF(type) {
-    const monthVal = document.getElementById('reportMonthPicker').value;
-    document.getElementById('pdfReportTitle').textContent = `STATEMENT FOR ${monthVal}`;
-    document.getElementById('pdfReportDate').textContent = `Exported: ${new Date().toLocaleDateString()}`;
-
-    document.getElementById('pdfGrossIncome').textContent = document.getElementById('rptRevenue').textContent;
-    document.getElementById('pdfTotalExpense').textContent = document.getElementById('rptExpenses').textContent;
-    document.getElementById('pdfDeptFee').textContent = document.getElementById('rptDeptFee').textContent;
-    document.getElementById('pdfNetBalance').textContent = document.getElementById('rptNetBalance').textContent;
-
-    const tbody = document.getElementById('pdfTableBody');
-    tbody.innerHTML = document.getElementById('reportItemizedTable').innerHTML;
-
     const element = document.getElementById('pdfReportTemplate');
-    element.style.display = 'block';
+    const month = document.getElementById('reportMonthPicker').value;
+    document.getElementById('pdfReportTitle').innerText = 'Financial Report (' + (type === 'daily' ? 'Today' : month) + ')';
+    document.getElementById('pdfReportDate').innerText = 'Generated: ' + new Date().toLocaleDateString();
 
+    document.getElementById('pdfGrossIncome').innerText = document.getElementById('rptRevenue').innerText;
+    document.getElementById('pdfTotalExpense').innerText = document.getElementById('rptExpenses').innerText;
+    document.getElementById('pdfDeptFee').innerText = document.getElementById('rptDeptFee').innerText;
+    document.getElementById('pdfNetBalance').innerText = document.getElementById('rptNetBalance').innerText;
+
+    const pdfTbody = document.getElementById('pdfTableBody');
+    pdfTbody.innerHTML = document.getElementById('reportItemizedTable').innerHTML;
+
+    element.style.display = 'block';
     const opt = {
-      margin: 0.5,
-      filename: `ATMOS_Financial_Report_${monthVal}.pdf`,
+      margin: 10,
+      filename: `ATMOS_Financial_Report_${month}.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
       html2canvas: { scale: 2 },
-      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
-
     html2pdf().set(opt).from(element).save().then(() => {
       element.style.display = 'none';
     });
   }
 
-  /* Admin Control Functions */
+  /* ==========================================================================
+     ADMIN CONTROLS & MASTER CATALOG
+     ========================================================================== */
   function closeSelectedMonth() {
-    const monthVal = document.getElementById('closingMonthPicker').value;
-    if (!monthVal) return;
-
-    closedMonths[monthVal] = true;
-    broadcastDataChange();
-    document.getElementById('closingStatusMsg').textContent = `Month ${monthVal} is locked and closed.`;
+    const month = document.getElementById('closingMonthPicker').value;
+    if (!closedMonths.includes(month)) {
+      closedMonths.push(month);
+      localStorage.setItem('atmosClosedMonths_v11', JSON.stringify(closedMonths));
+      document.getElementById('closingStatusMsg').innerText = 'Month ' + month + ' closed & locked successfully.';
+    } else {
+      alert('Month already closed.');
+    }
   }
 
   function editClosedMonth() {
-    const monthVal = document.getElementById('closingMonthPicker').value;
-    if (!monthVal) return;
-
-    delete closedMonths[monthVal];
-    broadcastDataChange();
-    document.getElementById('closingStatusMsg').textContent = `Month ${monthVal} unlocked for editing.`;
+    const month = document.getElementById('closingMonthPicker').value;
+    closedMonths = closedMonths.filter(m => m !== month);
+    localStorage.setItem('atmosClosedMonths_v11', JSON.stringify(closedMonths));
+    document.getElementById('closingStatusMsg').innerText = 'Month ' + month + ' unlocked for editing.';
   }
 
   function handleFazyTransfer(dir) {
     const amt = parseFloat(document.getElementById('fazyAmountInput').value) || 0;
-    if (amt <= 0) {
-      alert("Enter valid amount.");
-      return;
+    if (amt <= 0) return;
+    if (dir === 'to') {
+      openingBalances.bank -= amt;
+      alert(`Transferred ₹${amt} to Fazy.`);
+    } else {
+      openingBalances.bank += amt;
+      alert(`Received ₹${amt} from Fazy.`);
     }
-
-    fazyTransfers.push({
-      id: Date.now(),
-      date: new Date().toISOString().split('T')[0],
-      direction: dir,
-      amount: amt
-    });
-
-    broadcastDataChange();
-    alert(`Fazy transfer of ₹${amt} recorded.`);
-    document.getElementById('fazyAmountInput').value = '';
+    recalculateBalances();
+    refreshAllUIViews();
   }
 
   function saveManualBalanceEdits() {
     const cash = parseFloat(document.getElementById('manualEditCashInput').value);
     const bank = parseFloat(document.getElementById('manualEditBankInput').value);
 
-    const cur = calculateBalances();
+    if (!isNaN(cash)) openingBalances.cash = cash;
+    if (!isNaN(bank)) openingBalances.bank = bank;
 
-    if (!isNaN(cash)) openingBalances.cash += (cash - cur.cash);
-    if (!isNaN(bank)) openingBalances.bank += (bank - cur.bank);
+    recalculateBalances();
+    refreshAllUIViews();
+    alert('Manual balances saved!');
+  }
 
-    broadcastDataChange();
-    alert("Manual balance overrides saved.");
-    document.getElementById('manualEditCashInput').value = '';
-    document.getElementById('manualEditBankInput').value = '';
+  function saveAdminOpeningBalances() {
+    openingBalances.cash = parseFloat(document.getElementById('adminOpeningCashInput').value) || 0;
+    openingBalances.bank = parseFloat(document.getElementById('adminOpeningBankInput').value) || 0;
+    openingBalances.credit = parseFloat(document.getElementById('adminOpeningCreditInput').value) || 0;
+
+    recalculateBalances();
+    refreshAllUIViews();
+    alert('Opening balances saved!');
   }
 
   function extractHistoricalData() {
     const month = document.getElementById('historicalMonth').value;
-    let srvCount = 0;
-    let netIncome = 0;
-    let expenses = 0;
+    let count = 0, income = 0, expenses = 0;
 
-    serviceEntries.forEach(s => {
-      if (s.date && s.date.startsWith(month)) {
-        srvCount++;
-        netIncome += parseFloat(s.serviceCharge) || 0;
+    serviceLogs.forEach(s => {
+      if (s.date.startsWith(month)) {
+        count++;
+        income += (parseFloat(s.basePrice || s.serviceCharge) || 0) - (parseFloat(s.discountAmt || s.discount) || 0);
       }
     });
 
-    expenseEntries.forEach(e => {
-      if (e.date && e.date.startsWith(month)) {
+    expenseLogs.forEach(e => {
+      if (e.date.startsWith(month)) {
         expenses += parseFloat(e.amount) || 0;
       }
     });
 
-    document.getElementById('histReportTitle').textContent = `Historical Report for ${month}`;
-    document.getElementById('histTotalServices').textContent = srvCount;
-    document.getElementById('histNetIncome').textContent = `₹${netIncome.toFixed(2)}`;
-    document.getElementById('histExpenses').textContent = `₹${expenses.toFixed(2)}`;
-    document.getElementById('histNetBalance').textContent = `₹${(netIncome - expenses).toFixed(2)}`;
+    document.getElementById('histTotalServices').innerText = count;
+    document.getElementById('histNetIncome').innerText = '₹' + income.toFixed(2);
+    document.getElementById('histExpenses').innerText = '₹' + expenses.toFixed(2);
+    document.getElementById('histNetBalance').innerText = '₹' + (income - expenses).toFixed(2);
     document.getElementById('historicalReportContent').style.display = 'block';
   }
 
@@ -3148,173 +2965,66 @@
     if (!tbody) return;
     tbody.innerHTML = '';
 
-    const picker = document.getElementById('salaryMonthPicker');
-    const selMonth = picker ? picker.value : '';
+    const selectedMonth = document.getElementById('salaryMonthPicker').value;
 
-    const staffList = userAccounts.filter(a => a.role === 'Staff');
-
-    staffList.forEach(stf => {
-      const basic = parseFloat(staffSalaries[stf.name]) || 0;
-
-      let srvChargeCollected = 0;
-      serviceEntries.forEach(s => {
-        if (s.loggedBy === stf.name && (!selMonth || (s.date && s.date.startsWith(selMonth)))) {
-          srvChargeCollected += parseFloat(s.serviceCharge) || 0;
+    userAccounts.filter(a => a.role === 'Staff').forEach(staff => {
+      let totalCollected = 0;
+      serviceLogs.forEach(s => {
+        if (s.staff === staff.name && (!selectedMonth || s.date.startsWith(selectedMonth))) {
+          totalCollected += (parseFloat(s.basePrice || s.serviceCharge) || 0) - (parseFloat(s.discountAmt || s.discount) || 0);
         }
       });
 
+      const basic = staffSalaries[staff.name] || 0;
       let incentive = 0;
-      if (srvChargeCollected > basic) {
-        const excess = srvChargeCollected - basic;
-        const cappedExcess = Math.min(excess, 9000);
-        incentive = cappedExcess * 0.20;
+      if (totalCollected > basic) {
+        incentive = Math.min(9000, (totalCollected - basic) * 0.20);
       }
-
       const totalPayable = basic + incentive;
 
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td style="font-weight: 800;">${stf.name}</td>
-        <td><input type="number" value="${basic}" id="salaryInput_${stf.name.replace(/\s+/g, '')}" style="width: 110px; padding: 4px;"></td>
-        <td style="font-weight: 800; color: var(--primary);">₹${srvChargeCollected.toFixed(2)}</td>
-        <td style="font-weight: 800; color: var(--accent-green);">₹${incentive.toFixed(2)}</td>
-        <td style="font-weight: 900; color: var(--atmos-navy);">₹${totalPayable.toFixed(2)}</td>
+        <td><strong>${staff.name}</strong></td>
+        <td><input type="number" value="${basic}" onchange="updateStaffBasicSalary('${staff.name}', this.value)" style="width:100px;"></td>
+        <td style="color:var(--primary); font-weight:800;">₹${totalCollected.toFixed(2)}</td>
+        <td style="color:var(--accent-green); font-weight:800;">₹${incentive.toFixed(2)}</td>
+        <td style="color:var(--atmos-navy); font-weight:900;">₹${totalPayable.toFixed(2)}</td>
       `;
       tbody.appendChild(tr);
     });
   }
 
+  function updateStaffBasicSalary(name, val) {
+    staffSalaries[name] = parseFloat(val) || 0;
+  }
+
   function saveStaffSalaries() {
-    const staffList = userAccounts.filter(a => a.role === 'Staff');
-    staffList.forEach(stf => {
-      const el = document.getElementById(`salaryInput_${stf.name.replace(/\s+/g, '')}`);
-      if (el) {
-        staffSalaries[stf.name] = parseFloat(el.value) || 0;
-      }
-    });
-    broadcastDataChange();
-    alert("Salary settings saved successfully.");
-  }
-
-  function saveAdminOpeningBalances() {
-    openingBalances.cash = parseFloat(document.getElementById('adminOpeningCashInput').value) || 0;
-    openingBalances.bank = parseFloat(document.getElementById('adminOpeningBankInput').value) || 0;
-    openingBalances.credit = parseFloat(document.getElementById('adminOpeningCreditInput').value) || 0;
-
-    broadcastDataChange();
-    alert("Base opening balances saved successfully.");
-  }
-
-  function saveFirebaseSettings() {
-    const url = document.getElementById('firebaseDbUrlInput').value.trim();
-    if (url) {
-      firebaseConfig.databaseURL = url;
-      alert("Firebase Database URL configured!");
-      initFirebaseIfConfigured();
-    }
+    localStorage.setItem('atmosStaffSalaries_v11', JSON.stringify(staffSalaries));
+    alert('Staff salary configurations saved!');
+    renderStaffSalaryTable();
   }
 
   function renderStaffBreakdown() {
-    const picker = document.getElementById('staffCollectionMonthPicker');
-    const month = picker ? picker.value : '';
+    const selectedMonth = document.getElementById('staffCollectionMonthPicker').value;
+    const staffTotals = { 'Manu Joseph': { rev: 0, count: 0 }, 'Jasim': { rev: 0, count: 0 }, 'Staff 3': { rev: 0, count: 0 } };
 
-    const staffRevs = { "Manu Joseph": 0, "Jasim": 0, "Staff 3": 0 };
-    const staffCounts = { "Manu Joseph": 0, "Jasim": 0, "Staff 3": 0 };
-
-    serviceEntries.forEach(s => {
-      if (!month || (s.date && s.date.startsWith(month))) {
-        if (staffRevs[s.loggedBy] !== undefined) {
-          staffRevs[s.loggedBy] += parseFloat(s.serviceCharge) || 0;
-          staffCounts[s.loggedBy]++;
+    serviceLogs.forEach(s => {
+      if (!selectedMonth || s.date.startsWith(selectedMonth)) {
+        if (staffTotals[s.staff]) {
+          staffTotals[s.staff].rev += (parseFloat(s.basePrice || s.serviceCharge) || 0) - (parseFloat(s.discountAmt || s.discount) || 0);
+          staffTotals[s.staff].count++;
         }
       }
     });
 
-    if (document.getElementById('staffRevManu')) document.getElementById('staffRevManu').textContent = `₹${staffRevs["Manu Joseph"].toFixed(2)}`;
-    if (document.getElementById('staffCountManu')) document.getElementById('staffCountManu').textContent = `${staffCounts["Manu Joseph"]} transactions`;
+    if (document.getElementById('staffRevManu')) document.getElementById('staffRevManu').innerText = '₹' + staffTotals['Manu Joseph'].rev.toFixed(2);
+    if (document.getElementById('staffCountManu')) document.getElementById('staffCountManu').innerText = staffTotals['Manu Joseph'].count + ' transactions';
 
-    if (document.getElementById('staffRevJasim')) document.getElementById('staffRevJasim').textContent = `₹${staffRevs["Jasim"].toFixed(2)}`;
-    if (document.getElementById('staffCountJasim')) document.getElementById('staffCountJasim').textContent = `${staffCounts["Jasim"]} transactions`;
+    if (document.getElementById('staffRevJasim')) document.getElementById('staffRevJasim').innerText = '₹' + staffTotals['Jasim'].rev.toFixed(2);
+    if (document.getElementById('staffCountJasim')) document.getElementById('staffCountJasim').innerText = staffTotals['Jasim'].count + ' transactions';
 
-    if (document.getElementById('staffRevStaff3')) document.getElementById('staffRevStaff3').textContent = `₹${staffRevs["Staff 3"].toFixed(2)}`;
-    if (document.getElementById('staffCountStaff3')) document.getElementById('staffCountStaff3').textContent = `${staffCounts["Staff 3"]} transactions`;
-  }
-
-  function renderAnalyticsCharts() {
-    chartsInstance.forEach(c => c.destroy());
-    chartsInstance = [];
-
-    const ctx1 = document.getElementById('growthChart');
-    if (ctx1) {
-      const chart1 = new Chart(ctx1, {
-        type: 'line',
-        data: {
-          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-          datasets: [{ label: 'Revenue (₹)', data: [12000, 15000, 18000, 22000, 26000, 31000], borderColor: '#2563eb', fill: false }]
-        },
-        options: { responsive: true, maintainAspectRatio: false }
-      });
-      chartsInstance.push(chart1);
-    }
-
-    const ctx2 = document.getElementById('interactionsChart');
-    if (ctx2) {
-      const chart2 = new Chart(ctx2, {
-        type: 'doughnut',
-        data: {
-          labels: ['Standard Services', 'Custom Bill Services'],
-          datasets: [{ data: [65, 35], backgroundColor: ['#059669', '#7c3aed'] }]
-        },
-        options: { responsive: true, maintainAspectRatio: false }
-      });
-      chartsInstance.push(chart2);
-    }
-
-    const ctx3 = document.getElementById('staffChart');
-    if (ctx3) {
-      const chart3 = new Chart(ctx3, {
-        type: 'bar',
-        data: {
-          labels: ['Manu Joseph', 'Jasim', 'Staff 3'],
-          datasets: [{ label: 'Service Volume', data: [120, 95, 40], backgroundColor: '#0B1E2D' }]
-        },
-        options: { responsive: true, maintainAspectRatio: false }
-      });
-      chartsInstance.push(chart3);
-    }
-  }
-
-  function renderAttendanceTable() {
-    const tbody = document.getElementById('attendanceTable');
-    if (!tbody) return;
-    tbody.innerHTML = '';
-
-    const picker = document.getElementById('attendanceMonthPicker');
-    const month = picker ? picker.value : '';
-
-    const filtered = attendanceLogs.filter(log => !month || (log.date && log.date.startsWith(month)));
-
-    if (filtered.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">No attendance records found.</td></tr>';
-      return;
-    }
-
-    filtered.forEach(log => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td style="font-weight: 800;">${log.staffName}</td>
-        <td>${log.date}</td>
-        <td>${log.firstCheckIn}</td>
-        <td>${log.lastActive}</td>
-        <td>${log.relogins}</td>
-        <td><span class="badge ${log.status.includes('Late') ? 'badge-credit' : 'badge-cash'}">${log.status}</span></td>
-      `;
-      tbody.appendChild(tr);
-    });
-  }
-
-  function exportAttendancePDF(type) {
-    alert("Exporting Attendance PDF report...");
+    if (document.getElementById('staffRevStaff3')) document.getElementById('staffRevStaff3').innerText = '₹' + staffTotals['Staff 3'].rev.toFixed(2);
+    if (document.getElementById('staffCountStaff3')) document.getElementById('staffCountStaff3').innerText = staffTotals['Staff 3'].count + ' transactions';
   }
 
   function saveMasterService(e) {
@@ -3323,55 +3033,36 @@
     const cat = document.getElementById('newServiceCategory').value;
     const name = document.getElementById('newServiceName').value.trim();
     const price = parseFloat(document.getElementById('newServicePrice').value) || 0;
-    const deptFee = parseFloat(document.getElementById('newServiceDeptFee').value) || 0;
+    const dept = parseFloat(document.getElementById('newServiceDeptFee').value) || 0;
 
     if (editId) {
-      const srv = masterServices.find(s => s.id === parseInt(editId, 10));
-      if (srv) {
-        srv.category = cat;
-        srv.name = name;
-        srv.price = price;
-        srv.defaultDeptFee = deptFee;
+      const item = masterServices.find(s => s.id == editId);
+      if (item) {
+        item.category = cat;
+        item.name = name;
+        item.price = price;
+        item.defaultDeptFee = dept;
       }
+      document.getElementById('editServiceId').value = '';
+      document.getElementById('saveServiceBtn').innerText = 'Add to Master Catalog';
     } else {
-      const newSrv = {
+      masterServices.push({
         id: Date.now(),
         category: cat,
         name: name,
         price: price,
-        defaultDeptFee: deptFee
-      };
-      masterServices.push(newSrv);
+        defaultDeptFee: dept
+      });
     }
 
-    broadcastDataChange();
-    populateMasterServiceDropdown();
-    document.getElementById('editServiceId').value = '';
+    localStorage.setItem('atmosMasterServices_v11', JSON.stringify(masterServices));
+    syncWithFirebase();
+    populateMasterServicesDropdown();
+    renderMasterServicesTable();
+
     document.getElementById('newServiceName').value = '';
     document.getElementById('newServicePrice').value = '';
     document.getElementById('newServiceDeptFee').value = '0';
-    document.getElementById('saveServiceBtn').textContent = "Add to Master Catalog";
-    alert("Master catalog updated successfully!");
-  }
-
-  function editMasterService(id) {
-    const srv = masterServices.find(s => s.id === id);
-    if (!srv) return;
-
-    document.getElementById('editServiceId').value = srv.id;
-    document.getElementById('newServiceCategory').value = srv.category;
-    document.getElementById('newServiceName').value = srv.name;
-    document.getElementById('newServicePrice').value = srv.price;
-    document.getElementById('newServiceDeptFee').value = srv.defaultDeptFee || 0;
-    document.getElementById('saveServiceBtn').textContent = "Save Changes to Catalog";
-  }
-
-  function deleteMasterService(id) {
-    if (confirm("Delete this service from the catalog?")) {
-      masterServices = masterServices.filter(s => s.id !== id);
-      broadcastDataChange();
-      populateMasterServiceDropdown();
-    }
   }
 
   function renderMasterServicesTable() {
@@ -3379,19 +3070,40 @@
     if (!tbody) return;
     tbody.innerHTML = '';
 
-    masterServices.forEach(s => {
+    masterServices.forEach(item => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td><span class="badge ${s.category.includes('Standard') ? 'badge-std-cat' : 'badge-custom-cat'}">${s.category}</span></td>
-        <td style="font-weight: 700;">${s.name}</td>
-        <td style="font-weight: 800; color: var(--accent-green);">₹${s.price.toFixed(2)}</td>
+        <td><span class="badge ${item.category.includes('Standard') ? 'badge-std-cat' : 'badge-custom-cat'}">${item.category}</span></td>
+        <td><strong>${item.name}</strong></td>
+        <td>₹${item.price.toFixed(2)}</td>
         <td>
-          <button onclick="editMasterService(${s.id})" style="background:transparent; color: var(--atmos-navy);"><i class="fa-solid fa-pen"></i></button>
-          <button onclick="deleteMasterService(${s.id})" style="background:transparent; color: var(--accent-rose);"><i class="fa-solid fa-trash"></i></button>
+          <button style="background:transparent; color:var(--primary); padding:2px 6px;" onclick="editMasterService(${item.id})"><i class="fa-solid fa-pen"></i></button>
+          <button style="background:transparent; color:var(--accent-rose); padding:2px 6px;" onclick="deleteMasterService(${item.id})"><i class="fa-solid fa-trash"></i></button>
         </td>
       `;
       tbody.appendChild(tr);
     });
+  }
+
+  function editMasterService(id) {
+    const item = masterServices.find(s => s.id == id);
+    if (!item) return;
+    document.getElementById('editServiceId').value = item.id;
+    document.getElementById('newServiceCategory').value = item.category;
+    document.getElementById('newServiceName').value = item.name;
+    document.getElementById('newServicePrice').value = item.price;
+    document.getElementById('newServiceDeptFee').value = item.defaultDeptFee || 0;
+    document.getElementById('saveServiceBtn').innerText = 'Update Catalog Item';
+  }
+
+  function deleteMasterService(id) {
+    if (confirm('Delete from master catalog?')) {
+      masterServices = masterServices.filter(s => s.id != id);
+      localStorage.setItem('atmosMasterServices_v11', JSON.stringify(masterServices));
+      syncWithFirebase();
+      populateMasterServicesDropdown();
+      renderMasterServicesTable();
+    }
   }
 
   function renderStaffPasswordTable() {
@@ -3402,179 +3114,145 @@
     userAccounts.forEach(acc => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td style="font-weight: 800;">${acc.name} (${acc.id})</td>
-        <td><span class="badge ${acc.role === 'Admin' ? 'badge-credit' : 'badge-cash'}">${acc.role}</span></td>
-        <td>
-          <input type="password" id="passInput_${acc.id}" value="${acc.password}" style="width: 120px; padding: 4px; display: inline-block;">
-          <button onclick="updateStaffPassword('${acc.id}')" class="btn-primary" style="width: auto; padding: 4px 10px; font-size: 0.75rem;">Save</button>
-        </td>
+        <td><strong>${acc.name}</strong> (${acc.id})</td>
+        <td>${acc.role}</td>
+        <td><button class="btn-primary" style="width:auto; padding:4px 10px; font-size:0.75rem;" onclick="resetStaffPasswordPrompt('${acc.id}')">Reset Password</button></td>
       `;
       tbody.appendChild(tr);
     });
   }
 
-  function updateStaffPassword(id) {
-    const acc = userAccounts.find(a => a.id === id);
+  function resetStaffPasswordPrompt(accId) {
+    const acc = userAccounts.find(a => a.id === accId);
     if (!acc) return;
-    const input = document.getElementById(`passInput_${id}`);
-    if (input) {
-      acc.password = input.value.trim();
-      broadcastDataChange();
-      alert(`Password updated for ${acc.name}!`);
+    const newPwd = prompt('Enter new password for ' + acc.name + ':', acc.password);
+    if (newPwd) {
+      acc.password = newPwd;
+      localStorage.setItem('atmosUserAccounts_v11', JSON.stringify(userAccounts));
+      alert('Password updated for ' + acc.name);
     }
   }
 
   /* ==========================================================================
-     8. STAFF PROFILE & HR SUMMARY - FIXED ABSENT DAYS & ENHANCED LIGHT GRADIENT
+     ATTENDANCE & PROFILE SUMMARY
      ========================================================================== */
-
-  function renderProfileData() {
-    const staffSelect = document.getElementById('profileStaffSelect');
-    const selectedStaff = (currentRole === 'Admin' && staffSelect) ? staffSelect.value : (currentUser || 'Manu Joseph');
-
-    document.getElementById('profileStaffName').textContent = selectedStaff;
-    document.getElementById('profileStaffRole').textContent = (selectedStaff === 'Admin') ? 'System Administrator' : 'Staff Member';
-
-    const mobileInput = document.getElementById('profileStaffMobile');
-    if (mobileInput) mobileInput.value = staffMobiles[selectedStaff] || '9895638115';
-
-    const salaryInput = document.getElementById('profileStaffSalary');
-    if (salaryInput) salaryInput.value = staffSalaries[selectedStaff] || 0;
-
-    const imgEl = document.getElementById('profileStaffImg');
-    const placeholderEl = document.getElementById('profileStaffPlaceholder');
-    if (staffPhotos[selectedStaff]) {
-      imgEl.src = staffPhotos[selectedStaff];
-      imgEl.style.display = 'block';
-      placeholderEl.style.display = 'none';
-    } else {
-      imgEl.style.display = 'none';
-      placeholderEl.style.display = 'flex';
-    }
-
-    const profileMonthPicker = document.getElementById('profileAttendanceMonthPicker');
-    let selectedMonthVal = profileMonthPicker ? profileMonthPicker.value : '';
-    if (!selectedMonthVal) {
-      const now = new Date();
-      selectedMonthVal = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-      if (profileMonthPicker) profileMonthPicker.value = selectedMonthVal;
-    }
-
-    const [yearStr, monthStr] = selectedMonthVal.split('-');
-    const selYear = parseInt(yearStr, 10);
-    const selMonthIndex = parseInt(monthStr, 10) - 1; // 0-indexed month
-
-    // Calculate Month Incentives
-    let monthServiceCharge = 0;
-    serviceEntries.forEach(s => {
-      if (s.loggedBy === selectedStaff && s.date) {
-        const parts = s.date.split('-');
-        if (parseInt(parts[0], 10) === selYear && (parseInt(parts[1], 10) - 1) === selMonthIndex) {
-          monthServiceCharge += parseFloat(s.serviceCharge) || 0;
-        }
-      }
-    });
-
-    const basicSalary = parseFloat(staffSalaries[selectedStaff]) || 0;
-    let incentive = 0;
-    if (monthServiceCharge > basicSalary) {
-      const excess = monthServiceCharge - basicSalary;
-      const cappedExcess = Math.min(excess, 9000);
-      incentive = cappedExcess * 0.20;
-    }
-
-    const incEl = document.getElementById('profileStaffIncentive');
-    if (incEl) incEl.value = `₹${incentive.toFixed(2)}`;
-
-    // Calculate Working Days, Sundays, Present, On-time, Late, and ABSENT DAYS
-    const daysInMonth = new Date(selYear, selMonthIndex + 1, 0).getDate();
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    let totalWorkingDays = 0;
-    let sundayOff = 0;
-    let presentDays = 0;
-    let onTimeCount = 0;
-    let lateCount = 0;
-    let absentDays = 0;
-
-    const staffMonthLogs = attendanceLogs.filter(log => {
-      if (log.staffName !== selectedStaff || !log.date) return false;
-      const parts = log.date.split('-');
-      if (parts.length < 3) return false;
-      return parseInt(parts[0], 10) === selYear && (parseInt(parts[1], 10) - 1) === selMonthIndex;
-    });
-
-    const logMap = {};
-    staffMonthLogs.forEach(log => {
-      logMap[log.date] = log;
-    });
-
-    for (let d = 1; d <= daysInMonth; d++) {
-      const dateObj = new Date(selYear, selMonthIndex, d);
-      dateObj.setHours(0, 0, 0, 0);
-
-      const dateStr = `${selYear}-${String(selMonthIndex + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-      const isSunday = (dateObj.getDay() === 0);
-
-      if (isSunday) {
-        sundayOff++;
-      } else {
-        totalWorkingDays++;
-      }
-
-      const log = logMap[dateStr];
-
-      if (log) {
-        presentDays++;
-        if (log.status && log.status.toLowerCase().includes('late')) {
-          lateCount++;
-        } else {
-          onTimeCount++;
-        }
-      } else {
-        // STRICT ABSENT DAYS FIX: Only evaluate past days strictly before today
-        if (dateObj < today && !isSunday) {
-          absentDays++;
-        }
-      }
-    }
-
-    if (document.getElementById('sumTotalWorkingDays')) document.getElementById('sumTotalWorkingDays').textContent = totalWorkingDays;
-    if (document.getElementById('sumSundayOff')) document.getElementById('sumSundayOff').textContent = sundayOff;
-    if (document.getElementById('sumPresent')) document.getElementById('sumPresent').textContent = presentDays;
-    if (document.getElementById('sumOnTime')) document.getElementById('sumOnTime').textContent = onTimeCount;
-    if (document.getElementById('sumLate')) document.getElementById('sumLate').textContent = lateCount;
-    if (document.getElementById('sumAbsent')) document.getElementById('sumAbsent').textContent = absentDays;
-
-    renderProfileAttendanceTable(selectedStaff, selYear, selMonthIndex);
-  }
-
-  function renderProfileAttendanceTable(staffName, selYear, selMonthIndex) {
-    const tbody = document.getElementById('profileAttendanceTableBody');
+  function renderAttendanceTable() {
+    const tbody = document.getElementById('attendanceTable');
     if (!tbody) return;
     tbody.innerHTML = '';
 
-    const staffMonthLogs = attendanceLogs.filter(log => {
-      if (log.staffName !== staffName || !log.date) return false;
-      const parts = log.date.split('-');
-      if (parts.length < 3) return false;
-      return parseInt(parts[0], 10) === selYear && (parseInt(parts[1], 10) - 1) === selMonthIndex;
-    });
+    const selectedMonth = document.getElementById('attendanceMonthPicker').value;
 
-    if (staffMonthLogs.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">No check-in logs recorded for this month.</td></tr>';
-      return;
+    attendanceLogs.forEach(l => {
+      if (!selectedMonth || l.date.startsWith(selectedMonth)) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong>${l.name}</strong></td>
+          <td>${l.date}</td>
+          <td>${l.firstCheckin}</td>
+          <td>${l.lastTime}</td>
+          <td>${l.relogins}</td>
+          <td><span class="badge ${l.status === 'On-time' ? 'badge-cash' : 'badge-credit'}">${l.status}</span></td>
+        `;
+        tbody.appendChild(tr);
+      }
+    });
+  }
+
+  function renderProfileData() {
+    let staffName = currentUser ? currentUser.name : 'Manu Joseph';
+    if (currentUser && currentUser.role === 'Admin') {
+      const sel = document.getElementById('profileStaffSelect');
+      if (sel) staffName = sel.value;
     }
 
-    staffMonthLogs.forEach(log => {
+    document.getElementById('profileStaffName').innerText = staffName;
+    document.getElementById('profileStaffMobile').value = staffMobiles[staffName] || '9895638115';
+    
+    const basic = staffSalaries[staffName] || 0;
+    document.getElementById('profileStaffSalary').value = basic;
+
+    const selectedMonth = document.getElementById('profileAttendanceMonthPicker').value;
+    let srvCollected = 0;
+    serviceLogs.forEach(s => {
+      if (s.staff === staffName && (!selectedMonth || s.date.startsWith(selectedMonth))) {
+        srvCollected += (parseFloat(s.basePrice || s.serviceCharge) || 0) - (parseFloat(s.discountAmt || s.discount) || 0);
+      }
+    });
+
+    let incentive = 0;
+    if (srvCollected > basic) {
+      incentive = Math.min(9000, (srvCollected - basic) * 0.20);
+    }
+    document.getElementById('profileStaffIncentive').value = '₹' + incentive.toFixed(2);
+
+    if (staffPhotos[staffName]) {
+      document.getElementById('profileStaffImg').src = staffPhotos[staffName];
+      document.getElementById('profileStaffImg').style.display = 'block';
+      document.getElementById('profileStaffPlaceholder').style.display = 'none';
+    } else {
+      document.getElementById('profileStaffImg').style.display = 'none';
+      document.getElementById('profileStaffPlaceholder').style.display = 'flex';
+    }
+
+    // Calculate Month-wise Attendance Metrics
+    calculateProfileAttendanceMetrics(staffName, selectedMonth);
+  }
+
+  function calculateProfileAttendanceMetrics(staffName, monthStr) {
+    if (!monthStr) return;
+    const year = parseInt(monthStr.split('-')[0]);
+    const month = parseInt(monthStr.split('-')[1]) - 1;
+    const totalDaysInMonth = new Date(year, month + 1, 0).getDate();
+
+    let sundays = 0;
+    for (let day = 1; day <= totalDaysInMonth; day++) {
+      const d = new Date(year, month, day);
+      if (d.getDay() === 0) sundays++;
+    }
+
+    const workingDays = totalDaysInMonth - sundays;
+    document.getElementById('sumTotalWorkingDays').innerText = workingDays;
+    document.getElementById('sumSundayOff').innerText = sundays;
+
+    let present = 0, onTime = 0, late = 0;
+    const userLogs = attendanceLogs.filter(l => l.name === staffName && l.date.startsWith(monthStr));
+
+    userLogs.forEach(l => {
+      present++;
+      if (l.status === 'On-time') onTime++;
+      else late++;
+    });
+
+    document.getElementById('sumPresent').innerText = present;
+    document.getElementById('sumOnTime').innerText = onTime;
+    document.getElementById('sumLate').innerText = late;
+
+    // Past absent days calculation
+    const todayStr = new Date().toISOString().split('T')[0];
+    let pastWorkingDays = 0;
+    for (let day = 1; day <= totalDaysInMonth; day++) {
+      const d = new Date(year, month, day);
+      const dStr = d.toISOString().split('T')[0];
+      if (dStr <= todayStr && d.getDay() !== 0) {
+        pastWorkingDays++;
+      }
+    }
+    const absent = Math.max(0, pastWorkingDays - present);
+    document.getElementById('sumAbsent').innerText = absent;
+
+    // Profile Attendance Table
+    const tbody = document.getElementById('profileAttendanceTableBody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    userLogs.forEach(l => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td style="font-weight: 700;">${log.date}</td>
-        <td>${log.firstCheckIn}</td>
-        <td>${log.lastActive}</td>
-        <td>${log.relogins}</td>
-        <td><span class="badge ${log.status.includes('Late') ? 'badge-credit' : 'badge-cash'}">${log.status}</span></td>
+        <td>${l.date}</td>
+        <td>${l.firstCheckin}</td>
+        <td>${l.lastTime}</td>
+        <td>${l.relogins}</td>
+        <td><span class="badge ${l.status === 'On-time' ? 'badge-cash' : 'badge-credit'}">${l.status}</span></td>
       `;
       tbody.appendChild(tr);
     });
@@ -3582,42 +3260,132 @@
 
   function handleStaffPhotoUpload(e) {
     const file = e.target.files[0];
-    if (!file) return;
-
-    const staffSelect = document.getElementById('profileStaffSelect');
-    const selectedStaff = (currentRole === 'Admin' && staffSelect) ? staffSelect.value : currentUser;
-
-    const reader = new FileReader();
-    reader.onload = function(evt) {
-      staffPhotos[selectedStaff] = evt.target.result;
-      broadcastDataChange();
-      renderProfileData();
-      alert("Staff photo updated successfully!");
-    };
-    reader.readAsDataURL(file);
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        let staffName = currentUser ? currentUser.name : 'Manu Joseph';
+        if (currentUser && currentUser.role === 'Admin') {
+          staffName = document.getElementById('profileStaffSelect').value;
+        }
+        staffPhotos[staffName] = evt.target.result;
+        localStorage.setItem('atmosStaffPhotos_v11', JSON.stringify(staffPhotos));
+        renderProfileData();
+      };
+      reader.readAsDataURL(file);
+    }
   }
 
   function saveProfileAdminEdits() {
-    const staffSelect = document.getElementById('profileStaffSelect');
-    const selectedStaff = (currentRole === 'Admin' && staffSelect) ? staffSelect.value : currentUser;
+    let staffName = document.getElementById('profileStaffSelect').value;
+    const mob = document.getElementById('profileStaffMobile').value;
+    const sal = parseFloat(document.getElementById('profileStaffSalary').value) || 0;
 
-    const mobile = document.getElementById('profileStaffMobile').value.trim();
-    const salary = parseFloat(document.getElementById('profileStaffSalary').value) || 0;
+    staffMobiles[staffName] = mob;
+    staffSalaries[staffName] = sal;
 
-    staffMobiles[selectedStaff] = mobile;
-    staffSalaries[selectedStaff] = salary;
-
-    broadcastDataChange();
-    alert("Profile details saved successfully!");
+    localStorage.setItem('atmosStaffMobiles_v11', JSON.stringify(staffMobiles));
+    localStorage.setItem('atmosStaffSalaries_v11', JSON.stringify(staffSalaries));
+    alert('Profile information updated!');
   }
 
-  /* Initialization on DOM Load */
-  window.addEventListener('DOMContentLoaded', () => {
-    initFirebaseIfConfigured();
-    setLoginMode('Staff');
-    document.getElementById('loginModal').style.display = 'flex';
-  });
-</script>
+  function exportAttendancePDF(type) {
+    alert('Exporting ' + type + ' attendance statement PDF...');
+  }
 
+  /* ==========================================================================
+     ANALYTICS CHARTS
+     ========================================================================== */
+  function renderAnalyticsCharts() {
+    // 1. Monthly Growth Chart
+    const ctx1 = document.getElementById('growthChart');
+    if (ctx1) {
+      if (growthChartInst) growthChartInst.destroy();
+      growthChartInst = new Chart(ctx1, {
+        type: 'line',
+        data: {
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+          datasets: [{
+            label: 'Net Revenue (₹)',
+            data: [12000, 15000, 18000, 22000, 26000, 31000],
+            borderColor: '#059669',
+            backgroundColor: 'rgba(5, 150, 105, 0.1)',
+            fill: true,
+            tension: 0.3
+          }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+      });
+    }
+
+    // 2. Service Interactions Chart
+    const ctx2 = document.getElementById('interactionsChart');
+    if (ctx2) {
+      if (interactionsChartInst) interactionsChartInst.destroy();
+      interactionsChartInst = new Chart(ctx2, {
+        type: 'doughnut',
+        data: {
+          labels: ['Photocopy', 'DTP', 'KSEB Bills', 'Lamination', 'Other'],
+          datasets: [{
+            data: [40, 25, 15, 10, 10],
+            backgroundColor: ['#2563eb', '#059669', '#d97706', '#7c3aed', '#e11d48']
+          }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+      });
+    }
+
+    // 3. Staff Service Volume Chart
+    const ctx3 = document.getElementById('staffChart');
+    if (ctx3) {
+      if (staffChartInst) staffChartInst.destroy();
+      staffChartInst = new Chart(ctx3, {
+        type: 'bar',
+        data: {
+          labels: ['Manu Joseph', 'Jasim', 'Staff 3'],
+          datasets: [{
+            label: 'Volume Logged',
+            data: [65, 45, 20],
+            backgroundColor: '#0B1E2D'
+          }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+      });
+    }
+  }
+
+  /* ==========================================================================
+     FORGOT PASSWORD MODAL
+     ========================================================================== */
+  function openForgotPasswordModal() {
+    document.getElementById('forgotPasswordModal').style.display = 'flex';
+  }
+
+  function closeForgotPasswordModal() {
+    document.getElementById('forgotPasswordModal').style.display = 'none';
+  }
+
+  function sendAdminOTP() {
+    alert('OTP sent to Admin WhatsApp (8089278115). Standard OTP: 8055');
+    document.getElementById('otpStep1').style.display = 'none';
+    document.getElementById('otpStep2').style.display = 'block';
+  }
+
+  function verifyAndResetAdminPassword() {
+    const otp = document.getElementById('adminOtpInput').value;
+    const newPwd = document.getElementById('newAdminPasswordInput').value;
+
+    if (otp === '8055' && newPwd) {
+      const adminAcc = userAccounts.find(a => a.role === 'Admin');
+      if (adminAcc) {
+        adminAcc.password = newPwd;
+        localStorage.setItem('atmosUserAccounts_v11', JSON.stringify(userAccounts));
+        alert('Admin password successfully reset! Login with new password.');
+        closeForgotPasswordModal();
+      }
+    } else {
+      alert('Invalid OTP or missing password field.');
+    }
+  }
+</script>
 </body>
 </html>
